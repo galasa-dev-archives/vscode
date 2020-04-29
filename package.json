@@ -1,0 +1,112 @@
+{
+	"name": "galasa-plugin",
+	"displayName": "Galasa",
+	"description": "",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.44.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onView:galasa-testrunner",
+		"onDebug",
+		"onCommand:galasa.specifyTestClass"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "galasa.addEntry",
+				"title": "Add Run"
+			},
+			{
+				"command": "galasa.specifyTestClass",
+				"title": "Specify Test Class"
+			},
+			{
+				"command": "galasa.bootjar",
+				"title": "Boot Jar"
+			},
+			{
+				"command": "galasa.localmaven",
+				"title": "Local Maven"
+			},
+			{
+				"command": "galasa.remotemaven",
+				"title": "Remote Maven"
+			},
+			{
+				"command": "galasa.version",
+				"title": "Galasa Version"
+			}
+		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "galasa",
+					"title": "Galasa",
+					"icon": "/resources/GalasaLogo.svg"
+				}
+			]
+		},
+		"views": {
+			"galasa": [
+				{
+					"id": "galasa-testrunner",
+					"name": "Test Runner"
+				},
+				{
+					"id": "galasa-ras",
+					"name": "Result Archive Store"
+				}
+			]
+		},
+		"viewsWelcome": [
+			{
+				"view": "galasa-testrunner",
+				"contents": "Start Debugging on current open Test File\n[Start Test](command:galasa.addEntry)"
+			}
+		],
+		"debuggers": [
+			{
+			  "type": "galasa",
+			  "label": "Galasa Debug",
+			  "runtime": "java",
+			  "languages": ["java"],
+			  "initialConfigurations": [
+				{
+				  "type": "java",
+				  "request": "launch",
+				  "name": "Galasa Debug",
+				  "classPaths": ["${command:galasa.bootjar}"],
+				  "mainClass": "dev.galasa.boot.Launcher",
+				  "args": "${command:galasa.localmaven} ${command:galasa.remotemaven} --obr mvn:dev.galasa/dev.galasa.uber.obr/${command:galasa.version}/obr --test ${command:galasa.specifyTestClass}"
+				}
+			  ]
+			}
+		  ]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.44.0",
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^7.0.2",
+		"@types/node": "^13.11.0",
+		"eslint": "^6.8.0",
+		"@typescript-eslint/parser": "^2.26.0",
+		"@typescript-eslint/eslint-plugin": "^2.26.0",
+		"glob": "^7.1.6",
+		"mocha": "^7.1.1",
+		"typescript": "^3.8.3",
+		"vscode-test": "^1.3.0"
+	}
+}
