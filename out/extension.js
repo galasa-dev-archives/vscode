@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
+const TreeViewResultArchiveStore_1 = require("./TreeViewResultArchiveStore");
 const path = require('path');
 const fs = require('fs');
 function activate(context) {
@@ -35,6 +36,10 @@ function activate(context) {
             return packageName + "/" + packageName + "." + testName;
         }
     });
+    //RAS
+    const rasProvider = new TreeViewResultArchiveStore_1.RASProvider(vscode.workspace.getConfiguration("galasa").get("path") + "");
+    vscode.window.registerTreeDataProvider("galasa-ras", rasProvider);
+    vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
 }
 exports.activate = activate;
 //# sourceMappingURL=extension.js.map

@@ -11,8 +11,7 @@
 	],
 	"activationEvents": [
 		"onView:galasa-testrunner",
-		"onDebug",
-		"onCommand:galasa.specifyTestClass"
+		"onDebug"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -40,7 +39,15 @@
 			{
 				"command": "galasa.version",
 				"title": "Galasa Version"
-			}
+			},
+			{
+                "command": "galasa-ras.refresh",
+                "title": "Refresh",
+                "icon": {
+                    "light": "resources/GalasaLogo.svg",
+                    "dark": "resources/GalasaLogo.svg"
+                }
+            }
 		],
 		"viewsContainers": {
 			"activitybar": [
@@ -104,8 +111,22 @@
                     "type": "string",
                     "default": "LATEST",
                     "description": "%galasavscode.config.galasa.version%"
+				},
+				"galasa.path": {
+                    "type": "string",
+                    "default": "",
+                    "description": "%galasavscode.config.galasa.path%"
 				}  
 			  }
+		  },
+		  "menus": {
+			  "view/title": [
+				  {
+					  "command": "galasa-ras.refresh",
+					  "when": "view == galasa-ras",
+					  "group": "navigation"
+				  }
+			  ]
 		  }
 	},
 	"scripts": {

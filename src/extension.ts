@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { RASProvider } from './TreeViewResultArchiveStore';
 const path = require('path');
 const fs = require('fs');
 
@@ -35,4 +36,12 @@ export function activate(context: vscode.ExtensionContext) {
             return packageName + "/" + packageName + "." + testName;
         }
     });
+
+    //RAS
+    const rasProvider = new RASProvider(vscode.workspace.getConfiguration("galasa").get("path") + "");
+    vscode.window.registerTreeDataProvider("galasa-ras", rasProvider);
+    vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
+    
+
+    
 }
