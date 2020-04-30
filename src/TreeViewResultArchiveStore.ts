@@ -11,6 +11,10 @@ export class RASProvider implements vscode.TreeDataProvider<TestRun> {
     }
 
     getChildren(element?: TestRun): TestRun[] | undefined {
+        if (this.galasaRoot === "" || !this.galasaRoot) {
+            vscode.window.showErrorMessage("You need to update your galasa path in your configurations of the Galasa extension.");
+            return undefined;
+        }
         if (!element) {
             return this.getDirectories(this.galasaRoot + "/ras/");
         } else {
