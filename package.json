@@ -52,8 +52,8 @@
                 "command": "galasa-ras.refresh",
                 "title": "Refresh",
                 "icon": {
-                    "light": "resources/GalasaLogo.svg",
-                    "dark": "resources/GalasaLogo.svg"
+                    "light": "resources/refresh-light.svg",
+                    "dark": "resources/refresh-dark.svg"
                 }
             }
 		],
