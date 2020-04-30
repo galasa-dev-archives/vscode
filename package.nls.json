@@ -1,0 +1,5 @@
+{
+    "galasavscode.config.galasa.version" : "Specify your built version of Galasa to keep up with latest developments during your testing",
+    "galasavscode.config.galasa.maven-local" : "Specify the absolute path towards your local Maven repository",
+    "galasavscode.config.galasa.maven-remote" : "Specify the WEB URI pointing at your remote Maven repository"
+}

@@ -86,7 +86,27 @@
 				}
 			  ]
 			}
-		  ]
+		  ],
+		  "configuration": {
+			  "title" : "Galasa",
+			  "properties": {
+				"galasa.maven-remote": {
+                    "type": "string",
+                    "default": "https://nexus.galasa.dev/repository/maven-nightly/",
+                    "description": "%galasavscode.config.galasa.maven-remote%"
+				},
+				"galasa.maven-local": {
+                    "type": "string",
+                    "default": "",
+                    "description": "%galasavscode.config.galasa.maven-local%"
+				},
+				"galasa.version": {
+                    "type": "string",
+                    "default": "LATEST",
+                    "description": "%galasavscode.config.galasa.version%"
+				}  
+			  }
+		  }
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

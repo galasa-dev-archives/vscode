@@ -11,13 +11,19 @@ function activate(context) {
         return context.extensionPath + "/lib/galasa-boot.jar";
     });
     vscode.commands.registerCommand('galasa.localmaven', config => {
-        return "";
+        return "--localmaven file:" + vscode.workspace.getConfiguration("galasa").get("maven-local");
     });
     vscode.commands.registerCommand('galasa.remotemaven', config => {
-        return "--remotemaven https://nexus.galasa.dev/repository/maven-nightly/";
+        return "--remotemaven " + vscode.workspace.getConfiguration("galasa").get("maven-remote");
     });
     vscode.commands.registerCommand('galasa.version', config => {
-        return "0.7.0-SNAPSHOT";
+        const version = vscode.workspace.getConfiguration("galasa").get("version");
+        if (version === "LATEST") {
+            return "0.7.0";
+        }
+        else {
+            return version;
+        }
     });
     vscode.commands.registerCommand('galasa.specifyTestClass', config => {
         const active = vscode.window.activeTextEditor;
