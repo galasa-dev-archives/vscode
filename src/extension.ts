@@ -1,11 +1,14 @@
 import * as vscode from 'vscode';
+import { testextractor, TestCase } from './testextractor';
 const path = require('path');
 const fs = require('fs');
 
 export function activate(context: vscode.ExtensionContext) {
-    vscode.commands.registerCommand('galasa.addEntry', () => {
-        vscode.debug.startDebugging(undefined, "Galasa Debug");
-    });
+    if(vscode.workspace.workspaceFolders) {
+        const testExtractor = new testextractor(vscode.workspace.workspaceFolders);
+        vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
+        vscode.commands.registerCommand('galasa-test.refresh', () => {testExtractor.refresh()});
+    }
     vscode.commands.registerCommand('galasa.bootjar', config => {
         return context.extensionPath + "/lib/galasa-boot.jar";
     });
@@ -17,7 +20,6 @@ export function activate(context: vscode.ExtensionContext) {
     });
     vscode.commands.registerCommand('galasa.version', config => {
         const version = vscode.workspace.getConfiguration("galasa").get("version");
-
         if (version === "LATEST") {
             return "0.7.0";
         } else {
@@ -35,4 +37,5 @@ export function activate(context: vscode.ExtensionContext) {
             return packageName + "/" + packageName + "." + testName;
         }
     });
+    vscode.commands.registerCommand('galasa-test.debug', (run : TestCase) => {vscode.window.showInformationMessage(run.label + " Debugging")});
 }

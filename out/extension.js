@@ -1,12 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
+const testextractor_1 = require("./testextractor");
 const path = require('path');
 const fs = require('fs');
 function activate(context) {
-    vscode.commands.registerCommand('galasa.addEntry', () => {
-        vscode.debug.startDebugging(undefined, "Galasa Debug");
-    });
+    if (vscode.workspace.workspaceFolders) {
+        const testExtractor = new testextractor_1.testextractor(vscode.workspace.workspaceFolders);
+        vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
+        vscode.commands.registerCommand('galasa-test.refresh', () => { testExtractor.refresh(); });
+    }
     vscode.commands.registerCommand('galasa.bootjar', config => {
         return context.extensionPath + "/lib/galasa-boot.jar";
     });
@@ -35,6 +38,7 @@ function activate(context) {
             return packageName + "/" + packageName + "." + testName;
         }
     });
+    vscode.commands.registerCommand('galasa-test.debug', (run) => { vscode.window.showInformationMessage(run.label + " Debugging"); });
 }
 exports.activate = activate;
 //# sourceMappingURL=extension.js.map

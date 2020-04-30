@@ -18,10 +18,6 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "galasa.addEntry",
-				"title": "Add Run"
-			},
-			{
 				"command": "galasa.specifyTestClass",
 				"title": "Specify Test Class"
 			},
@@ -40,6 +36,18 @@
 			{
 				"command": "galasa.version",
 				"title": "Galasa Version"
+			},
+			{
+                "command": "galasa-test.refresh",
+                "title": "Refresh",
+                "icon": {
+                    "light": "resources/refresh-light.svg",
+                    "dark": "resources/refresh-dark.svg"
+                }
+			},
+			{
+				"command": "galasa-test.debug",
+				"title": "Debug"
 			}
 		],
 		"viewsContainers": {
@@ -63,12 +71,6 @@
 				}
 			]
 		},
-		"viewsWelcome": [
-			{
-				"view": "galasa-testrunner",
-				"contents": "Start Debugging on current open Test File\n[Start Test](command:galasa.addEntry)"
-			}
-		],
 		"debuggers": [
 			{
 			  "type": "galasa",
@@ -86,10 +88,10 @@
 				}
 			  ]
 			}
-		  ],
-		  "configuration": {
-			  "title" : "Galasa",
-			  "properties": {
+		],
+		"configuration": {
+			"title" : "Galasa",
+			"properties": {
 				"galasa.maven-remote": {
                     "type": "string",
                     "default": "https://nexus.galasa.dev/repository/maven-nightly/",
@@ -105,8 +107,23 @@
                     "default": "LATEST",
                     "description": "%galasavscode.config.galasa.version%"
 				}  
-			  }
-		  }
+			}
+		},
+		"menus": {
+            "view/title": [
+                {
+                    "command": "galasa-test.refresh",
+                    "when": "view == galasa-testrunner",
+                    "group": "navigation"
+                }
+			],
+			"view/item/context": [
+				{
+					"command": "galasa-test.debug",
+					"when": "view == galasa-testrunner"
+				}
+			]
+   		 }
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
