@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
 const testextractor_1 = require("./testextractor");
+const TreeViewResultArchiveStore_1 = require("./TreeViewResultArchiveStore");
 const path = require('path');
 const fs = require('fs');
 function activate(context) {
@@ -39,6 +40,10 @@ function activate(context) {
         }
     });
     vscode.commands.registerCommand('galasa-test.debug', (run) => { vscode.window.showInformationMessage(run.label + " Debugging"); });
+    //RAS
+    const rasProvider = new TreeViewResultArchiveStore_1.RASProvider(vscode.workspace.getConfiguration("galasa").get("path") + "");
+    vscode.window.registerTreeDataProvider("galasa-ras", rasProvider);
+    vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
 }
 exports.activate = activate;
 //# sourceMappingURL=extension.js.map

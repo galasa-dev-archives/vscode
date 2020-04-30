@@ -11,8 +11,7 @@
 	],
 	"activationEvents": [
 		"onView:galasa-testrunner",
-		"onDebug",
-		"onCommand:galasa.specifyTestClass"
+		"onDebug"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -48,7 +47,15 @@
 			{
 				"command": "galasa-test.debug",
 				"title": "Debug"
-			}
+			},
+			{
+                "command": "galasa-ras.refresh",
+                "title": "Refresh",
+                "icon": {
+                    "light": "resources/GalasaLogo.svg",
+                    "dark": "resources/GalasaLogo.svg"
+                }
+            }
 		],
 		"viewsContainers": {
 			"activitybar": [
@@ -106,6 +113,11 @@
                     "type": "string",
                     "default": "LATEST",
                     "description": "%galasavscode.config.galasa.version%"
+				},
+				"galasa.path": {
+                    "type": "string",
+                    "default": "",
+                    "description": "%galasavscode.config.galasa.path%"
 				}  
 			}
 		},
@@ -115,7 +127,12 @@
                     "command": "galasa-test.refresh",
                     "when": "view == galasa-testrunner",
                     "group": "navigation"
-                }
+				},
+				{
+					"command": "galasa-ras.refresh",
+					"when": "view == galasa-ras",
+					"group": "navigation"
+				}
 			],
 			"view/item/context": [
 				{
@@ -123,7 +140,7 @@
 					"when": "view == galasa-testrunner"
 				}
 			]
-   		 }
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
