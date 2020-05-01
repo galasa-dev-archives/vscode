@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('GalasaVsPlugin') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'public-github-cicsdeliverytest', usernameVariable: 'USERNAME', passwordVariable: 'TOKEN')]) {
+                withCredentials([usernamePassword(credentialsId: 'f313f43d-3af7-431b-a267-0b73b6c3bf8f', usernameVariable: 'USERNAME', passwordVariable: 'TOKEN')]) {
                     script {
                         def vscodePackageJson = readJSON file: "package.json"
                         def version = "v${vscodePackageJson.version}"
