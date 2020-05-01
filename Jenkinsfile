@@ -14,7 +14,7 @@ pipeline {
                 sh "npx vsce package"
                 sh "docker build -t 'galasa-vscode:latest' ."
                 sh "docker tag galasa-vscode:latest docker.galasa.dev/galasa-vscode:latest"
-                sh "docker push docker.galasa.dev:galasa-vscode:latest"
+                sh "docker push docker.galasa.dev/galasa-vscode:latest"
             }
         }
     }
