@@ -10,9 +10,8 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'f313f43d-3af7-431b-a267-0b73b6c3bf8f', usernameVariable: 'USERNAME', passwordVariable: 'TOKEN')]) {
                     script {
-                        def vscodePackageJson = readJSON file: "package.json"
-                        def version = "v${vscodePackageJson.version}"
-                        def versionName = "vscode-extension-for-galasa-v${vscodePackageJson.version}"
+                        def version = "vDO-NOT-USE"
+                        def versionName = "vscode-extension-for-galasa-$version"
                         sh "npx vsce package -o ${versionName}.vsix"
 
                         def releaseAPI = "repos/galasa-dev/vscode/releases"
