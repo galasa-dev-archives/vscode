@@ -42,6 +42,12 @@ function activate(context) {
     const rasProvider = new TreeViewResultArchiveStore_1.RASProvider(vscode.workspace.getConfiguration("galasa").get("path") + "");
     vscode.window.registerTreeDataProvider("galasa-ras", rasProvider);
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
+    vscode.commands.registerCommand('galasa-ras.open', (run) => {
+        vscode.workspace.openTextDocument(run.path).then(doc => {
+            vscode.window.showTextDocument(doc);
+        });
+    });
+    vscode.commands.registerCommand("galasa-ras.clearAll", () => rasProvider.clearAll());
 }
 exports.activate = activate;
 //# sourceMappingURL=extension.js.map

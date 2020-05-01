@@ -17,7 +17,17 @@ class RASProvider {
             return undefined;
         }
         if (!element) {
-            return this.getDirectories(this.galasaRoot + "/ras/");
+            return this.getDirectories(this.galasaRoot + "/ras").sort((run1, run2) => {
+                if (fs.statSync(run1.path).mtime > fs.statSync(run2.path).mtime) {
+                    return -1;
+                }
+                if (fs.statSync(run1.path).mtime = fs.statSync(run2.path).mtime) {
+                    return 0;
+                }
+                else {
+                    return 1;
+                }
+            });
         }
         else {
             return this.getDirectories(element.path);
@@ -35,17 +45,20 @@ class RASProvider {
         });
         return list;
     }
-    pathExists(p) {
-        try {
-            fs.accessSync(p);
-        }
-        catch (err) {
-            return false;
-        }
-        return true;
-    }
     refresh() {
         this._onDidChangeTreeData.fire();
+    }
+    clearAll() {
+        fs.readdirSync(this.galasaRoot + "/ras").forEach((file) => {
+            let filePath = this.galasaRoot + "/ras/" + file;
+            if (fs.statSync(filePath).isDirectory()) {
+                console.log("TO DO: RM Directory");
+            }
+            else {
+                console.log("TO DO: RM File");
+            }
+        });
+        this.refresh();
     }
 }
 exports.RASProvider = RASProvider;

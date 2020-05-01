@@ -55,7 +55,15 @@
                     "light": "resources/refresh-light.svg",
                     "dark": "resources/refresh-dark.svg"
                 }
-            }
+			},
+			{
+                "command": "galasa-ras.open",
+                "title": "Open"
+			},
+			{
+                "command": "galasa-ras.clearAll",
+                "title": "Clear the RAS"
+			}
 		],
 		"viewsContainers": {
 			"activitybar": [
@@ -132,12 +140,22 @@
 					"command": "galasa-ras.refresh",
 					"when": "view == galasa-ras",
 					"group": "navigation"
+				},
+				{
+					"command": "galasa-ras.clearAll",
+					"when": "view == galasa-ras",
+					"group": "navigation"
 				}
 			],
 			"view/item/context": [
 				{
 					"command": "galasa-test.debug",
 					"when": "view == galasa-testrunner"
+				},
+				{
+					"command": "galasa-ras.open",
+					"when": "view == galasa-ras",
+					"group" : "navigation@1"
 				}
 			]
 		}
@@ -153,13 +171,11 @@
 	"devDependencies": {
 		"@types/vscode": "^1.44.0",
 		"@types/glob": "^7.1.1",
-		"@types/mocha": "^7.0.2",
 		"@types/node": "^13.11.0",
 		"eslint": "^6.8.0",
 		"@typescript-eslint/parser": "^2.26.0",
 		"@typescript-eslint/eslint-plugin": "^2.26.0",
 		"glob": "^7.1.6",
-		"mocha": "^7.1.1",
 		"typescript": "^3.8.3",
 		"vscode-test": "^1.3.0"
 	}
