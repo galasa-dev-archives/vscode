@@ -1,7 +1,5 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import * as path from 'path';
-import { Test } from 'mocha';
 
 export class RASProvider implements vscode.TreeDataProvider<TestRun> {
     private _onDidChangeTreeData: vscode.EventEmitter<TestRun | undefined> = new vscode.EventEmitter<TestRun | undefined>();
