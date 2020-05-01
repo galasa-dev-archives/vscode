@@ -4,6 +4,9 @@ import * as path from 'path';
 import { Test } from 'mocha';
 
 export class RASProvider implements vscode.TreeDataProvider<TestRun> {
+    private _onDidChangeTreeData: vscode.EventEmitter<TestRun | undefined> = new vscode.EventEmitter<TestRun | undefined>();
+    readonly onDidChangeTreeData: vscode.Event<TestRun | undefined> = this._onDidChangeTreeData.event;
+
     constructor(private galasaRoot: string) { }
 
     getTreeItem(element: TestRun): vscode.TreeItem {
@@ -16,7 +19,15 @@ export class RASProvider implements vscode.TreeDataProvider<TestRun> {
             return undefined;
         }
         if (!element) {
-            return this.getDirectories(this.galasaRoot + "/ras/");
+            return this.getDirectories(this.galasaRoot + "/ras").sort((run1, run2) => {
+                if(fs.statSync(run1.path).mtime > fs.statSync(run2.path).mtime) {
+                    return -1;
+                } if (fs.statSync(run1.path).mtime = fs.statSync(run2.path).mtime) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            });
         } else {
             return this.getDirectories(element.path);
         }
@@ -34,20 +45,21 @@ export class RASProvider implements vscode.TreeDataProvider<TestRun> {
         return list;
     }
 
-    private pathExists(p: string): boolean {
-        try {
-            fs.accessSync(p);
-        } catch (err) {
-            return false;
-        }
-        return true;
+
+    public refresh(): void {
+        this._onDidChangeTreeData.fire();
     }
 
-    private _onDidChangeTreeData: vscode.EventEmitter<TestRun | undefined> = new vscode.EventEmitter<TestRun | undefined>();
-    readonly onDidChangeTreeData: vscode.Event<TestRun | undefined> = this._onDidChangeTreeData.event;
-
-    refresh(): void {
-        this._onDidChangeTreeData.fire();
+    public clearAll(): void {
+        fs.readdirSync(this.galasaRoot + "/ras").forEach((file) => {
+            let filePath = this.galasaRoot + "/ras/" + file;
+            if(fs.statSync(filePath).isDirectory()) {
+                console.log("TO DO: RM Directory");
+            } else {
+                console.log("TO DO: RM File");
+            }
+        });
+        this.refresh();
     }
 }
 

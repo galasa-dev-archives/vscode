@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { testextractor, TestCase } from './testextractor';
-import { RASProvider } from './TreeViewResultArchiveStore';
+import { RASProvider, TestRun } from './TreeViewResultArchiveStore';
 const path = require('path');
 const fs = require('fs');
 
@@ -8,7 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
     if(vscode.workspace.workspaceFolders) {
         const testExtractor = new testextractor(vscode.workspace.workspaceFolders);
         vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
-        vscode.commands.registerCommand('galasa-test.refresh', () => {testExtractor.refresh()});
+        vscode.commands.registerCommand('galasa-test.refresh', () => {testExtractor.refresh();});
     }
     vscode.commands.registerCommand('galasa.bootjar', config => {
         return context.extensionPath + "/lib/galasa-boot.jar";
@@ -38,11 +38,18 @@ export function activate(context: vscode.ExtensionContext) {
             return packageName + "/" + packageName + "." + testName;
         }
     });
-    vscode.commands.registerCommand('galasa-test.debug', (run : TestCase) => {vscode.window.showInformationMessage(run.label + " Debugging")});
+    vscode.commands.registerCommand('galasa-test.debug', (run : TestCase) => {vscode.window.showInformationMessage(run.label + " Debugging");});
 
     //RAS
     const rasProvider = new RASProvider(vscode.workspace.getConfiguration("galasa").get("path") + "");
     vscode.window.registerTreeDataProvider("galasa-ras", rasProvider);
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
+    vscode.commands.registerCommand('galasa-ras.open', (run : TestRun) => {
+        vscode.workspace.openTextDocument(run.path).then(doc => {
+            vscode.window.showTextDocument(doc);
+          });
+    });
+    vscode.commands.registerCommand("galasa-ras.clearAll", () => rasProvider.clearAll());
+
     
 }
