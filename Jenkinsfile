@@ -8,6 +8,7 @@ pipeline {
     stages {
         stage('GalasaVsPlugin') {
             steps {
+                sh "npm install"
                 sh "npm install vsce"
                 sh "npx vsce package"
                 sh "docker build -t 'galasa-vscode:latest' ."
