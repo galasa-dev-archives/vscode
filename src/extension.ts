@@ -47,7 +47,7 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showTextDocument(doc);
           });
     });
-    vscode.commands.registerCommand("galasa-ras.clearAll", () => rasProvider.clearAll());
+    //vscode.commands.registerCommand("galasa-ras.clearAll", () => rasProvider.clearAll());
 
     
 }

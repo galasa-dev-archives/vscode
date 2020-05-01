@@ -37,39 +37,48 @@ export class RASProvider implements vscode.TreeDataProvider<TestRun> {
         let list: TestRun[] = Array(0);
         fs.readdirSync(path).forEach(file => {
             if (fs.statSync(path  + "/" + file).isDirectory()) {
-                list.push(new TestRun(file, vscode.TreeItemCollapsibleState.Collapsed, path  + "/" + file));
+                list.push(new TestRun(file, this.toDate(fs.statSync(path  + "/" + file))  , vscode.TreeItemCollapsibleState.Collapsed, path  + "/" + file));
             } else {
-                list.push(new TestRun(file, vscode.TreeItemCollapsibleState.None, path  + "/" + file));
+                list.push(new TestRun(file, "", vscode.TreeItemCollapsibleState.None, path  + "/" + file));
             }
         });
         return list;
     }
 
+    private toDate(date: fs.Stats): string {
+        const mtime = date.mtime;
+        return "Changes: " + mtime.getUTCDate() + "/" + mtime.getUTCMonth() + "---" + mtime.getUTCHours() + ":" + mtime.getUTCMinutes() + ":" + mtime.getUTCSeconds();
+    }
 
     public refresh(): void {
         this._onDidChangeTreeData.fire();
     }
 
-    public clearAll(): void {
-        fs.readdirSync(this.galasaRoot + "/ras").forEach((file) => {
-            let filePath = this.galasaRoot + "/ras/" + file;
-            if(fs.statSync(filePath).isDirectory()) {
-                console.log("TO DO: RM Directory");
-            } else {
-                console.log("TO DO: RM File");
-            }
-        });
-        this.refresh();
-    }
+    // public clearAll(): void {
+    //     fs.readdirSync(this.galasaRoot + "/ras").forEach((file) => {
+    //         let filePath = this.galasaRoot + "/ras/" + file;
+    //         if(fs.statSync(filePath).isDirectory()) {
+    //             console.log("TO DO: RM Directory");
+    //         } else {
+    //             console.log("TO DO: RM File");
+    //         }
+    //     });
+    //     this.refresh();
+    // }
 }
 
 export class TestRun extends vscode.TreeItem {
     constructor(
         public readonly label: string,
+        private lastTimeChanged: string,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
         public readonly path:string
     ) {
         super(label, collapsibleState);
+    }
+
+    get description(): string {
+        return this.lastTimeChanged;
     }
 }
 

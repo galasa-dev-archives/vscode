@@ -37,37 +37,33 @@ class RASProvider {
         let list = Array(0);
         fs.readdirSync(path).forEach(file => {
             if (fs.statSync(path + "/" + file).isDirectory()) {
-                list.push(new TestRun(file, vscode.TreeItemCollapsibleState.Collapsed, path + "/" + file));
+                list.push(new TestRun(file, this.toDate(fs.statSync(path + "/" + file)), vscode.TreeItemCollapsibleState.Collapsed, path + "/" + file));
             }
             else {
-                list.push(new TestRun(file, vscode.TreeItemCollapsibleState.None, path + "/" + file));
+                list.push(new TestRun(file, "", vscode.TreeItemCollapsibleState.None, path + "/" + file));
             }
         });
         return list;
     }
+    toDate(date) {
+        const mtime = date.mtime;
+        return "Changes: " + mtime.getUTCDate() + "/" + mtime.getUTCMonth() + "---" + mtime.getUTCHours() + ":" + mtime.getUTCMinutes() + ":" + mtime.getUTCSeconds();
+    }
     refresh() {
         this._onDidChangeTreeData.fire();
-    }
-    clearAll() {
-        fs.readdirSync(this.galasaRoot + "/ras").forEach((file) => {
-            let filePath = this.galasaRoot + "/ras/" + file;
-            if (fs.statSync(filePath).isDirectory()) {
-                console.log("TO DO: RM Directory");
-            }
-            else {
-                console.log("TO DO: RM File");
-            }
-        });
-        this.refresh();
     }
 }
 exports.RASProvider = RASProvider;
 class TestRun extends vscode.TreeItem {
-    constructor(label, collapsibleState, path) {
+    constructor(label, lastTimeChanged, collapsibleState, path) {
         super(label, collapsibleState);
         this.label = label;
+        this.lastTimeChanged = lastTimeChanged;
         this.collapsibleState = collapsibleState;
         this.path = path;
+    }
+    get description() {
+        return this.lastTimeChanged;
     }
 }
 exports.TestRun = TestRun;

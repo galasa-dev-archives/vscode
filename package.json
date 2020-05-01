@@ -59,10 +59,6 @@
 			{
                 "command": "galasa-ras.open",
                 "title": "Open"
-			},
-			{
-                "command": "galasa-ras.clearAll",
-                "title": "Clear the RAS"
 			}
 		],
 		"viewsContainers": {
@@ -109,7 +105,7 @@
 			"properties": {
 				"galasa.maven-remote": {
                     "type": "string",
-                    "default": "https://nexus.galasa.dev/repository/maven-nightly/",
+                    "default": "https://repo.maven.apache.org/maven2/",
                     "description": "%galasavscode.config.galasa.maven-remote%"
 				},
 				"galasa.maven-local": {
@@ -138,11 +134,6 @@
 				},
 				{
 					"command": "galasa-ras.refresh",
-					"when": "view == galasa-ras",
-					"group": "navigation"
-				},
-				{
-					"command": "galasa-ras.clearAll",
 					"when": "view == galasa-ras",
 					"group": "navigation"
 				}
