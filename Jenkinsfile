@@ -8,6 +8,7 @@ pipeline {
     stages {
         stage('GalasaVsPlugin') {
             steps {
+                sh "node -v"
                 sh "npm install"
                 sh "npm install vsce"
                 sh "npx vsce package"
