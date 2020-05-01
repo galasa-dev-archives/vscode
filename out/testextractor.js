@@ -12,9 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
 const fs = require('fs');
 const path = require('path');
-class testextractor {
-    constructor(workspaceRoots) {
-        this.workspaceRoots = workspaceRoots;
+class TestExtractor {
+    constructor() {
         this._onDidChangeTreeData = new vscode.EventEmitter();
         this.onDidChangeTreeData = this._onDidChangeTreeData.event;
     }
@@ -37,7 +36,7 @@ class testextractor {
                     fileName = fileName.replace("%40", "@");
                 }
                 const data = fs.readFileSync(fileName).toString();
-                if (data.includes("@Test")) {
+                if (data.includes("@Test") && data.includes("import dev.galasa.Test;")) {
                     var name = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf(".java"));
                     testFiles.push(new TestCase(name));
                 }
@@ -46,7 +45,7 @@ class testextractor {
         });
     }
 }
-exports.testextractor = testextractor;
+exports.TestExtractor = TestExtractor;
 class TestCase extends vscode.TreeItem {
     constructor(label) {
         super(label);
@@ -58,4 +57,4 @@ class TestCase extends vscode.TreeItem {
     }
 }
 exports.TestCase = TestCase;
-//# sourceMappingURL=testextractor.js.map
+//# sourceMappingURL=TestExtractor.js.map

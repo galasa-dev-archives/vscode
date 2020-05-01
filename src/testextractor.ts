@@ -2,12 +2,12 @@ import * as vscode from 'vscode';
 const fs = require('fs');
 const path = require('path');
 
-export class testextractor implements vscode.TreeDataProvider<TestCase> {
+export class TestExtractor implements vscode.TreeDataProvider<TestCase> {
 
     private _onDidChangeTreeData: vscode.EventEmitter<TestCase | undefined> = new vscode.EventEmitter<TestCase | undefined>();
     readonly onDidChangeTreeData: vscode.Event<TestCase | undefined> = this._onDidChangeTreeData.event;
 
-    constructor(private workspaceRoots: readonly vscode.WorkspaceFolder[]) {
+    constructor() {
     }
     
     refresh(): void {
@@ -31,7 +31,7 @@ export class testextractor implements vscode.TreeDataProvider<TestCase> {
                 fileName = fileName.replace("%40","@");
             }
             const data = fs.readFileSync(fileName).toString();
-            if(data.includes("@Test")) {
+            if(data.includes("@Test") && data.includes("import dev.galasa.Test;")) {
                 var name = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf(".java"));
                 testFiles.push(new TestCase(name));
             }

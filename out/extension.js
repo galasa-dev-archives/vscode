@@ -1,16 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
-const testextractor_1 = require("./testextractor");
+const TestExtractor_1 = require("./TestExtractor");
 const TreeViewResultArchiveStore_1 = require("./TreeViewResultArchiveStore");
 const path = require('path');
 const fs = require('fs');
 function activate(context) {
-    if (vscode.workspace.workspaceFolders) {
-        const testExtractor = new testextractor_1.testextractor(vscode.workspace.workspaceFolders);
-        vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
-        vscode.commands.registerCommand('galasa-test.refresh', () => { testExtractor.refresh(); });
-    }
+    const testExtractor = new TestExtractor_1.TestExtractor();
+    vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
+    vscode.commands.registerCommand('galasa-test.refresh', () => { testExtractor.refresh(); });
     vscode.commands.registerCommand('galasa.bootjar', config => {
         return context.extensionPath + "/lib/galasa-boot.jar";
     });
