@@ -9,10 +9,10 @@ pipeline {
         stage('GalasaVsPlugin') {
             steps {
                 sh "npm install"
-                sh "npm install -g node@latest"
-                sh "npm install -g npm@latest"
-                sh "npm install -g vscode@latest"
-                sh "npm install -g vsce@latest"
+                sh "npm install node@latest"
+                sh "npm install npm@latest"
+                sh "npm install vscode@latest"
+                sh "npm install vsce@latest"
                 sh "npx vsce package"
                 sh "docker build -t 'galasa-vscode:latest' ."
                 sh "docker tag 'galasa-vscode:latest docker.galasa.dev:galasa-vscode:latest"
