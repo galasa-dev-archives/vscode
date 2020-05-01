@@ -3,7 +3,8 @@
 	"displayName": "Galasa",
 	"description": "",
 	"publisher" : "Galasa",
-	"version": "0.0.1",
+	"version": "0.7.0",
+	"icon": "resources/GalasaLogo.png",
 	"engines": {
 		"vscode": "^1.44.0"
 	},
