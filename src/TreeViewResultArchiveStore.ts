@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-//const rimraf = require("rimraf");
+const rimraf = require("rimraf");
 
 export class RASProvider implements vscode.TreeDataProvider<TestRun> {
     private _onDidChangeTreeData: vscode.EventEmitter<TestRun | undefined> = new vscode.EventEmitter<TestRun | undefined>();
     readonly onDidChangeTreeData: vscode.Event<TestRun | undefined> = this._onDidChangeTreeData.event;
 
-    constructor(private galasaRoot: string) { }
+    constructor(private galasaRoot: string | undefined) { }
 
     getTreeItem(element: TestRun): vscode.TreeItem {
         return element;
@@ -63,13 +63,11 @@ export class RASProvider implements vscode.TreeDataProvider<TestRun> {
         fs.readdirSync(this.galasaRoot + "/ras").forEach((file) => {
             let filePath = this.galasaRoot + "/ras/" + file;
             if(fs.statSync(filePath).isDirectory()) {
-                //TODO
-                console.log("TODO");
+                rimraf(filePath, () => {return file + "cleared out of the RAS";});
             } else {
                 fs.unlinkSync(filePath);
             }
         });
-        this.refresh();
     }
 }
 

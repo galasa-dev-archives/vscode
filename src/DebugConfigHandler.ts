@@ -73,8 +73,6 @@ export function findTestArtifact(testClass : TestCase) : string {
 }
 
 function findBundleName(directory : string) : string {
-    console.log(directory);
-    console.log(fs.statSync(directory).isDirectory());
     if(fs.statSync(directory).isDirectory()) {
         let pom = "";
         fs.readdirSync(directory).forEach(file => {

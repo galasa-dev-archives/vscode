@@ -4,6 +4,7 @@ import { RASProvider, TestRun } from './TreeViewResultArchiveStore';
 import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfigHandler';
 const path = require('path');
 const fs = require('fs');
+const galasaPath = process.env.HOME + "/" + ".galasa";
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -31,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
         });
         if (filterActiveDocs.length < 1 || !filterActiveDocs ) {
             vscode.workspace.openTextDocument(run.pathToFile).then(doc => {
-                vscode.window.showInformationMessage("Opened " + run.label + ", launch the debug now.");
+                vscode.window.showInformationMessage("Opened " + run.label + ", the test will now be build and debugged.");
                 vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,false);
             });
         } else {
@@ -42,19 +43,23 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     //Result Archive Store
-    const rasProvider = new RASProvider(vscode.workspace.getConfiguration("galasa").get("path") + "");
+    const rasProvider = new RASProvider(galasaPath);
     vscode.window.registerTreeDataProvider("galasa-ras", rasProvider);
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
     vscode.commands.registerCommand('galasa-ras.open', (run : TestRun) => {
-        const filterActiveDocs = vscode.workspace.textDocuments.filter(textDoc => {
-            return textDoc.fileName.includes(run.label);
-        });
-        if (filterActiveDocs.length < 1 || !filterActiveDocs ) {
-            vscode.workspace.openTextDocument(run.path).then(doc => {
-                vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
-              });
+        if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) {
+            const filterActiveDocs = vscode.workspace.textDocuments.filter(textDoc => {
+                return textDoc.fileName.includes(run.label);
+            });
+            if (filterActiveDocs.length < 1 || !filterActiveDocs ) {
+                vscode.workspace.openTextDocument(run.path).then(doc => {
+                    vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
+                  });
+            } else {
+                vscode.window.showInformationMessage("You have already opened this file.");
+            }
         } else {
-            vscode.window.showInformationMessage("You have already opened this file.");
+            vscode.window.showErrorMessage("You tried to display a directory, " + run.label);
         }
     });
     vscode.commands.registerCommand("galasa-ras.clearAll", () => {
@@ -63,7 +68,8 @@ export function activate(context: vscode.ExtensionContext) {
             input.then((text) => {
                 if (text === "YES") {
                     rasProvider.clearAll();
-                    vscode.window.showInformationMessage("TODO: The Result Archive Store needs to be cleared here.");
+                    vscode.window.showInformationMessage("The Result Archive Store has been fully cleared out.");
+                    rasProvider.refresh();
                 } else {
                     vscode.window.showInformationMessage("The Result Archive Store has not been affected.");
                 }
@@ -71,6 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
             vscode.window.showErrorMessage("There was an error trying to clear the Result Archive Store.");
         }
+        rasProvider.refresh();
     });
 
     // General Galasa commands
