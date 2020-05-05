@@ -31,10 +31,17 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
     vscode.commands.registerCommand('galasa-test.refresh', () => {testExtractor.refresh();});
     vscode.commands.registerCommand('galasa-test.debug', (run : TestCase) => {
-        vscode.workspace.openTextDocument(run.pathToFile).then(doc => {
-            vscode.window.showInformationMessage("Opened " + run.label + ", launch the debug now.");
-            vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,false);
+        const filterActiveDocs = vscode.workspace.textDocuments.filter(textDoc => {
+            return textDoc.fileName.includes(run.label);
         });
+        if (filterActiveDocs.length < 1 || !filterActiveDocs ) {
+            vscode.workspace.openTextDocument(run.pathToFile).then(doc => {
+                vscode.window.showInformationMessage("Opened " + run.label + ", launch the debug now.");
+                vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,false);
+            });
+        } else {
+            vscode.window.showInformationMessage("You have already opened this testcase");
+        }
         vscode.debug.startDebugging(undefined, getDebugConfig(context.extensionPath + "/lib/galasa-boot.jar", vscode.workspace.getConfiguration("galasa").get("maven-local"),
                                                     vscode.workspace.getConfiguration("galasa").get("maven-remote"), run));
     });
@@ -44,9 +51,16 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerTreeDataProvider("galasa-ras", rasProvider);
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
     vscode.commands.registerCommand('galasa-ras.open', (run : TestRun) => {
-        vscode.workspace.openTextDocument(run.path).then(doc => {
-            vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
-          });
+        const filterActiveDocs = vscode.workspace.textDocuments.filter(textDoc => {
+            return textDoc.fileName.includes(run.label);
+        });
+        if (filterActiveDocs.length < 1 || !filterActiveDocs ) {
+            vscode.workspace.openTextDocument(run.path).then(doc => {
+                vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
+              });
+        } else {
+            vscode.window.showInformationMessage("You have already opened this file.");
+        }
     });
     vscode.commands.registerCommand("galasa-ras.clearAll", () => {
         let input = vscode.window.showInputBox({placeHolder: "Type YES if you want to PERMANELTY clear out your local RAS."});
