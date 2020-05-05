@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { TestExtractor, TestCase } from './TestExtractor';
 import { RASProvider, TestRun } from './TreeViewResultArchiveStore';
-import { getDebugConfig } from './DebugConfigHandler';
+import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfigHandler';
 const path = require('path');
 const fs = require('fs');
 
@@ -18,19 +18,14 @@ export function activate(context: vscode.ExtensionContext) {
         return "--remotemaven " + vscode.workspace.getConfiguration("galasa").get("maven-remote");
     });
     vscode.commands.registerCommand('galasa.version', config => {
-        const version = vscode.workspace.getConfiguration("galasa").get("version");
-        if (version === "LATEST") {
-            return "0.7.0";
-        } else {
-            return version;
-        }
+        return getGalasaVersion();
     });
 
     // Test Runner
     const testExtractor = new TestExtractor();
     vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
     vscode.commands.registerCommand('galasa-test.refresh', () => {testExtractor.refresh();});
-    vscode.commands.registerCommand('galasa-test.debug', (run : TestCase) => {
+    vscode.commands.registerCommand('galasa-test.debug', async (run : TestCase) => {
         const filterActiveDocs = vscode.workspace.textDocuments.filter(textDoc => {
             return textDoc.fileName.includes(run.label);
         });
@@ -42,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
             vscode.window.showInformationMessage("You have already opened this testcase");
         }
-        vscode.debug.startDebugging(undefined, getDebugConfig(context.extensionPath + "/lib/galasa-boot.jar", vscode.workspace.getConfiguration("galasa").get("maven-local"),
+        vscode.debug.startDebugging(undefined, await getDebugConfig(context.extensionPath + "/lib/galasa-boot.jar", vscode.workspace.getConfiguration("galasa").get("maven-local"),
                                                     vscode.workspace.getConfiguration("galasa").get("maven-remote"), run));
     });
 
@@ -79,15 +74,12 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     // General Galasa commands
-    vscode.commands.registerCommand('galasa.specifyTestClass', config => { //TODO change to check manifest
+    vscode.commands.registerCommand('galasa.specifyTestClass', config => {
         const active = vscode.window.activeTextEditor;
-        
         if(active) {
-            let text = active.document.getText();
-            let packageStart = text.substring(text.indexOf("package"));
-            let packageName = packageStart.substring(8, packageStart.indexOf(';'));
-            let testName = active.document.fileName.substring(active.document.fileName.lastIndexOf('/') + 1, active.document.fileName.lastIndexOf('.java'));
-            return packageName + "/" + packageName + "." + testName;
+            const fileName = active.document.fileName;
+            let testCase = new TestCase(fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('.java')), fileName);
+            return findTestArtifact(testCase);
         }
     });
     

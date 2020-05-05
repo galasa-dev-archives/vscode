@@ -3,18 +3,13 @@ import { TestCase } from './TestExtractor';
 import * as fs from 'fs';
 var path = require('path');
 
-export function getDebugConfig(bootUri : string, localMaven : string | undefined, remoteMaven : string | undefined, testClass : TestCase) : DebugConfiguration {
+export async function getDebugConfig(bootUri : string, localMaven : string | undefined, remoteMaven : string | undefined, testClass : TestCase) : Promise<DebugConfiguration> {
     let maven = "";
     if(localMaven && localMaven.trim().length != 0) {
         maven = maven + "--localmaven file:" + workspace.getConfiguration("galasa").get("maven-local") + " ";
     }
     if(remoteMaven && remoteMaven.trim().length != 0) {
         maven = maven + "--remotemaven " + workspace.getConfiguration("galasa").get("maven-remote") + " ";
-    }
-
-    let version = workspace.getConfiguration("galasa").get("version");
-    if (version == "LATEST") {
-        version = "0.7.0";
     }
     
     return {
@@ -23,8 +18,47 @@ export function getDebugConfig(bootUri : string, localMaven : string | undefined
         request: "launch",
         classPaths: [bootUri],
         mainClass: "dev.galasa.boot.Launcher",
-        args: maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + version + "/obr --test " + findTestArtifact(testClass)
+        args: maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion() + "/obr " + await findLocalObrs(testClass) + "--test " + findTestArtifact(testClass)
     }
+}
+
+export function getGalasaVersion() : string {
+    let version : string | undefined = workspace.getConfiguration("galasa").get("version");
+    if(!version || version == "LATEST") {
+        version = "0.7.0";
+    }
+    
+    return version;
+}
+
+export async function findLocalObrs(testCase : TestCase) : Promise<string> {
+    let obrs : string[] = [];
+    const pomFiles = await workspace.findFiles("**/pom.xml");
+    pomFiles.forEach(file => {
+        let fileName = file.toString().substring(7);
+        if(fileName.includes("%40")) {
+            fileName = fileName.replace("%40","@");
+        }
+        let data = fs.readFileSync(fileName).toString();
+
+        let groupId = data.substring(data.indexOf("<groupId>") + 9, data.indexOf("</groupId>"));
+        if(data.includes("<packaging>galasa-obr</packaging>")) {
+            if(data.includes("<parent>")) {
+                data = data.substring(data.indexOf("</parent>"))
+            } else {
+                groupId = data.substring(data.indexOf("<groupId>") + 9, data.indexOf("</groupId>"));
+            }
+            let version = data.substring(data.indexOf("<version>") + 12, data.indexOf("</version>"));
+            data = data.substring(data.indexOf("<artifactId>") + 12, data.indexOf("</artifactId>"));
+            obrs.push(groupId + "/" + data + "/" + version + "/obr");
+        }
+    });
+
+    let obrString = "";
+    obrs.forEach(obr => {
+        obrString = obrString + "--obr mvn:" + obr + " ";
+    });
+    return obrString;
 }
 
 export function findTestArtifact(testClass : TestCase) : string {
@@ -45,7 +79,7 @@ function findBundleName(directory : string) : string {
         let pom = "";
         fs.readdirSync(directory).forEach(file => {
             if(file.includes("pom.xml")) {
-                pom = file; 
+                pom = file;
             }
         });
         if(pom != "") {
