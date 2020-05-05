@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { TestExtractor, TestCase } from './TestExtractor';
-import { RASProvider, TestRun } from './TreeViewResultArchiveStore';
+import { RASProvider, TestArtifact} from './TreeViewResultArchiveStore';
 import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfigHandler';
 const path = require('path');
 const fs = require('fs');
@@ -46,7 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
     const rasProvider = new RASProvider(galasaPath);
     vscode.window.registerTreeDataProvider("galasa-ras", rasProvider);
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
-    vscode.commands.registerCommand('galasa-ras.open', (run : TestRun) => {
+    vscode.commands.registerCommand('galasa-ras.open', (run : TestArtifact) => {
         if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) {
             let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
                 return textDoc.document.fileName.includes(run.label);

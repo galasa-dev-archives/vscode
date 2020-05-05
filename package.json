@@ -41,30 +41,27 @@
 			{
                 "command": "galasa-test.refresh",
                 "title": "Refresh",
-                "icon": {
-                    "light": "resources/refresh-light.svg",
-                    "dark": "resources/refresh-dark.svg"
-                }
+                "icon": "$(refresh)"
 			},
 			{
 				"command": "galasa-test.debug",
-				"title": "Debug"
+				"title": "Debug",
+				"icon": "$(debug-start)"
 			},
 			{
                 "command": "galasa-ras.refresh",
                 "title": "Refresh",
-                "icon": {
-                    "light": "resources/refresh-light.svg",
-                    "dark": "resources/refresh-dark.svg"
-                }
+                "icon": "$(refresh)"
 			},
 			{
                 "command": "galasa-ras.open",
-                "title": "Open"
+				"title": "Open",
+				"icon": "$(go-to-file)"
 			},
 			{
                 "command": "galasa-ras.clearAll",
-				"title": "Clear"
+				"title": "Clear",
+				"icon": "$(clear-all)"
 			}
 		],
 		"viewsContainers": {
@@ -147,12 +144,13 @@
 			"view/item/context": [
 				{
 					"command": "galasa-test.debug",
-					"when": "view == galasa-testrunner"
+					"when": "view == galasa-testrunner",
+					"group": "inline"
 				},
 				{
 					"command": "galasa-ras.open",
-					"when": "view == galasa-ras",
-					"group" : "navigation@1"
+					"when": "view == galasa-ras && viewItem == testartifact",
+					"group": "inline"
 				}
 			]
 		}

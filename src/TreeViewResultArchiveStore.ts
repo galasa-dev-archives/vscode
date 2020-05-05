@@ -2,44 +2,51 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 const rimraf = require("rimraf");
 
-export class RASProvider implements vscode.TreeDataProvider<TestRun> {
-    private _onDidChangeTreeData: vscode.EventEmitter<TestRun | undefined> = new vscode.EventEmitter<TestRun | undefined>();
-    readonly onDidChangeTreeData: vscode.Event<TestRun | undefined> = this._onDidChangeTreeData.event;
+export class RASProvider implements vscode.TreeDataProvider<Directory | TestArtifact> {
+    private _onDidChangeTreeData: vscode.EventEmitter<Directory | TestArtifact | undefined> = new vscode.EventEmitter<Directory | TestArtifact | undefined>();
+    readonly onDidChangeTreeData: vscode.Event<Directory | TestArtifact | undefined> = this._onDidChangeTreeData.event;
 
     constructor(private galasaRoot: string | undefined) { }
 
-    getTreeItem(element: TestRun): vscode.TreeItem {
+    getTreeItem(element: Directory | TestArtifact): vscode.TreeItem {
         return element;
     }
 
-    getChildren(element?: TestRun): TestRun[] | undefined {
+    getChildren(element?: vscode.TreeItem): (Directory | TestArtifact)[] | undefined {
         if (this.galasaRoot === "" || !this.galasaRoot) {
             vscode.window.showErrorMessage("You need to update your galasa path in your configurations of the Galasa extension.");
             return undefined;
         }
         if (!element) {
             return this.getDirectories(this.galasaRoot + "/ras").sort((run1, run2) => {
-                if(fs.statSync(run1.path).mtime > fs.statSync(run2.path).mtime) {
-                    return -1;
-                } if (fs.statSync(run1.path).mtime = fs.statSync(run2.path).mtime) {
-                    return 0;
-                } else {
-                    return 1;
+                if(run1 instanceof TestArtifact || run1 instanceof Directory) {
+                    if(run2 instanceof TestArtifact || run2 instanceof Directory) {
+                        if(fs.statSync(run1.path).mtime > fs.statSync(run2.path).mtime) {
+                            return -1;
+                        } else if (fs.statSync(run1.path).mtime = fs.statSync(run2.path).mtime) {
+                            return 0;
+                        }
+                    }
                 }
+                return 1;
             });
         } else {
-            return this.getDirectories(element.path);
+            if(element instanceof TestArtifact || element instanceof Directory) {
+                return this.getDirectories(element.path);
+            } else {
+                return undefined;
+            }
         }
     }
 
-    private getDirectories(path: string): TestRun[] {
-        let list: TestRun[] = Array(0);
+    private getDirectories(path: string): (Directory | TestArtifact)[] {
+        let list: (Directory | TestArtifact)[] = Array(0);
         if (fs.existsSync(path)) {
             fs.readdirSync(path).forEach(file => {
                 if (fs.statSync(path  + "/" + file).isDirectory()) {
-                    list.push(new TestRun(file, this.toDate(fs.statSync(path  + "/" + file))  , vscode.TreeItemCollapsibleState.Collapsed, path  + "/" + file));
+                    list.push(new Directory(file, this.toDate(fs.statSync(path  + "/" + file)), vscode.TreeItemCollapsibleState.Collapsed, path  + "/" + file));
                 } else {
-                    list.push(new TestRun(file, "", vscode.TreeItemCollapsibleState.None, path  + "/" + file));
+                    list.push(new TestArtifact(file, "", vscode.TreeItemCollapsibleState.None, path  + "/" + file, "testartifact"));
                 }
             });
             return list;
@@ -72,12 +79,28 @@ export class RASProvider implements vscode.TreeDataProvider<TestRun> {
 }
 
 
-export class TestRun extends vscode.TreeItem {
+export class Directory extends vscode.TreeItem {
     constructor(
         public readonly label: string,
         private lastTimeChanged: string,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
         public readonly path:string
+    ) {
+        super(label, collapsibleState);
+    }
+
+    get description(): string {
+        return this.lastTimeChanged;
+    }
+}
+
+export class TestArtifact extends vscode.TreeItem {
+    constructor(
+        public readonly label: string,
+        private lastTimeChanged: string,
+        public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+        public readonly path:string,
+        public contextValue : string
     ) {
         super(label, collapsibleState);
     }
