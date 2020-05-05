@@ -48,7 +48,7 @@ export async function findLocalObrs(testCase : TestCase) : Promise<string> {
             } else {
                 groupId = data.substring(data.indexOf("<groupId>") + 9, data.indexOf("</groupId>"));
             }
-            let version = data.substring(data.indexOf("<version>") + 12, data.indexOf("</version>"));
+            let version = data.substring(data.indexOf("<version>") + 9, data.indexOf("</version>"));
             data = data.substring(data.indexOf("<artifactId>") + 12, data.indexOf("</artifactId>"));
             obrs.push(groupId + "/" + data + "/" + version + "/obr");
         }
