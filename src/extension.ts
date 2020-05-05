@@ -5,9 +5,8 @@ const path = require('path');
 const fs = require('fs');
 
 export function activate(context: vscode.ExtensionContext) {
-    const testExtractor = new TestExtractor();
-    vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
-    vscode.commands.registerCommand('galasa-test.refresh', () => {testExtractor.refresh();});
+
+    // Configuration
     vscode.commands.registerCommand('galasa.bootjar', config => {
         return context.extensionPath + "/lib/galasa-boot.jar";
     });
@@ -26,17 +25,10 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    vscode.commands.registerCommand('galasa.specifyTestClass', config => { //TODO change to check manifest
-        const active = vscode.window.activeTextEditor;
-        
-        if(active) {
-            let text = active.document.getText();
-            let packageStart = text.substring(text.indexOf("package"));
-            let packageName = packageStart.substring(8, packageStart.indexOf(';'));
-            let testName = active.document.fileName.substring(active.document.fileName.lastIndexOf('/') + 1, active.document.fileName.lastIndexOf('.java'));
-            return packageName + "/" + packageName + "." + testName;
-        }
-    });
+    // Test Runner
+    const testExtractor = new TestExtractor();
+    vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
+    vscode.commands.registerCommand('galasa-test.refresh', () => {testExtractor.refresh();});
     vscode.commands.registerCommand('galasa-test.debug', (run : TestCase) => {
         vscode.workspace.openTextDocument(run.pathToFile).then(doc => {
             vscode.window.showInformationMessage("Opened " + run.label + ", launch the debug now.");
@@ -44,7 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
         });
     });
 
-    //RAS
+    //Result Archive Store
     const rasProvider = new RASProvider(vscode.workspace.getConfiguration("galasa").get("path") + "");
     vscode.window.registerTreeDataProvider("galasa-ras", rasProvider);
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
@@ -59,13 +51,27 @@ export function activate(context: vscode.ExtensionContext) {
             input.then((text) => {
                 if (text === "YES") {
                     rasProvider.clearAll();
-                    vscode.window.showInformationMessage("The Result Archive Store needs to be cleared here");
+                    vscode.window.showInformationMessage("TODO: The Result Archive Store needs to be cleared here.");
                 } else {
-                    vscode.window.showInformationMessage("The Result Archive Store will not be affected");
+                    vscode.window.showInformationMessage("The Result Archive Store has not been affected.");
                 }
             });
+        } else {
+            vscode.window.showErrorMessage("There was an error trying to clear the Result Archive Store.");
         }
+    });
+
+    // General Galasa commands
+    vscode.commands.registerCommand('galasa.specifyTestClass', config => { //TODO change to check manifest
+        const active = vscode.window.activeTextEditor;
         
+        if(active) {
+            let text = active.document.getText();
+            let packageStart = text.substring(text.indexOf("package"));
+            let packageName = packageStart.substring(8, packageStart.indexOf(';'));
+            let testName = active.document.fileName.substring(active.document.fileName.lastIndexOf('/') + 1, active.document.fileName.lastIndexOf('.java'));
+            return packageName + "/" + packageName + "." + testName;
+        }
     });
     
 }
