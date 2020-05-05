@@ -34,14 +34,20 @@ export class RASProvider implements vscode.TreeDataProvider<TestRun> {
 
     private getDirectories(path: string): TestRun[] {
         let list: TestRun[] = Array(0);
-        fs.readdirSync(path).forEach(file => {
-            if (fs.statSync(path  + "/" + file).isDirectory()) {
-                list.push(new TestRun(file, this.toDate(fs.statSync(path  + "/" + file))  , vscode.TreeItemCollapsibleState.Collapsed, path  + "/" + file));
-            } else {
-                list.push(new TestRun(file, "", vscode.TreeItemCollapsibleState.None, path  + "/" + file));
-            }
-        });
-        return list;
+        if (fs.existsSync(path)) {
+            fs.readdirSync(path).forEach(file => {
+                if (fs.statSync(path  + "/" + file).isDirectory()) {
+                    list.push(new TestRun(file, this.toDate(fs.statSync(path  + "/" + file))  , vscode.TreeItemCollapsibleState.Collapsed, path  + "/" + file));
+                } else {
+                    list.push(new TestRun(file, "", vscode.TreeItemCollapsibleState.None, path  + "/" + file));
+                }
+            });
+            return list;
+        } else {
+            vscode.window.showErrorMessage("The Galasa extension was not able to find the correct directories.");
+            return [];
+        }
+       
     }
 
     private toDate(date: fs.Stats): string {
