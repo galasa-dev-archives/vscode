@@ -37,17 +37,35 @@ function activate(context) {
             return packageName + "/" + packageName + "." + testName;
         }
     });
-    vscode.commands.registerCommand('galasa-test.debug', (run) => { vscode.window.showInformationMessage(run.label + " Debugging"); });
+    vscode.commands.registerCommand('galasa-test.debug', (run) => {
+        vscode.workspace.openTextDocument(run.pathToFile).then(doc => {
+            vscode.window.showInformationMessage("Opened " + run.label + ", launch the debug now.");
+            vscode.window.showTextDocument(doc, vscode.ViewColumn.Beside, false);
+        });
+    });
     //RAS
     const rasProvider = new TreeViewResultArchiveStore_1.RASProvider(vscode.workspace.getConfiguration("galasa").get("path") + "");
     vscode.window.registerTreeDataProvider("galasa-ras", rasProvider);
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
     vscode.commands.registerCommand('galasa-ras.open', (run) => {
         vscode.workspace.openTextDocument(run.path).then(doc => {
-            vscode.window.showTextDocument(doc);
+            vscode.window.showTextDocument(doc, vscode.ViewColumn.Beside, true);
         });
     });
-    //vscode.commands.registerCommand("galasa-ras.clearAll", () => rasProvider.clearAll());
+    vscode.commands.registerCommand("galasa-ras.clearAll", () => {
+        let input = vscode.window.showInputBox({ placeHolder: "Type YES if you want to PERMANELTY clear out your local RAS." });
+        if (input) {
+            input.then((text) => {
+                if (text === "YES") {
+                    rasProvider.clearAll();
+                    vscode.window.showInformationMessage("The Result Archive Store needs to be cleared here");
+                }
+                else {
+                    vscode.window.showInformationMessage("The Result Archive Store will not be affected");
+                }
+            });
+        }
+    });
 }
 exports.activate = activate;
 //# sourceMappingURL=extension.js.map

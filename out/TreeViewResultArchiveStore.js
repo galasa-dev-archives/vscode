@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
 const fs = require("fs");
+//const rimraf = require("rimraf");
 class RASProvider {
     constructor(galasaRoot) {
         this.galasaRoot = galasaRoot;
@@ -47,10 +48,23 @@ class RASProvider {
     }
     toDate(date) {
         const mtime = date.mtime;
-        return "Changes: " + mtime.getUTCDate() + "/" + mtime.getUTCMonth() + "---" + mtime.getUTCHours() + ":" + mtime.getUTCMinutes() + ":" + mtime.getUTCSeconds();
+        return "Changes: " + mtime.getDate() + "/" + mtime.getMonth() + " - " + (mtime.getHours()) + ":" + mtime.getMinutes() + ":" + mtime.getSeconds();
     }
     refresh() {
         this._onDidChangeTreeData.fire();
+    }
+    clearAll() {
+        fs.readdirSync(this.galasaRoot + "/ras").forEach((file) => {
+            let filePath = this.galasaRoot + "/ras/" + file;
+            if (fs.statSync(filePath).isDirectory()) {
+                //TODO
+                console.log("TODO");
+            }
+            else {
+                fs.unlinkSync(filePath);
+            }
+        });
+        this.refresh();
     }
 }
 exports.RASProvider = RASProvider;

@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+//const rimraf = require("rimraf");
 
 export class RASProvider implements vscode.TreeDataProvider<TestRun> {
     private _onDidChangeTreeData: vscode.EventEmitter<TestRun | undefined> = new vscode.EventEmitter<TestRun | undefined>();
@@ -45,25 +46,27 @@ export class RASProvider implements vscode.TreeDataProvider<TestRun> {
 
     private toDate(date: fs.Stats): string {
         const mtime = date.mtime;
-        return "Changes: " + mtime.getUTCDate() + "/" + mtime.getUTCMonth() + "---" + mtime.getUTCHours() + ":" + mtime.getUTCMinutes() + ":" + mtime.getUTCSeconds();
+        return "Changes: " + mtime.getDate() + "/" + mtime.getMonth() + " - " + (mtime.getHours()) +  ":" + mtime.getMinutes() + ":" + mtime.getSeconds();
     }
 
     public refresh(): void {
         this._onDidChangeTreeData.fire();
     }
 
-    // public clearAll(): void {
-    //     fs.readdirSync(this.galasaRoot + "/ras").forEach((file) => {
-    //         let filePath = this.galasaRoot + "/ras/" + file;
-    //         if(fs.statSync(filePath).isDirectory()) {
-    //             console.log("TO DO: RM Directory");
-    //         } else {
-    //             console.log("TO DO: RM File");
-    //         }
-    //     });
-    //     this.refresh();
-    // }
+    public clearAll(): void {
+        fs.readdirSync(this.galasaRoot + "/ras").forEach((file) => {
+            let filePath = this.galasaRoot + "/ras/" + file;
+            if(fs.statSync(filePath).isDirectory()) {
+                //TODO
+                console.log("TODO");
+            } else {
+                fs.unlinkSync(filePath);
+            }
+        });
+        this.refresh();
+    }
 }
+
 
 export class TestRun extends vscode.TreeItem {
     constructor(

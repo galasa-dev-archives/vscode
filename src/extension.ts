@@ -7,7 +7,7 @@ const fs = require('fs');
 export function activate(context: vscode.ExtensionContext) {
     const testExtractor = new TestExtractor();
     vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
-    vscode.commands.registerCommand('galasa-test.refresh', () => {testExtractor.refresh()});
+    vscode.commands.registerCommand('galasa-test.refresh', () => {testExtractor.refresh();});
     vscode.commands.registerCommand('galasa.bootjar', config => {
         return context.extensionPath + "/lib/galasa-boot.jar";
     });
@@ -25,6 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
             return version;
         }
     });
+
     vscode.commands.registerCommand('galasa.specifyTestClass', config => { //TODO change to check manifest
         const active = vscode.window.activeTextEditor;
         
@@ -36,7 +37,12 @@ export function activate(context: vscode.ExtensionContext) {
             return packageName + "/" + packageName + "." + testName;
         }
     });
-    vscode.commands.registerCommand('galasa-test.debug', (run : TestCase) => {vscode.window.showInformationMessage(run.label + " Debugging");});
+    vscode.commands.registerCommand('galasa-test.debug', (run : TestCase) => {
+        vscode.workspace.openTextDocument(run.pathToFile).then(doc => {
+            vscode.window.showInformationMessage("Opened " + run.label + ", launch the debug now.");
+            vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,false);
+        });
+    });
 
     //RAS
     const rasProvider = new RASProvider(vscode.workspace.getConfiguration("galasa").get("path") + "");
@@ -44,10 +50,22 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
     vscode.commands.registerCommand('galasa-ras.open', (run : TestRun) => {
         vscode.workspace.openTextDocument(run.path).then(doc => {
-            vscode.window.showTextDocument(doc);
+            vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
           });
     });
-    //vscode.commands.registerCommand("galasa-ras.clearAll", () => rasProvider.clearAll());
-
+    vscode.commands.registerCommand("galasa-ras.clearAll", () => {
+        let input = vscode.window.showInputBox({placeHolder: "Type YES if you want to PERMANELTY clear out your local RAS."});
+        if (input) {
+            input.then((text) => {
+                if (text === "YES") {
+                    rasProvider.clearAll();
+                    vscode.window.showInformationMessage("The Result Archive Store needs to be cleared here");
+                } else {
+                    vscode.window.showInformationMessage("The Result Archive Store will not be affected");
+                }
+            });
+        }
+        
+    });
     
 }

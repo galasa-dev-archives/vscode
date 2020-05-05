@@ -33,9 +33,9 @@ export class TestExtractor implements vscode.TreeDataProvider<TestCase> {
             const data = fs.readFileSync(fileName).toString();
             if(data.includes("@Test") && data.includes("import dev.galasa.Test;")) {
                 var name = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf(".java"));
-                testFiles.push(new TestCase(name));
+                testFiles.push(new TestCase(name,file.path));
             }
-        })
+        });
         return testFiles;
     }
 }
@@ -43,7 +43,8 @@ export class TestExtractor implements vscode.TreeDataProvider<TestCase> {
 export class TestCase extends vscode.TreeItem {
 
     constructor(
-		public readonly label: string,
+        public readonly label: string,
+        public readonly pathToFile: string
 	) {
 		super(label);
     }

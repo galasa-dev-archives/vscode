@@ -38,7 +38,7 @@ class TestExtractor {
                 const data = fs.readFileSync(fileName).toString();
                 if (data.includes("@Test") && data.includes("import dev.galasa.Test;")) {
                     var name = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf(".java"));
-                    testFiles.push(new TestCase(name));
+                    testFiles.push(new TestCase(name, file.path));
                 }
             });
             return testFiles;
@@ -47,9 +47,10 @@ class TestExtractor {
 }
 exports.TestExtractor = TestExtractor;
 class TestCase extends vscode.TreeItem {
-    constructor(label) {
+    constructor(label, pathToFile) {
         super(label);
         this.label = label;
+        this.pathToFile = pathToFile;
         this.iconPath = {
             light: path.join(__filename, '..', '..', 'resources', 'GalasaLogo.svg'),
             dark: path.join(__filename, '..', '..', 'resources', 'GalasaLogo.svg')
