@@ -27,13 +27,13 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
     vscode.commands.registerCommand('galasa-test.refresh', () => {testExtractor.refresh();});
     vscode.commands.registerCommand('galasa-test.debug', async (run : TestCase) => {
-        const filterActiveDocs = vscode.workspace.textDocuments.filter(textDoc => {
-            return textDoc.fileName.includes(run.label);
+        let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
+            return textDoc.document.fileName.includes(run.label);
         });
         if (filterActiveDocs.length < 1 || !filterActiveDocs ) {
             vscode.workspace.openTextDocument(run.pathToFile).then(doc => {
                 vscode.window.showInformationMessage("Opened " + run.label + ", the test will now be build and debugged.");
-                vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,false);
+                vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,false);
             });
         } else {
             vscode.window.showInformationMessage("You have already opened this testcase");
@@ -48,8 +48,8 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
     vscode.commands.registerCommand('galasa-ras.open', (run : TestRun) => {
         if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) {
-            const filterActiveDocs = vscode.workspace.textDocuments.filter(textDoc => {
-                return textDoc.fileName.includes(run.label);
+            let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
+                return textDoc.document.fileName.includes(run.label);
             });
             if (filterActiveDocs.length < 1 || !filterActiveDocs ) {
                 vscode.workspace.openTextDocument(run.path).then(doc => {
