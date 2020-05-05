@@ -123,12 +123,7 @@
                     "type": "string",
                     "default": "LATEST",
                     "description": "%galasavscode.config.galasa.version%"
-				},
-				"galasa.path": {
-                    "type": "string",
-                    "default": "",
-                    "description": "%galasavscode.config.galasa.path%"
-				}  
+				}
 			}
 		},
 		"menus": {
