@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { TestExtractor, TestCase } from './TestExtractor';
 import { RASProvider, TestRun } from './TreeViewResultArchiveStore';
+import { getDebugConfig } from './DebugConfigHandler';
 const path = require('path');
 const fs = require('fs');
 
@@ -34,6 +35,8 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showInformationMessage("Opened " + run.label + ", launch the debug now.");
             vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,false);
         });
+        vscode.debug.startDebugging(undefined, getDebugConfig(context.extensionPath + "/lib/galasa-boot.jar", vscode.workspace.getConfiguration("galasa").get("maven-local"),
+                                                    vscode.workspace.getConfiguration("galasa").get("maven-remote"), run));
     });
 
     //Result Archive Store
