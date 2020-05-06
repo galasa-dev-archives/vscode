@@ -24,6 +24,7 @@
 		"onCommand:galasa-ras.refresh",
 		"onCommand:galasa-ras.open",
 		"onCommand:galasa-ras.clearAll",
+		"onCommand:galasa-test.setupWorkspace",
 		"onDebug"
 	],
 	"main": "./out/extension",
@@ -73,6 +74,11 @@
 				"command": "galasa-ras.clearAll",
 				"title": "Clear",
 				"icon": "$(clear-all)"
+			},
+			{
+				"command": "galasa-test.setupWorkspace",
+				"title": "Setup Galasa Workspace",
+				"icon": "$(root-folder)"
 			}
 		],
 		"viewsContainers": {
@@ -143,7 +149,12 @@
 				{
 					"command": "galasa-test.refresh",
 					"when": "view == galasa-testrunner",
-					"group": "navigation"
+					"group": "navigation@2"
+				},
+				{
+					"command": "galasa-test.setupWorkspace",
+					"when": "view == galasa-testrunner",
+					"group": "navigation@1"
 				},
 				{
 					"command": "galasa-ras.refresh",
