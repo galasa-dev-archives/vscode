@@ -3,11 +3,13 @@ import { TestCase } from './TestExtractor';
 import * as fs from 'fs';
 var path = require('path');
 
-export async function getDebugConfig(bootUri : string, localMaven : string | undefined, remoteMaven : string | undefined, testClass : TestCase) : Promise<DebugConfiguration> {
+export async function getDebugConfig(bootUri : string, testClass : TestCase) : Promise<DebugConfiguration> {
     let maven = "";
+    let localMaven : string | undefined = workspace.getConfiguration("galasa").get("maven-local");
     if(localMaven && localMaven.trim().length != 0) {
         maven = maven + "--localmaven file:" + workspace.getConfiguration("galasa").get("maven-local") + " ";
     }
+    let remoteMaven : string | undefined = workspace.getConfiguration("galasa").get("maven-remote");
     if(remoteMaven && remoteMaven.trim().length != 0) {
         maven = maven + "--remotemaven " + workspace.getConfiguration("galasa").get("maven-remote") + " ";
     }
