@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { TestExtractor, TestCase } from './TestExtractor';
 import { RASProvider, TestArtifact} from './TreeViewResultArchiveStore';
 import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfigHandler';
+import {TerminalView} from "./TerminalView";
 const path = require('path');
 import * as fs from 'fs';
 const galasaPath = process.env.HOME + "/" + ".galasa";
@@ -93,16 +94,21 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
     vscode.commands.registerCommand('galasa-ras.open', (run : TestArtifact) => {
         if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) {
-            let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
-                return textDoc.document.fileName.includes(run.label);
-            });
-            if (!filterActiveDocs || filterActiveDocs.length < 1) {
-                vscode.workspace.openTextDocument(run.path).then(doc => {
-                    vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
-                  });
+            if (run.label.includes(".gz") && run.label.includes("term")) { // TERMINAL SCREEN
+                const terminalView = new TerminalView(run.path);
             } else {
-                vscode.window.showInformationMessage("You have already opened this file.");
+                let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
+                    return textDoc.document.fileName.includes(run.label);
+                });
+                if (!filterActiveDocs || filterActiveDocs.length < 1) {
+                    vscode.workspace.openTextDocument(run.path).then(doc => {
+                            vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
+                      });
+                } else {
+                    vscode.window.showInformationMessage("You have already opened this file.");
+                }
             }
+            
         } else {
             vscode.window.showErrorMessage("You tried to display a directory, " + run.label);
         }
