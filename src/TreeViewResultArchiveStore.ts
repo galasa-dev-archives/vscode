@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-const rimraf = require("rimraf");
+import * as rimraf from "rimraf";
 
 export class RASProvider implements vscode.TreeDataProvider<Directory | TestArtifact> {
     private _onDidChangeTreeData: vscode.EventEmitter<Directory | TestArtifact | undefined> = new vscode.EventEmitter<Directory | TestArtifact | undefined>();

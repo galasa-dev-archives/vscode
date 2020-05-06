@@ -2,20 +2,31 @@
 	"name": "galasa-plugin",
 	"displayName": "Galasa",
 	"description": "",
-	"publisher" : "Galasa",
+	"publisher": "Galasa",
 	"version": "0.7.0",
 	"icon": "resources/GalasaLogo.png",
 	"engines": {
 		"vscode": "^1.44.0"
 	},
 	"categories": [
-		"Other"
+		"Debuggers"
 	],
 	"activationEvents": [
 		"onView:galasa-testrunner",
+		"onView:galasa-ras",
+		"onCommand:galasa.specifyTestClass",
+		"onCommand:galasa.bootjar",
+		"onCommand:galasa.localmaven",
+		"onCommand:galasa.remotemaven",
+		"onCommand:galasa.version",
+		"onCommand:galasa-test.refresh",
+		"onCommand:galasa-test.debug",
+		"onCommand:galasa-ras.refresh",
+		"onCommand:galasa-ras.open",
+		"galasa-ras.clearAll",
 		"onDebug"
 	],
-	"main": "./out/extension.js",
+	"main": "./out/extension",
 	"contributes": {
 		"commands": [
 			{
@@ -39,9 +50,9 @@
 				"title": "Galasa Version"
 			},
 			{
-                "command": "galasa-test.refresh",
-                "title": "Refresh",
-                "icon": "$(refresh)"
+				"command": "galasa-test.refresh",
+				"title": "Refresh",
+				"icon": "$(refresh)"
 			},
 			{
 				"command": "galasa-test.debug",
@@ -49,17 +60,17 @@
 				"icon": "$(debug-start)"
 			},
 			{
-                "command": "galasa-ras.refresh",
-                "title": "Refresh",
-                "icon": "$(refresh)"
+				"command": "galasa-ras.refresh",
+				"title": "Refresh",
+				"icon": "$(refresh)"
 			},
 			{
-                "command": "galasa-ras.open",
+				"command": "galasa-ras.open",
 				"title": "Open",
 				"icon": "$(go-to-file)"
 			},
 			{
-                "command": "galasa-ras.clearAll",
+				"command": "galasa-ras.clearAll",
 				"title": "Clear",
 				"icon": "$(clear-all)"
 			}
@@ -87,48 +98,52 @@
 		},
 		"debuggers": [
 			{
-			  "type": "galasa",
-			  "label": "Galasa Debug",
-			  "runtime": "java",
-			  "languages": ["java"],
-			  "initialConfigurations": [
-				{
-				  "type": "java",
-				  "request": "launch",
-				  "name": "Galasa Debug",
-				  "classPaths": ["${command:galasa.bootjar}"],
-				  "mainClass": "dev.galasa.boot.Launcher",
-				  "args": "${command:galasa.localmaven} ${command:galasa.remotemaven} --obr mvn:dev.galasa/dev.galasa.uber.obr/${command:galasa.version}/obr --test ${command:galasa.specifyTestClass}"
-				}
-			  ]
+				"type": "galasa",
+				"label": "Galasa Debug",
+				"runtime": "java",
+				"languages": [
+					"java"
+				],
+				"initialConfigurations": [
+					{
+						"type": "java",
+						"request": "launch",
+						"name": "Galasa Debug",
+						"classPaths": [
+							"${command:galasa.bootjar}"
+						],
+						"mainClass": "dev.galasa.boot.Launcher",
+						"args": "${command:galasa.localmaven} ${command:galasa.remotemaven} --obr mvn:dev.galasa/dev.galasa.uber.obr/${command:galasa.version}/obr --test ${command:galasa.specifyTestClass}"
+					}
+				]
 			}
 		],
 		"configuration": {
-			"title" : "Galasa",
+			"title": "Galasa",
 			"properties": {
 				"galasa.maven-remote": {
-                    "type": "string",
-                    "default": "https://repo.maven.apache.org/maven2/",
-                    "description": "%galasavscode.config.galasa.maven-remote%"
+					"type": "string",
+					"default": "https://repo.maven.apache.org/maven2/",
+					"description": "%galasavscode.config.galasa.maven-remote%"
 				},
 				"galasa.maven-local": {
-                    "type": "string",
-                    "default": "",
-                    "description": "%galasavscode.config.galasa.maven-local%"
+					"type": "string",
+					"default": "",
+					"description": "%galasavscode.config.galasa.maven-local%"
 				},
 				"galasa.version": {
-                    "type": "string",
-                    "default": "LATEST",
-                    "description": "%galasavscode.config.galasa.version%"
+					"type": "string",
+					"default": "LATEST",
+					"description": "%galasavscode.config.galasa.version%"
 				}
 			}
 		},
 		"menus": {
-            "view/title": [
-                {
-                    "command": "galasa-test.refresh",
-                    "when": "view == galasa-testrunner",
-                    "group": "navigation"
+			"view/title": [
+				{
+					"command": "galasa-test.refresh",
+					"when": "view == galasa-testrunner",
+					"group": "navigation"
 				},
 				{
 					"command": "galasa-ras.refresh",
@@ -156,9 +171,18 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
+		"vscode:prepublish": "tsc -p ./",
+		"compile": "gulp build",
 		"watch": "tsc -watch -p ./"
+	},
+	"dependencies": {
+		"@types/node": "^13.11.0",
+		"@types/rimraf": "^3.0.0",
+		"@types/vscode": "^1.44.0",
+		"glob": "^7.1.6",
+		"gulp": "^4.0.2",
+		"rimraf": "^3.0.2",
+		"typescript": "^3.8.3"
 	},
 	"devDependencies": {
 		"@types/vscode": "^1.44.0",
