@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as rimraf from "rimraf";
 
+
 export class RASProvider implements vscode.TreeDataProvider<Directory | TestArtifact> {
     private _onDidChangeTreeData: vscode.EventEmitter<Directory | TestArtifact | undefined> = new vscode.EventEmitter<Directory | TestArtifact | undefined>();
     readonly onDidChangeTreeData: vscode.Event<Directory | TestArtifact | undefined> = this._onDidChangeTreeData.event;
