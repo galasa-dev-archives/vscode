@@ -187,8 +187,8 @@
 		"watch": "tsc -watch -p ./"
 	},
 	"extensionDependencies": [
-        "vscjava.vscode-java-pack"
-    ],
+		"vscjava.vscode-java-pack"
+	],
 	"dependencies": {
 		"@types/node": "^13.11.0",
 		"@types/rimraf": "^3.0.0",
