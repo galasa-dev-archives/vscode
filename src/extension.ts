@@ -4,10 +4,55 @@ import { RASProvider, TestArtifact} from './TreeViewResultArchiveStore';
 import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfigHandler';
 import {TerminalView} from "./TerminalView";
 const path = require('path');
-const fs = require('fs');
+import * as fs from 'fs';
 const galasaPath = process.env.HOME + "/" + ".galasa";
 
 export function activate(context: vscode.ExtensionContext) {
+
+    //Setup Workspace
+    vscode.commands.registerCommand('galasa-test.setupWorkspace', () => {
+        let created : string[] = [];
+        if(!fs.existsSync(galasaPath + "/credentials.properties")) {
+            fs.writeFile(galasaPath + "/credentials.properties", "", function (err) {
+                if (err) throw err;
+            });
+            created.push("credentials.properties");
+        }
+        if(!fs.existsSync(galasaPath + "/cps.properties")) {
+            fs.writeFile(galasaPath + "/cps.properties", "", function (err) {
+                if (err) throw err;
+            });
+            created.push("cps.properties");
+        }
+        if(!fs.existsSync(galasaPath + "/bootstrap.properties")) {
+            fs.writeFile(galasaPath + "/bootstrap.properties", "", function (err) {
+                if (err) throw err;
+            });
+            created.push("bootstrap.properties");
+        }
+        if(!fs.existsSync(galasaPath + "/dss.properties")) {
+            fs.writeFile(galasaPath + "/dss.properties", "", function (err) {
+                if (err) throw err;
+            });
+            created.push("dss.properties");
+        }
+        if(!fs.existsSync(galasaPath + "/overrides.properties")) {
+            fs.writeFile(galasaPath + "/overrides.properties", "", function (err) {
+                if (err) throw err;
+            });
+            created.push("overrides.properties");
+        }
+        if(created.length > 0) {
+            let createdString : string = "Created:"
+            created.forEach(element => {
+                createdString = createdString + " " + element + ",";
+            });
+            createdString = createdString.substring(0, createdString.length - 1);
+            vscode.window.showInformationMessage(createdString);
+        } else {
+            vscode.window.showInformationMessage("Workspace already setup");
+        }
+    });
 
     // Configuration
     vscode.commands.registerCommand('galasa.bootjar', config => {
@@ -31,7 +76,7 @@ export function activate(context: vscode.ExtensionContext) {
         let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
             return textDoc.document.fileName.includes(run.label);
         });
-        if (filterActiveDocs.length < 1 || !filterActiveDocs ) {
+        if (!filterActiveDocs || filterActiveDocs.length < 1) {
             vscode.workspace.openTextDocument(run.pathToFile).then(doc => {
                 vscode.window.showInformationMessage("Opened " + run.label + ", the test will now be build and debugged.");
                 vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,false);
@@ -55,7 +100,7 @@ export function activate(context: vscode.ExtensionContext) {
                 let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
                     return textDoc.document.fileName.includes(run.label);
                 });
-                if (filterActiveDocs.length < 1 || !filterActiveDocs ) {
+                if (!filterActiveDocs || filterActiveDocs.length < 1) {
                     vscode.workspace.openTextDocument(run.path).then(doc => {
                             vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
                       });
