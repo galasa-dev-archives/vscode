@@ -47,7 +47,7 @@ export function activate(context: vscode.ExtensionContext) {
     const rasProvider = new RASProvider(galasaPath);
     vscode.window.registerTreeDataProvider("galasa-ras", rasProvider);
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
-    vscode.commands.registerCommand('galasa-ras.open', (run : TestArtifact) => {
+    vscode.commands.registerCommand('galasa-ras.open', async (run : TestArtifact) => {
         if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) {
             if (run.label.includes(".gz") && run.label.includes("term")) { // TERMINAL SCREEN
                 const terminalView = new TerminalView(run.path);
