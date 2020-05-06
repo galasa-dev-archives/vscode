@@ -23,7 +23,7 @@
 		"onCommand:galasa-test.debug",
 		"onCommand:galasa-ras.refresh",
 		"onCommand:galasa-ras.open",
-		"galasa-ras.clearAll",
+		"onCommand:galasa-ras.clearAll",
 		"onDebug"
 	],
 	"main": "./out/extension",
