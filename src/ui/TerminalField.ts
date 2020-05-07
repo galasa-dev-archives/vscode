@@ -1,14 +1,19 @@
-export class TerminalField {
-    public row:number | undefined;
-    public column:number | undefined;
-    private fieldProtected:boolean | undefined;
-    private fieldDisplay:boolean | undefined;
+import { FieldContents } from "./FieldContents";
 
-    constructor(row:number | undefined, column:number | undefined, fieldProtected:boolean | undefined, fieldDisplay:boolean | undefined) {
+export class TerminalField {
+    public row:number;
+    public column:number;
+    private fieldProtected:boolean;
+    private fieldDisplay:boolean;
+    public contents:FieldContents[];
+
+    constructor(row:number, column:number, fieldProtected:boolean, 
+                    fieldDisplay:boolean, contents:FieldContents[]) {
         this.row = row;
         this.column = column;
         this.fieldProtected = fieldProtected;
         this.fieldDisplay = fieldDisplay;
+        this.contents = contents;
     }
     
 }
