@@ -1,20 +1,25 @@
 import * as vscode from "vscode";
 import * as fs from 'fs';
 import * as zlib from "zlib";
+import { TerminalImage } from "./TerminalImage";
+import { TerminalSize } from "./TerminalSize";
+import { TerminalField } from "./TerminalField";
 
 export class TerminalView {
     private path:string | undefined;
     private id:string | undefined;
     private run_id:string | undefined;
     private sequence:number | undefined;
-    private images:Object[] | undefined;
-    private defaultSize:Object | undefined;
+    private images:TerminalImage[] | undefined;
+    private defaultSize:TerminalSize | undefined;
+    private showScreen:boolean | undefined;
     constructor(
         private readonly pathToGZ:string
 
     ) {
         this.path = pathToGZ;
         this.setup();
+        this.showTerminal();
     }
 
     setup() {
@@ -28,34 +33,39 @@ export class TerminalView {
             this.sequence = parsedFileJSON.sequence;
             this.images = parsedFileJSON.images;
             this.defaultSize = parsedFileJSON.defaultSize;
-
-            console.log(this);
-
-            const panel = vscode.window.createWebviewPanel("terminalView", "Terminals", vscode.ViewColumn.Beside, {});
-            panel.webview.html = this.getWebviewContent();
+            this.showScreen = true;
         } else {
             this.id = undefined;
             this.run_id = undefined;
             this.sequence = undefined;
             this.images = undefined;
             this.defaultSize = undefined;
-            vscode.window.showErrorMessage("The terminal you tried to open is formatted incorrectely.")
+            this.showScreen = false;
         }
     }
 
-    getWebviewContent() : string {
-        return `<!DOCTYPE html>
-      <html lang="en">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Cat Coding</title>
-      </head>
-      <body>
-          <img src="https://media.giphy.com/media/5i7umUqAOYYEw/giphy.gif" width="300" />
-      </body>
-      </html>`;
-      }
+    showTerminal() {
+        if (this.showScreen) {
+            const panel = vscode.window.createWebviewPanel("terminalView", "Terminals", vscode.ViewColumn.Beside, {});
+            panel.webview.html = this.getWebviewContent(this.images);
+        } else {
+            vscode.window.showErrorMessage("The terminal you tried to open is formatted incorrectely.")
+        }
+    }   
+
+    getWebviewContent(images: TerminalImage[] | undefined) : string {
+
+        let str =  `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Terminals</title></head><body><ul>`
+              
+        let str2 = `</ul></body></html>`
+
+        str = str + str2
+
+
+        return str;
+    }
+
+    
 
 
     private utf8ToString(array: number[]) : string {
