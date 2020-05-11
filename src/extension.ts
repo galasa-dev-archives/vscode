@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { TestExtractor, TestCase } from './TestExtractor';
 import { RASProvider, TestArtifact} from './TreeViewResultArchiveStore';
 import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfigHandler';
-import {TerminalView} from "./TerminalView";
+import {TerminalView} from "./ui/TerminalView";
 const path = require('path');
 import * as fs from 'fs';
 const galasaPath = process.env.HOME + "/" + ".galasa";
