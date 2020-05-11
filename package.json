@@ -218,7 +218,6 @@
 		"vscjava.vscode-java-pack"
 	],
 	"dependencies": {
-		"@types/node": "^13.11.0",
 		"@types/rimraf": "^3.0.0",
 		"@types/unzipper": "^0.10.3",
 		"@types/vscode": "^1.44.0",
@@ -229,8 +228,8 @@
 		"unzipper": "^0.10.11"
 	},
 	"devDependencies": {
+		"@types/node": "^13.13.5",
 		"@types/vscode": "^1.44.0",
-		"@types/node": "^13.11.0",
 		"glob": "^7.1.6",
 		"typescript": "^3.8.3"
 	},
