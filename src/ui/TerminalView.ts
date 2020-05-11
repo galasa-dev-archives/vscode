@@ -44,7 +44,7 @@ export class TerminalView {
 
     showTerminal() {
         if (this.showScreen) {
-            const panel = vscode.window.createWebviewPanel("terminalView", "Terminals", vscode.ViewColumn.Beside, {});
+            const panel = vscode.window.createWebviewPanel("terminalView", "Terminal " + this.run_id + " " + this.id, vscode.ViewColumn.Beside, {});
             panel.webview.html = this.getWebviewContent(this.images);
         } else {
             vscode.window.showErrorMessage("The terminal you tried to open at " + this.pathToGZ + " is formatted incorrectely.")
