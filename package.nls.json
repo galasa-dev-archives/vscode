@@ -1,6 +1,6 @@
 {
     "galasavscode.config.galasa.version" : "Specify your built version of Galasa to keep up with latest developments during your testing",
-    "galasavscode.config.galasa.maven-local" : "Specify the absolute path towards your local Maven repository",
-    "galasavscode.config.galasa.maven-remote" : "Specify the WEB URI pointing at your remote Maven repository",
+    "galasavscode.config.galasa.maven-local" : "Specify the absolute path towards your local Maven repository (/User/$$$/.m2/repository)",
+    "galasavscode.config.galasa.maven-remote" : "Specify the WEB URI pointing at your remote Maven repository (https://repo.maven.apache.org/maven2/)",
     "galasavscode.config.galasa.path" : "Specify your galasa path where the RAS, CPS, DSS... are located. This folder should be in a hidden folder under your user with the name; .galasa"
 }

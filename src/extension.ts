@@ -84,8 +84,7 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
             vscode.window.showInformationMessage("You have already opened this testcase");
         }
-        vscode.debug.startDebugging(undefined, await getDebugConfig(context.extensionPath + "/lib/galasa-boot.jar", vscode.workspace.getConfiguration("galasa").get("maven-local"),
-                                                    vscode.workspace.getConfiguration("galasa").get("maven-remote"), run));
+        vscode.debug.startDebugging(undefined, await getDebugConfig(context.extensionPath + "/lib/galasa-boot.jar", run));
     });
 
     //Result Archive Store
