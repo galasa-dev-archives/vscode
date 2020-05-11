@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { TestExtractor, TestCase } from './TestExtractor';
 import { RASProvider, TestArtifact} from './TreeViewResultArchiveStore';
-import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfigHandler';
+import { getDebugConfig, findTestArtifact, getGalasaVersion, getRemoteEndPoint } from './DebugConfigHandler';
 import {TerminalView} from "./ui/TerminalView";
 const path = require('path');
 import * as fs from 'fs';
@@ -77,6 +77,27 @@ export function activate(context: vscode.ExtensionContext) {
         return getGalasaVersion();
     });
 
+    vscode.commands.registerCommand('galasa.remoteTest', config => {
+        return getRemoteEndPoint();
+    });
+
+    //Remote Testing
+    vscode.commands.registerCommand("galasa-test.remoteTest", (run : TestCase) => {
+        let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
+            return textDoc.document.fileName.includes(run.label);
+        });
+        if (!filterActiveDocs || filterActiveDocs.length < 1) {
+            vscode.workspace.openTextDocument(run.pathToFile).then(doc => {
+                vscode.window.showInformationMessage("Opened " + run.label + ", the test will now be built and debugged.");
+                vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,false);
+            });
+        } else {
+            vscode.window.showInformationMessage("You have already opened this testcase");
+        }
+        //TODO  Call method to run remote test here
+        getRemoteEndPoint();
+    });
+
     // Test Runner
     const testExtractor = new TestExtractor();
     vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
@@ -87,7 +108,7 @@ export function activate(context: vscode.ExtensionContext) {
         });
         if (!filterActiveDocs || filterActiveDocs.length < 1) {
             vscode.workspace.openTextDocument(run.pathToFile).then(doc => {
-                vscode.window.showInformationMessage("Opened " + run.label + ", the test will now be build and debugged.");
+                vscode.window.showInformationMessage("Opened " + run.label + ", the test will now be built and debugged.");
                 vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,false);
             });
         } else {
