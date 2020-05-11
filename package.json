@@ -219,14 +219,7 @@
 					"group": "inline"
 				}
 			]
-		},
-		"taskDefinitions": [
-			{
-				"type": "shell",
-				"command": "mvn -f /Users/jamesdavies/git/public/galasa/managers/galasa-managers-parent/galasa-managers-cloud-parent/dev.galasa.docker.manager clean install -DskipTests",
-				"group": "build"
-			}
-		]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "tsc -p ./",
