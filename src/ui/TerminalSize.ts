@@ -1,6 +1,6 @@
 export class TerminalSize {
-    public columns:number | undefined;
-    public rows:number | undefined;
+    public columns:number;
+    public rows:number;
 
     constructor(columns:number, rows:number) {
         this.columns = columns;
