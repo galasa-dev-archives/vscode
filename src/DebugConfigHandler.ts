@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import rimraf = require('rimraf');
 var path = require('path');
 
-export async function getDebugConfig(bootUri : string, testClass : TestCase, context : ExtensionContext) : Promise<DebugConfiguration> {
+export async function getDebugConfig(testClass : TestCase, context : ExtensionContext) : Promise<DebugConfiguration> {
     let maven = "";
     let localMaven : string | undefined = workspace.getConfiguration("galasa").get("maven-local");
     if(localMaven && localMaven.trim().length != 0) {
@@ -23,7 +23,7 @@ export async function getDebugConfig(bootUri : string, testClass : TestCase, con
         name: "Galasa Debug",
         type: "java",
         request: "launch",
-        classPaths: [bootUri],
+        classPaths: [context.extensionPath + "/lib/galasa-boot.jar"],
         mainClass: "dev.galasa.boot.Launcher",
         args: maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion() + "/obr " + workspaceObr + "--test " + findTestArtifact(testClass)
     }
@@ -85,7 +85,7 @@ function findPomField(directory : string, field : string) : string {
         if(pom != "") {
             let data = fs.readFileSync(directory + "/" + pom).toString();
             if((field == "artifactId" || field == "version")&& data.includes("<parent>")) {
-                data = data.substring(data.indexOf("</parent>"))
+                data = data.substring(data.indexOf("</parent>"));
             }
             data = data.substring(data.indexOf("<" + field + ">") + field.length + 2, data.indexOf("</"+ field +">"));
             return data;

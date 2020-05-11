@@ -93,7 +93,7 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
             vscode.window.showInformationMessage("You have already opened this testcase");
         }
-        vscode.debug.startDebugging(undefined, await getDebugConfig(context.extensionPath + "/lib/galasa-boot.jar", run, context));
+        vscode.debug.startDebugging(undefined, await getDebugConfig(run, context));
     });
 
     //Result Archive Store
