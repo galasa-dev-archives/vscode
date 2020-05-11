@@ -1,0 +1,149 @@
+<repository name='dev.galasa:vscode.workspace.obr:0.7.0' lastmodified='20200511101041.010'>
+  <resource id='dev.galasa.simbank.manager/0.0.1.SNAPSHOT' symbolicname='dev.galasa.simbank.manager' presentationname='dev.galasa.simbank.manager' uri='mvn:dev.galasa.simbank/dev.galasa.simbank.manager/0.0.1-SNAPSHOT/jar' version='0.0.1.SNAPSHOT'>
+    <size>46786</size>
+    <capability name='bundle'>
+      <p n='symbolicname' v='dev.galasa.simbank.manager'/>
+      <p n='presentationname' v='dev.galasa.simbank.manager'/>
+      <p n='version' t='version' v='0.0.1.SNAPSHOT'/>
+      <p n='manifestversion' v='2'/>
+    </capability>
+    <capability name='package'>
+      <p n='package' v='dev.galasa.simbank.manager'/>
+      <p n='version' t='version' v='0.0.1'/>
+      <p n='uses:' v='dev.galasa,dev.galasa.framework.spi,dev.galasa.simbank.manager.ghrekin,dev.galasa.zos3270,dev.galasa.zos3270.spi'/>
+    </capability>
+    <capability name='package'>
+      <p n='package' v='dev.galasa.simbank.manager.ghrekin'/>
+      <p n='version' t='version' v='0.0.1'/>
+      <p n='uses:' v='dev.galasa.artifact,dev.galasa.core.manager,dev.galasa.http,dev.galasa.simbank.manager,dev.galasa.zos3270,dev.galasa.zos3270.spi'/>
+    </capability>
+    <capability name='package'>
+      <p n='package' v='dev.galasa.simbank.manager.spi'/>
+      <p n='version' t='version' v='0.0.1'/>
+      <p n='uses:' v='dev.galasa.simbank.manager'/>
+    </capability>
+    <capability name='service'>
+      <p n='osgi.service' v='osgi.service'/>
+      <p n='version' t='version' v='0.0.0'/>
+      <p n='objectClass:List&lt;String&gt;' v='dev.galasa.framework.spi.IManager'/>
+    </capability>
+    <capability name='service'>
+      <p n='osgi.service' v='osgi.service'/>
+      <p n='version' t='version' v='0.0.0'/>
+      <p n='objectClass:List&lt;String&gt;' v='dev.galasa.framework.spi.IResourceManagementProvider'/>
+    </capability>
+    <capability name='service'>
+      <p n='osgi.service' v='osgi.service'/>
+      <p n='version' t='version' v='0.0.0'/>
+      <p n='objectClass:List&lt;String&gt;' v='dev.galasa.simbank.manager.internal.properties.SimBankPropertiesSingleton'/>
+    </capability>
+    <require name='package' filter='(&amp;(package=dev.galasa)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.artifact)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.artifact;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.core.manager)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.core.manager;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.framework.spi)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.framework.spi;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.framework.spi.cps)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.framework.spi.cps;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.framework.spi.creds)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.framework.spi.creds;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.http)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.http;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.ipnetwork)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.ipnetwork;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.simbank.manager.ghrekin))' extend='false' multiple='false' optional='false'>Import package dev.galasa.simbank.manager.ghrekin</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.simbank.manager.spi))' extend='false' multiple='false' optional='false'>Import package dev.galasa.simbank.manager.spi</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos.spi)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos.spi;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos3270)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos3270;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos3270.spi)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos3270.spi;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=javax.validation.constraints)(version&gt;=2.0.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='false'>Import package javax.validation.constraints;version="[2.0,3)"</require>
+    <require name='package' filter='(&amp;(package=org.apache.commons.logging)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.apache.commons.logging;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.apache.derby.jdbc))' extend='false' multiple='false' optional='false'>Import package org.apache.derby.jdbc</require>
+    <require name='package' filter='(&amp;(package=org.assertj.core.api)(version&gt;=3.11.0)(!(version&gt;=4.0.0)))' extend='false' multiple='false' optional='false'>Import package org.assertj.core.api;version="[3.11,4)"</require>
+  </resource>
+  <resource id='dev.galasa.simbank.tests/0.0.1.SNAPSHOT' symbolicname='dev.galasa.simbank.tests' presentationname='dev.galasa.simbank.tests' uri='mvn:dev.galasa.simbank/dev.galasa.simbank.tests/0.0.1-SNAPSHOT/jar' version='0.0.1.SNAPSHOT'>
+    <size>12598</size>
+    <capability name='bundle'>
+      <p n='symbolicname' v='dev.galasa.simbank.tests'/>
+      <p n='presentationname' v='dev.galasa.simbank.tests'/>
+      <p n='version' t='version' v='0.0.1.SNAPSHOT'/>
+      <p n='manifestversion' v='2'/>
+    </capability>
+    <capability name='package'>
+      <p n='package' v='dev.galasa.simbank.tests'/>
+      <p n='version' t='version' v='0.0.1'/>
+      <p n='uses:' v='dev.galasa,dev.galasa.artifact,dev.galasa.core.manager,dev.galasa.http,dev.galasa.simbank.manager,dev.galasa.zos,dev.galasa.zos3270,dev.galasa.zos3270.spi,dev.galasa.zosbatch,org.apache.commons.logging'/>
+    </capability>
+    <require name='package' filter='(&amp;(package=dev.galasa)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.artifact)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.artifact;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.core.manager)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.core.manager;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.http)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.http;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.simbank.manager)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.simbank.manager;version="[0.0,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos3270)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos3270;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos3270.spi)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos3270.spi;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zosbatch)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zosbatch;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=org.apache.commons.logging)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.apache.commons.logging;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.assertj.core.api)(version&gt;=3.11.0)(!(version&gt;=4.0.0)))' extend='false' multiple='false' optional='false'>Import package org.assertj.core.api;version="[3.11,4)"</require>
+  </resource>
+  <resource id='dev.galasa.genapp.tests/0.7.0.SNAPSHOT' symbolicname='dev.galasa.genapp.tests' presentationname='Galasa GenApp Example Tests' uri='mvn:dev.galasa/dev.galasa.genapp.tests/0.7.0-SNAPSHOT/jar' version='0.7.0.SNAPSHOT'>
+    <description>Sample test to run with Galasa against the GenApp application</description>
+    <size>21428</size>
+    <license>https://www.eclipse.org/legal/epl-2.0/t</license>
+    <capability name='bundle'>
+      <p n='symbolicname' v='dev.galasa.genapp.tests'/>
+      <p n='presentationname' v='Galasa GenApp Example Tests'/>
+      <p n='version' t='version' v='0.7.0.SNAPSHOT'/>
+      <p n='manifestversion' v='2'/>
+    </capability>
+    <capability name='package'>
+      <p n='package' v='dev.galasa.genapp.tests'/>
+      <p n='version' t='version' v='0.7.0'/>
+      <p n='uses:' v='com.google.gson,dev.galasa,dev.galasa.artifact,dev.galasa.core.manager,dev.galasa.docker,dev.galasa.genapp.manager,dev.galasa.http,dev.galasa.zos,dev.galasa.zos3270'/>
+    </capability>
+    <require name='package' filter='(&amp;(package=com.google.gson)(version&gt;=2.8.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='false'>Import package com.google.gson;version="[2.8,3)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.artifact)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.artifact;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.core.manager)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.core.manager;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.docker)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.docker;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.genapp.manager)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.genapp.manager;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.http)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.http;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos3270)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos3270;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos3270.spi)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos3270.spi;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=org.apache.commons.logging)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.apache.commons.logging;version="[1.2,2)"</require>
+    <require name='package' filter='(&amp;(package=org.assertj.core.api)(version&gt;=3.11.0)(!(version&gt;=4.0.0)))' extend='false' multiple='false' optional='false'>Import package org.assertj.core.api;version="[3.11,4)"</require>
+  </resource>
+  <resource id='dev.galasa.genapp.manager/0.7.0.SNAPSHOT' symbolicname='dev.galasa.genapp.manager' presentationname='Galasa GenApp Manager' uri='mvn:dev.galasa/dev.galasa.genapp.manager/0.7.0-SNAPSHOT/jar' version='0.7.0.SNAPSHOT'>
+    <description>Sample test to run with Galasa against the GenApp application</description>
+    <size>32032</size>
+    <license>https://www.eclipse.org/legal/epl-2.0/t</license>
+    <capability name='bundle'>
+      <p n='symbolicname' v='dev.galasa.genapp.manager'/>
+      <p n='presentationname' v='Galasa GenApp Manager'/>
+      <p n='version' t='version' v='0.7.0.SNAPSHOT'/>
+      <p n='manifestversion' v='2'/>
+    </capability>
+    <capability name='package'>
+      <p n='package' v='dev.galasa.genapp.manager'/>
+      <p n='version' t='version' v='0.7.0'/>
+      <p n='uses:' v='dev.galasa,dev.galasa.framework.spi'/>
+    </capability>
+    <capability name='service'>
+      <p n='osgi.service' v='osgi.service'/>
+      <p n='version' t='version' v='0.0.0'/>
+      <p n='objectClass:List&lt;String&gt;' v='dev.galasa.framework.spi.IManager'/>
+    </capability>
+    <capability name='service'>
+      <p n='osgi.service' v='osgi.service'/>
+      <p n='version' t='version' v='0.0.0'/>
+      <p n='objectClass:List&lt;String&gt;' v='dev.galasa.genapp.manager.internal.properties.GenAppPropertiesSingleton'/>
+    </capability>
+    <require name='package' filter='(&amp;(package=dev.galasa)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.docker)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.docker;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.framework.spi)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.framework.spi;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.framework.spi.cps)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.framework.spi.cps;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.ipnetwork)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.ipnetwork;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos.spi)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos.spi;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos3270)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos3270;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=dev.galasa.zos3270.spi)(version&gt;=0.7.0)(!(version&gt;=1.0.0)))' extend='false' multiple='false' optional='false'>Import package dev.galasa.zos3270.spi;version="[0.7,1)"</require>
+    <require name='package' filter='(&amp;(package=javax.validation.constraints)(version&gt;=2.0.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='false'>Import package javax.validation.constraints;version="[2.0,3)"</require>
+    <require name='package' filter='(&amp;(package=org.apache.commons.logging)(version&gt;=1.2.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package org.apache.commons.logging;version="[1.2,2)"</require>
+  </resource>
+</repository>

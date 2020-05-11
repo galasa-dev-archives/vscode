@@ -5,6 +5,7 @@ import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfi
 import {TerminalView} from "./ui/TerminalView";
 const path = require('path');
 import * as fs from 'fs';
+import { createExampleFiles, launchSimbank } from './Examples';
 const galasaPath = process.env.HOME + "/" + ".galasa";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -54,6 +55,14 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
+    //Examples
+    vscode.commands.registerCommand('galasa-test.createExamples', () => {
+        createExampleFiles(context);
+    });
+    vscode.commands.registerCommand('galasa-test.simbank', () => {
+        launchSimbank(context);
+    });
+
     // Configuration
     vscode.commands.registerCommand('galasa.bootjar', config => {
         return context.extensionPath + "/lib/galasa-boot.jar";
@@ -84,7 +93,7 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
             vscode.window.showInformationMessage("You have already opened this testcase");
         }
-        vscode.debug.startDebugging(undefined, await getDebugConfig(context.extensionPath + "/lib/galasa-boot.jar", run));
+        vscode.debug.startDebugging(undefined, await getDebugConfig(context.extensionPath + "/lib/galasa-boot.jar", run, context));
     });
 
     //Result Archive Store

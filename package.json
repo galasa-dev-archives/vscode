@@ -25,6 +25,7 @@
 		"onCommand:galasa-ras.open",
 		"onCommand:galasa-ras.clearAll",
 		"onCommand:galasa-test.setupWorkspace",
+		"onCommand:galasa-test.createExamples",
 		"onDebug"
 	],
 	"main": "./out/extension",
@@ -79,6 +80,16 @@
 				"command": "galasa-test.setupWorkspace",
 				"title": "Setup Galasa Workspace",
 				"icon": "$(root-folder)"
+			},
+			{
+				"command": "galasa-test.createExamples",
+				"title": "Create SimBank Examples",
+				"icon": "$(file-code)"
+			},
+			{
+				"command": "galasa-test.simbank",
+				"title": "Launch Simbank",
+				"icon": "$(rocket)"
 			}
 		],
 		"viewsContainers": {
@@ -149,10 +160,20 @@
 				{
 					"command": "galasa-test.refresh",
 					"when": "view == galasa-testrunner",
-					"group": "navigation@2"
+					"group": "navigation@4"
 				},
 				{
 					"command": "galasa-test.setupWorkspace",
+					"when": "view == galasa-testrunner",
+					"group": "navigation@3"
+				},
+				{
+					"command": "galasa-test.createExamples",
+					"when": "view == galasa-testrunner",
+					"group": "navigation@2"
+				},
+				{
+					"command": "galasa-test.simbank",
 					"when": "view == galasa-testrunner",
 					"group": "navigation@1"
 				},
@@ -179,7 +200,14 @@
 					"group": "inline"
 				}
 			]
-		}
+		},
+		"taskDefinitions": [
+			{
+				"type": "shell",
+				"command": "mvn -f /Users/jamesdavies/git/public/galasa/managers/galasa-managers-parent/galasa-managers-cloud-parent/dev.galasa.docker.manager clean install -DskipTests",
+				"group": "build"
+			}
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "tsc -p ./",
@@ -192,11 +220,13 @@
 	"dependencies": {
 		"@types/node": "^13.11.0",
 		"@types/rimraf": "^3.0.0",
+		"@types/unzipper": "^0.10.3",
 		"@types/vscode": "^1.44.0",
 		"glob": "^7.1.6",
 		"gulp": "^4.0.2",
 		"rimraf": "^3.0.2",
-		"typescript": "^3.8.3"
+		"typescript": "^3.8.3",
+		"unzipper": "^0.10.11"
 	},
 	"devDependencies": {
 		"@types/vscode": "^1.44.0",

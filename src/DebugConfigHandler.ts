@@ -1,9 +1,10 @@
-import { DebugConfiguration, workspace } from 'vscode';
+import { DebugConfiguration, workspace, ExtensionContext, window, tasks, Task, TaskScope, ShellExecution } from 'vscode';
 import { TestCase } from './TestExtractor';
 import * as fs from 'fs';
+import rimraf = require('rimraf');
 var path = require('path');
 
-export async function getDebugConfig(bootUri : string, testClass : TestCase) : Promise<DebugConfiguration> {
+export async function getDebugConfig(bootUri : string, testClass : TestCase, context : ExtensionContext) : Promise<DebugConfiguration> {
     let maven = "";
     let localMaven : string | undefined = workspace.getConfiguration("galasa").get("maven-local");
     if(localMaven && localMaven.trim().length != 0) {
@@ -13,6 +14,10 @@ export async function getDebugConfig(bootUri : string, testClass : TestCase) : P
     if(remoteMaven && remoteMaven.trim().length != 0) {
         maven = maven + "--remotemaven " + workspace.getConfiguration("galasa").get("maven-remote") + " ";
     }
+
+    const workspaceObr = await buildLocalObr(context);
+
+    await tasks.executeTask(getBuildWorkspaceObrTask(context));
     
     return {
         name: "Galasa Debug",
@@ -20,7 +25,7 @@ export async function getDebugConfig(bootUri : string, testClass : TestCase) : P
         request: "launch",
         classPaths: [bootUri],
         mainClass: "dev.galasa.boot.Launcher",
-        args: maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion() + "/obr " + await findLocalObrs(testClass) + "--test " + findTestArtifact(testClass)
+        args: maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion() + "/obr " + workspaceObr + "--test " + findTestArtifact(testClass)
     }
 }
 
@@ -33,34 +38,29 @@ export function getGalasaVersion() : string {
     return version;
 }
 
-export async function findLocalObrs(testCase : TestCase) : Promise<string> {
-    let obrs : string[] = [];
-    const pomFiles = await workspace.findFiles("**/pom.xml");
-    pomFiles.forEach(file => {
-        let fileName = file.toString().substring(7);
-        if(fileName.includes("%40")) {
-            fileName = fileName.replace("%40","@");
-        }
-        let data = fs.readFileSync(fileName).toString();
+export async function buildLocalObr(context : ExtensionContext) : Promise<string> {
+    let pomData = fs.readFileSync(context.extensionPath +"/lib/obr-pom.xml").toString();
+    let dependencies = "";
 
-        let groupId = data.substring(data.indexOf("<groupId>") + 9, data.indexOf("</groupId>"));
-        if(data.includes("<packaging>galasa-obr</packaging>")) {
-            if(data.includes("<parent>")) {
-                data = data.substring(data.indexOf("</parent>"))
-            } else {
-                groupId = data.substring(data.indexOf("<groupId>") + 9, data.indexOf("</groupId>"));
-            }
-            let version = data.substring(data.indexOf("<version>") + 9, data.indexOf("</version>"));
-            data = data.substring(data.indexOf("<artifactId>") + 12, data.indexOf("</artifactId>"));
-            obrs.push(groupId + "/" + data + "/" + version + "/obr");
-        }
+    const manifests = await workspace.findFiles("**/MANIFEST.MF");
+    manifests.forEach(file => {
+        const bundleName = findPomField(file.toString().replace("%40", "@").replace("file://", ""), "artifactId");
+        const groupName = findPomField(file.toString().replace("%40", "@").replace("file://", ""), "groupId");
+        const version = findPomField(file.toString().replace("%40", "@").replace("file://", ""), "version");
+        dependencies = dependencies + "<dependency><groupId>" + groupName + "</groupId>" +
+            "<artifactId>"+ bundleName +"</artifactId>" +
+            "<version>"+ version + "</version>" +
+            "<scope>compile</scope></dependency>\n"
     });
+    let galasaVersion = getGalasaVersion();
+    pomData = pomData.replace(/%%dependencies%%/g, dependencies).replace(/%%version%%/g, galasaVersion);
 
-    let obrString = "";
-    obrs.forEach(obr => {
-        obrString = obrString + "--obr mvn:" + obr + " ";
-    });
-    return obrString;
+    if(!fs.existsSync(context.extensionPath + "/galasa-workspace-obr")) {
+        fs.mkdirSync(context.extensionPath + "/galasa-workspace-obr");
+    }
+    fs.writeFileSync(context.extensionPath + "/galasa-workspace-obr/pom.xml", pomData);
+
+    return "--obr mvn:dev.galasa/vscode.workspace.obr/" + galasaVersion + "/obr ";
 }
 
 export function findTestArtifact(testClass : TestCase) : string {
@@ -68,13 +68,13 @@ export function findTestArtifact(testClass : TestCase) : string {
     let packageName = data.substring(data.indexOf("package") + 8);
     packageName = packageName.substring(0, packageName.indexOf(";")).trim();
 
-    const bundleName = findBundleName(path.dirname(testClass.pathToFile));
+    const bundleName = findPomField(path.dirname(testClass.pathToFile), "artifactId");
 
     return bundleName + "/" + packageName + "." + testClass.label;
 
 }
 
-function findBundleName(directory : string) : string {
+function findPomField(directory : string, field : string) : string {
     if(fs.statSync(directory).isDirectory()) {
         let pom = "";
         fs.readdirSync(directory).forEach(file => {
@@ -84,12 +84,16 @@ function findBundleName(directory : string) : string {
         });
         if(pom != "") {
             let data = fs.readFileSync(directory + "/" + pom).toString();
-            if(data.includes("<parent>")) {
+            if((field == "artifactId" || field == "version")&& data.includes("<parent>")) {
                 data = data.substring(data.indexOf("</parent>"))
             }
-            data = data.substring(data.indexOf("<artifactId>") + 12, data.indexOf("</artifactId>"));
+            data = data.substring(data.indexOf("<" + field + ">") + field.length + 2, data.indexOf("</"+ field +">"));
             return data;
         }
     }
-    return findBundleName(path.dirname(directory));
+    return findPomField(path.dirname(directory), field);
+}
+
+function getBuildWorkspaceObrTask(context : ExtensionContext) : Task {
+    return new Task({type : "shell"}, TaskScope.Workspace.toString(), "Workspace Obr", new ShellExecution("mvn install -f " + context.extensionPath + "/galasa-workspace-obr/"));
 }
