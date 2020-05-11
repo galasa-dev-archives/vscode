@@ -70,7 +70,7 @@ export class TerminalView {
             border-style: double;
             padding : 5px;
             width: 625px;
-            height: 375px;
+            height: 425px;
         }
         </style></head><body><h1>Terminal Screens of run: ${this.run_id}</h1><h3>Amount of screens:  ${this.images?.length}</h3><div class="main-grid-container">`
 
@@ -86,11 +86,13 @@ export class TerminalView {
             for (let y = 0; y < standardRow; y++) {
                 let terminalLine = ""
                 for (let x = 0; x < standardCol; x++) {
+                    let lineUsed:boolean = false;
                     image.fields.forEach((field) => {
                         if (x == field.column && y == field.row) {
                             field.contents.forEach(content => {
                                 if (content.text) {
                                     terminalLine = terminalLine + content.text;
+                                    x = x + content.text.length - 1;
                                 } else {
                                     let terminalCharLine = ""
                                     content.chars?.forEach(char => {
@@ -101,11 +103,16 @@ export class TerminalView {
                                             terminalCharLine = terminalCharLine + char;
                                         }
                                     });
+                                    x = x + terminalCharLine.length;
                                     terminalLine = terminalLine + terminalCharLine 
                                 }
+                                lineUsed = true;
                             });  
                         }
                     });
+                    if (!lineUsed) {
+                        terminalLine = terminalLine + " ";
+                    }
                 }
                 dynamicHTML = dynamicHTML + `<div class="terminal-line">${terminalLine}</div>`;
             }

@@ -102,7 +102,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
     vscode.commands.registerCommand('galasa-ras.open', async (run : TestArtifact) => {
         if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) {
-            if (run.label.includes(".gz") && run.label.includes("term")) { // GALASA TERMINAL SCREEN
+            if (run.label.includes(".gz")) { // GALASA TERMINAL SCREEN
                 new TerminalView(run.path);
             } else {
                 let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
