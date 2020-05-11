@@ -14,6 +14,5 @@ export class TerminalField {
         this.fieldProtected = fieldProtected;
         this.fieldDisplay = fieldDisplay;
         this.contents = contents;
-    }
-    
+    }  
 }

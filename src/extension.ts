@@ -93,8 +93,8 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("galasa-ras.refresh", () => rasProvider.refresh());
     vscode.commands.registerCommand('galasa-ras.open', async (run : TestArtifact) => {
         if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) {
-            if (run.label.includes(".gz") && run.label.includes("term")) { // TERMINAL SCREEN
-                const terminalView = new TerminalView(run.path);
+            if (run.label.includes(".gz") && run.label.includes("term")) { // GALASA TERMINAL SCREEN
+                new TerminalView(run.path);
             } else {
                 let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
                     return textDoc.document.fileName.includes(run.label);
@@ -106,8 +106,7 @@ export function activate(context: vscode.ExtensionContext) {
                 } else {
                     vscode.window.showInformationMessage("You have already opened this file.");
                 }
-            }
-            
+            }            
         } else {
             vscode.window.showErrorMessage("You tried to display a directory, " + run.label);
         }
