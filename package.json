@@ -52,28 +52,32 @@
 				"title": "Galasa Version"
 			},
 			{
+				"command": "galasa.remoteTest",
+				"title": "Galasa RemoteTest end-point"
+			},
+			{
 				"command": "galasa-test.refresh",
-				"title": "Refresh",
+				"title": "Refresh the process of looking for Galasa tests",
 				"icon": "$(refresh)"
 			},
 			{
 				"command": "galasa-test.debug",
-				"title": "Debug",
+				"title": "Debug Galasa test locally",
 				"icon": "$(debug-start)"
 			},
 			{
 				"command": "galasa-ras.refresh",
-				"title": "Refresh",
+				"title": "Refresh the local RAS",
 				"icon": "$(refresh)"
 			},
 			{
 				"command": "galasa-ras.open",
-				"title": "Open",
+				"title": "Open a file from the RAS",
 				"icon": "$(go-to-file)"
 			},
 			{
 				"command": "galasa-ras.clearAll",
-				"title": "Clear",
+				"title": "Clear your local RAS",
 				"icon": "$(clear-all)"
 			},
 			{
@@ -90,6 +94,11 @@
 				"command": "galasa-test.simbank",
 				"title": "Launch Simbank",
 				"icon": "$(rocket)"
+			},
+			{
+				"command": "galasa-test.remoteTest",
+				"title": "Launch Remote Galasa test",
+				"icon": "$(cloud-upload)"
 			}
 		],
 		"viewsContainers": {
@@ -152,6 +161,11 @@
 					"type": "string",
 					"default": "LATEST",
 					"description": "%galasavscode.config.galasa.version%"
+				},
+				"galasa.bootstrap-endpoint": {
+					"type": "string",
+					"default": "",
+					"description": "%galasavscode.config.galasa.bootstrap-endpoint%"
 				}
 			}
 		},
@@ -191,6 +205,11 @@
 			"view/item/context": [
 				{
 					"command": "galasa-test.debug",
+					"when": "view == galasa-testrunner",
+					"group": "inline"
+				},
+				{
+					"command": "galasa-test.remoteTest",
 					"when": "view == galasa-testrunner",
 					"group": "inline"
 				},

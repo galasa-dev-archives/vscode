@@ -1,6 +1,7 @@
 import { DebugConfiguration, workspace, ExtensionContext, window, tasks, Task, TaskScope, ShellExecution } from 'vscode';
 import { TestCase } from './TestExtractor';
 import * as fs from 'fs';
+import * as vscode from "vscode";
 import rimraf = require('rimraf');
 var path = require('path');
 
@@ -36,6 +37,16 @@ export function getGalasaVersion() : string {
     }
     
     return version;
+}
+
+export function getRemoteEndPoint() : string {
+    let remoteEndpoint : string | undefined = workspace.getConfiguration("galasa").get("remoteTest");
+    if(!remoteEndpoint || remoteEndpoint == "") {
+        remoteEndpoint = "";
+        vscode.window.showErrorMessage("You have not set up your settings properly for running a remote test.")
+    }
+    
+    return remoteEndpoint;
 }
 
 export async function buildLocalObr(context : ExtensionContext) : Promise<string> {
