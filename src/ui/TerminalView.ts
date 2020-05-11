@@ -35,8 +35,6 @@ export class TerminalView {
             this.images = parsedFileJSON.images;
             this.defaultSize = parsedFileJSON.defaultSize;
             this.showScreen = true;
-
-            console.log(this)
         } else {
             this.id = undefined;
             this.run_id = undefined;
@@ -59,19 +57,26 @@ export class TerminalView {
     getWebviewContent(images: TerminalImage[] | undefined) : string {
 
         let str =  `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Terminals</title><style>
-        .grid-container {
+        .main-grid-container {
           display: grid;
           grid-template-columns: auto;
           grid-template-rows: auto;
-          grid-gap: 1px;
-          padding: 10px;
-          white-space: pre;
-          font-family: Menlo, Monaco, "Courier New", monospace
+          
+          font-family: Menlo, Monaco, "Courier New", monospace;
+          
         }
+        .terminal-line {
+            white-space: pre-wrap;
+        }
+
         .terminal {
-            white-space: pre; 
+            border: 10px;
+            border-style: double;
+            padding : 5px;
+            width: 625px;
+            height: 375px;
         }
-        </style></head><body><h1>Terminal Screens of run: ${this.run_id}</h1><h3>Amount of screens:  ${this.images?.length}</h3><div class="grid-container">`
+        </style></head><body><h1>Terminal Screens of run: ${this.run_id}</h1><h3>Amount of screens:  ${this.images?.length}</h3><div class="main-grid-container">`
 
         let test = "";
         
@@ -80,31 +85,36 @@ export class TerminalView {
         let standardRow:number = 24;
 
         images?.forEach((image,index) => { 
-            test = test + `<div class="grid-container${index}">`
+            test = test + `<h4>Terminal screen ${index+1}</h4>`
+            test = test + `<div class="terminal">`
             indexArray.push(index)
             for (let y = 0; y < standardRow; y++) {
                 let temp = ""
                 for (let x = 0; x < standardCol; x++) {
                     image.fields.forEach((field) => {
                         if (x == field.column && y == field.row) {
-                            if (field.contents[0].text) {
-                                temp = temp + field.contents[0].text;
-                            } else {
-                                let tempy = ""
-                                field.contents[0].chars?.forEach(char => {
-                                    if (char == null) {
-                                        tempy = tempy + " ";
-                                    } else {
-                                        tempy = tempy + char;
-                                    }
-                                });
-                                temp = temp + tempy
-                            }
+                            field.contents.forEach(content => {
+                                if (content.text) {
+                                    temp = temp + content.text;
+                                } else {
+                                    let tempy = ""
+                                    content.chars?.forEach(char => {
+                                        if (char == null || char == "") {
+                                            tempy = tempy + " ";
+                                        }
+                                        else {
+                                            tempy = tempy + char;
+                                        }
+                                    });
+                                    temp = temp + tempy
+                                    
+                                }
+                            });  
                         }
                     });
                 }
-                console.log(temp);
-                test = test + `<div class="terminal">${temp}</div>`;
+                
+                test = test + `<div class="terminal-line">${temp}</div>`;
             }
             test = test + `<br><br>`
             test = test + "</div>"
@@ -114,6 +124,7 @@ export class TerminalView {
 
         str = str + test  + str3
 
+        
         return str;
     }
 
