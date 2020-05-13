@@ -111,6 +111,8 @@ components:
           type: string
         infixes:
           type: array
+          items:
+            type: object
       required:  
         - namespace
         - prefix
@@ -127,10 +129,14 @@ components:
           type: boolean
         runs:
           type: array
+          items:
+            type: object
     TestRunRequest:
       properties:
         classNames:
           type: array
+          items:
+            type: object
         requestorType:
           type: string
         testStream:
