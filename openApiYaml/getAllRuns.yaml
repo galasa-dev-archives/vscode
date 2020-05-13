@@ -1,0 +1,21 @@
+openapi: 3.0.0
+info:
+  title: Get All Runs
+  version: 0.0.1
+
+servers:
+  - url: http://cicsk8sm.hursley.ibm.com:31410
+
+paths:
+  /getAllRuns:
+    get:
+      summary: Get All Runs
+      responses:
+        '200':
+          description: List of all Runs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
