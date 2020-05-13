@@ -222,7 +222,6 @@
 		}
 	},
 	"scripts": {
-		"generate-api": "rm -rf gen/api && openapi-generator generate -i openApiYaml/GalasaWebRequests.yaml --skip-validate-spec --generator-name typescript-fetch -o gen/api --config api.json && cd gen/api && npm install",
 		"vscode:prepublish": "tsc -p ./",
 		"compile": "gulp build",
 		"watch": "tsc -watch -p ./"
@@ -231,11 +230,10 @@
 		"vscjava.vscode-java-pack"
 	],
 	"dependencies": {
-		"typescript-fetch-api": "file:gen/api",
-		"@openapitools/openapi-generator-cli": "^1.0.13-4.3.1",
 		"@types/rimraf": "^3.0.0",
 		"@types/unzipper": "^0.10.3",
 		"@types/vscode": "^1.44.0",
+		"galasa-web-api": "^1.0.2",
 		"glob": "^7.1.6",
 		"gulp": "^4.0.2",
 		"rimraf": "^3.0.2",
