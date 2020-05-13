@@ -233,7 +233,7 @@
 		"@types/rimraf": "^3.0.0",
 		"@types/unzipper": "^0.10.3",
 		"@types/vscode": "^1.44.0",
-		"galasa-web-api": "^1.0.2",
+		"galasa-web-api": "^1.0.3",
 		"glob": "^7.1.6",
 		"gulp": "^4.0.2",
 		"rimraf": "^3.0.2",
