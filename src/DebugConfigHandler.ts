@@ -71,7 +71,7 @@ export async function buildLocalObr(context : ExtensionContext) : Promise<string
     }
     fs.writeFileSync(context.extensionPath + "/galasa-workspace-obr/pom.xml", pomData);
 
-    return "--obr mvn:dev.galasa/vscode.workspace.obr/" + galasaVersion + "/obr ";
+    return "--obr file:" + context.extensionPath + "/galasa-workspace-obr/target/repository.obr ";
 }
 
 export function findTestArtifact(testClass : TestCase) : string {
