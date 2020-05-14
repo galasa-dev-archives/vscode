@@ -8,7 +8,8 @@ import * as fs from 'fs';
 import { createExampleFiles, launchSimbank } from './Examples';
 import { DefaultApi } from 'galasa-web-api';
 import { GalasaProperties } from './remote/GalasaProperties';
-import { RemoteRASProvider } from './remote/TreeViewRemoteResultArchiveStore';
+import { RemoteRASProvider} from './remote/TreeViewRemoteResultArchiveStore';
+import { RasItem } from './remote/RasItem';
 const galasaPath = process.env.HOME + "/" + ".galasa";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -168,10 +169,10 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     //Remote Result Archive Store
-    const remoteRasProvider = new RemoteRASProvider("");
+    const remoteRasProvider = new RemoteRASProvider(api);
     vscode.window.registerTreeDataProvider("galasa-rasRemote", remoteRasProvider);
     vscode.commands.registerCommand("galasa-rasRemote.refresh", () => remoteRasProvider.refresh());
-    vscode.commands.registerCommand('galasa-rasRemote.open', async (run : TestArtifact) => {
+    vscode.commands.registerCommand('galasa-rasRemote.open', async (run : RasItem) => {
         if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) { 
             let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
                 return textDoc.document.fileName.includes(run.label);
