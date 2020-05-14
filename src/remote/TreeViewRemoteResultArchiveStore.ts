@@ -1,71 +1,53 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { DefaultApi } from "galasa-web-api";
+import { RasItem } from './RasItem';
 
 
-export class RemoteRASProvider implements vscode.TreeDataProvider<Directory | TestArtifact> {
-    private api:DefaultApi | undefined;
+export class RemoteRASProvider implements vscode.TreeDataProvider<RasItem> {
+    private api:DefaultApi;
 
-    private _onDidChangeTreeData: vscode.EventEmitter<Directory | TestArtifact | undefined> = new vscode.EventEmitter<Directory | TestArtifact | undefined>();
-    readonly onDidChangeTreeData: vscode.Event<Directory | TestArtifact | undefined> = this._onDidChangeTreeData.event;
+    private _onDidChangeTreeData: vscode.EventEmitter<RasItem | undefined> = new vscode.EventEmitter<RasItem | undefined>();
+    readonly onDidChangeTreeData: vscode.Event<RasItem | undefined> = this._onDidChangeTreeData.event;
 
-    constructor(private url: string) {
-        this.api = new DefaultApi(url);
-
-        if (!this.api) {
-            vscode.window.showErrorMessage("The connection with the api for your remote service has failed.");
-        }
+    constructor(api: DefaultApi) {
+        this.api = api;
     }
 
-    getTreeItem(element: Directory | TestArtifact): vscode.TreeItem {
+    getTreeItem(element:RasItem): vscode.TreeItem {
         return element;
     }
 
-    getChildren(element?: vscode.TreeItem): (Directory | TestArtifact)[] | undefined {
-        let list:(Directory | TestArtifact)[] = [];
-        console.log(this.api?.resultarchiveGet())
-        list.push(new TestArtifact("test",vscode.TreeItemCollapsibleState.None, ""));
-        return list;
-    }
-
-    private extractFileStructure(json: JSON): (Directory | TestArtifact)[] {
-        let list:(Directory | TestArtifact)[] = [];
-
-        if (json) {
-            
-        } else {
-            vscode.window.showErrorMessage("We were not able to communicate with the remote Galasa Ecosystem to read the remote Result Archive Store.");
+    async getChildren(element?: vscode.TreeItem): Promise<RasItem[] | undefined> {
+        let list: RasItem[] = [];
+        if (this.api) {
+            if (!element) {
+                const responseBody:any =  (await this.api.resultarchiveGet()).body;
+                const rasServices = responseBody.rasServices;
+                rasServices.forEach((rasService:any) => {
+                    const temp = rasService.structure;
+                    list.push(new RasItem(temp.name, temp.directory, temp.children, temp.resultPath, vscode.TreeItemCollapsibleState.Collapsed))
+                });
+                return list;
+            } else {
+                if(element instanceof RasItem) {
+                    element.children?.forEach(child=> {
+                        if (!child.directory) {
+                            list.push(new RasItem(child.name, false, undefined, child.resultPath, vscode.TreeItemCollapsibleState.None))
+                        } else { 
+                            list.push(new RasItem(child.name, true, child.children, undefined, vscode.TreeItemCollapsibleState.Collapsed));
+                        } 
+                    });
+                    return list;
+                } else {
+                    return undefined;
+                }
+            }
         }
-        
-        return [];
     }
 
     public refresh(): void {
         this._onDidChangeTreeData.fire();
     }
-
-}
-
-
-export class Directory extends vscode.TreeItem {
-    constructor(
-        public readonly label: string,
-        public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-        public readonly path:string
-    ) {
-        super(label, collapsibleState);
-    }
-
-}
-
-export class TestArtifact extends vscode.TreeItem {
-    constructor(
-        public readonly label: string,
-        public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-        public readonly path:string
-    ) {
-        super(label, collapsibleState);
-    }
-
 }
 

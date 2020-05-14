@@ -2,6 +2,7 @@ import { DefaultApi, TestRunRequest, CPSRequest } from "galasa-web-api";
 import { window, workspace } from "vscode";
 import { findTestArtifact } from "../DebugConfigHandler";
 import { TestCase } from "../TestExtractor";
+import { readFileSync } from "fs";
 
 export async function submitRuns(api : DefaultApi, testClass : TestCase) {
 
@@ -17,7 +18,7 @@ export async function submitRuns(api : DefaultApi, testClass : TestCase) {
     if(!testStream) {
         return;
     }
-    if(!testStreams.includes(testStream)) {
+    else if(!testStreams.includes(testStream)) {
         window.showErrorMessage("Invalid Test Stream: " + testStream);
         return;
     }
@@ -40,15 +41,23 @@ export async function submitRuns(api : DefaultApi, testClass : TestCase) {
         return;
     }
 
-    const propertiesFiles = await workspace.findFiles("*/properties");
+    const propertiesFiles = await workspace.findFiles("**/*.properties");
     let fileNames : any[] = [];
     propertiesFiles.forEach(file => {
-        fileNames.push(file.toString().substring(file.toString().lastIndexOf("/"), file.toString().length));
+        fileNames.push(file.path);
     });
-    const overrides = await window.showQuickPick(fileNames, {placeHolder : "Overrides File"});
+    const overridesFile : string = await window.showQuickPick(fileNames, {placeHolder : "Overrides File"});
+
+    let overridesMap : Map<string, string> = new Map<string,string>();
+    readFileSync(overridesFile).toString().split("\n").forEach(line => {
+        const pairing = line.split("=");
+        overridesMap.set(pairing[0],pairing[1]);
+    });
+
+    const overrides = JSON.parse(JSON.stringify(overridesMap))
 
     const traceOption = (await window.showQuickPick(["True", "False"], {placeHolder : "Overrides File"}));
-    if(!traceOption) {
+    if(traceOption == undefined) {
         return;
     }
     const trace = traceOption == "True";
