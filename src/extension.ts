@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { TestExtractor, TestCase } from './TestExtractor';
 import { RASProvider, TestArtifact} from './TreeViewLocalResultArchiveStore';
-import { getDebugConfig, findTestArtifact, getGalasaVersion, getRemoteEndPoint } from './DebugConfigHandler';
+import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfigHandler';
 import {TerminalView} from "./ui/TerminalView";
 const path = require('path');
 import * as fs from 'fs';
@@ -9,6 +9,7 @@ import { createExampleFiles, launchSimbank } from './Examples';
 import { DefaultApi } from 'galasa-web-api';
 import { GalasaProperties } from './remote/GalasaProperties';
 import { RemoteRASProvider } from './remote/TreeViewRemoteResultArchiveStore';
+import { submitRuns } from './remote/SubmitRuns';
 const galasaPath = process.env.HOME + "/" + ".galasa";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -85,10 +86,6 @@ export function activate(context: vscode.ExtensionContext) {
         return getGalasaVersion();
     });
 
-    vscode.commands.registerCommand('galasa.remoteTest', config => {
-        return getRemoteEndPoint();
-    });
-
     //Remote Testing
     vscode.commands.registerCommand("galasa-test.remoteTest", (run : TestCase) => {
         let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
@@ -102,8 +99,7 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
             vscode.window.showInformationMessage("You have already opened this testcase");
         }
-        //TODO  Call method to run remote test here
-        getRemoteEndPoint();
+        submitRuns(api, run);
     });
 
     // Test Runner

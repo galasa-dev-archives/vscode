@@ -39,16 +39,6 @@ export function getGalasaVersion() : string {
     return version;
 }
 
-export function getRemoteEndPoint() : string {
-    let remoteEndpoint : string | undefined = workspace.getConfiguration("galasa").get("remoteTest");
-    if(!remoteEndpoint || remoteEndpoint == "") {
-        remoteEndpoint = "";
-        vscode.window.showErrorMessage("You have not set up your settings properly for running a remote test.")
-    }
-    
-    return remoteEndpoint;
-}
-
 export async function buildLocalObr(context : ExtensionContext) : Promise<string> {
     let pomData = fs.readFileSync(context.extensionPath +"/lib/obr-pom.xml").toString();
     let dependencies = "";
