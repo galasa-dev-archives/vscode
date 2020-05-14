@@ -6,9 +6,16 @@ import {TerminalView} from "./ui/TerminalView";
 const path = require('path');
 import * as fs from 'fs';
 import { createExampleFiles, launchSimbank } from './Examples';
+import { DefaultApi } from 'galasa-web-api';
+import { GalasaProperties } from './remote/GalasaProperties';
 const galasaPath = process.env.HOME + "/" + ".galasa";
 
 export function activate(context: vscode.ExtensionContext) {
+
+    //Setup API
+    const bootstrap : string | undefined = vscode.workspace.getConfiguration("galasa").get("bootstrap-endpoint");
+    const props = new GalasaProperties(bootstrap);
+    const api =  new DefaultApi(props.getEndpointUrl());
 
     //Setup Workspace
     vscode.commands.registerCommand('galasa-test.setupWorkspace', () => {
