@@ -81,6 +81,16 @@
 				"icon": "$(clear-all)"
 			},
 			{
+				"command": "galasa-rasRemote.open",
+				"title": "Open a file from the remote RAS",
+				"icon": "$(go-to-file)"
+			},
+			{
+				"command": "galasa-rasRemote.refresh",
+				"title": "Refresh the remmote RAS",
+				"icon": "$(refresh)"
+			},
+			{
 				"command": "galasa-test.setupWorkspace",
 				"title": "Setup Galasa Workspace",
 				"icon": "$(root-folder)"
@@ -119,6 +129,10 @@
 				{
 					"id": "galasa-ras",
 					"name": "Result Archive Store"
+				},
+				{
+					"id": "galasa-rasRemote",
+					"name": "Remote Result Archive Store"
 				}
 			]
 		},
@@ -200,6 +214,11 @@
 					"command": "galasa-ras.clearAll",
 					"when": "view == galasa-ras",
 					"group": "navigation"
+				},
+				{
+					"command": "galasa-rasRemote.refresh",
+					"when": "view == galasa-rasRemote",
+					"group": "navigation"
 				}
 			],
 			"view/item/context": [
@@ -217,6 +236,11 @@
 					"command": "galasa-ras.open",
 					"when": "view == galasa-ras && viewItem == testartifact",
 					"group": "inline"
+				},
+				{
+					"command": "galasa-rasRemote.open",
+					"when": "view == galasa-rasRemote && viewItem == testartifact",
+					"group": "inline"
 				}
 			]
 		}
@@ -233,9 +257,11 @@
 		"@types/rimraf": "^3.0.0",
 		"@types/unzipper": "^0.10.3",
 		"@types/vscode": "^1.44.0",
-		"galasa-web-api": "^1.0.3",
+		"galasa-web-api": "^1.0.4",
 		"glob": "^7.1.6",
 		"gulp": "^4.0.2",
+		"http": "0.0.1-security",
+		"request": "^2.88.2",
 		"rimraf": "^3.0.2",
 		"typescript": "^3.8.3",
 		"unzipper": "^0.10.11"

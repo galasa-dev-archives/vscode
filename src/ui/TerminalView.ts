@@ -3,8 +3,6 @@ import * as fs from "fs";
 import * as zlib from "zlib";
 import { TerminalImage } from "./TerminalImage";
 import { TerminalSize } from "./TerminalSize";
-import { TerminalField } from "./TerminalField";
-import { FieldContents } from "./FieldContents";
 
 export class TerminalView {
     private id:string | undefined;
