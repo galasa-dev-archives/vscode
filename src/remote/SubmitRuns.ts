@@ -1,5 +1,5 @@
-import * as request from "typescript-fetch-api";
+import { DefaultApi } from "galasa-web-api";
 
-export function submitRuns() {
-    
+export async function submitRuns(url : string) {
+    const api =  new DefaultApi(url);
 }
