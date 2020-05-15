@@ -12,17 +12,21 @@ export class TerminalView {
     private defaultSize:TerminalSize | undefined;
     private showScreen:boolean | undefined;
     constructor(
-        private readonly pathToGZ:string
+        private readonly gzipBuffer:Buffer | undefined,
+        private readonly json:JSON | undefined
     ) {
         this.setup();
         this.showTerminal();
     }
 
     setup() {
-        const gzipFile = fs.readFileSync(this.pathToGZ);
-        const unzippedFile = zlib.unzipSync(gzipFile);
-        const parsedFileJSON = JSON.parse(this.utf8ToString(unzippedFile.toJSON().data));
-
+        let parsedFileJSON;
+        if (this.gzipBuffer) {
+            const unzippedFile = zlib.unzipSync(this.gzipBuffer);
+            parsedFileJSON = JSON.parse(this.utf8ToString(unzippedFile.toJSON().data));
+        } if (this.json) {
+            parsedFileJSON = this.json;
+        } 
         if (parsedFileJSON.id && parsedFileJSON.runId && parsedFileJSON.sequence && parsedFileJSON.images && parsedFileJSON.defaultSize) { 
             this.id = parsedFileJSON.id;
             this.run_id = parsedFileJSON.runId;
@@ -45,7 +49,7 @@ export class TerminalView {
             const panel = vscode.window.createWebviewPanel("terminalView", "Terminal " + this.run_id + " " + this.id, vscode.ViewColumn.Beside, {});
             panel.webview.html = this.getWebviewContent(this.images);
         } else {
-            vscode.window.showErrorMessage("The terminal you tried to open at " + this.pathToGZ + " is formatted incorrectely.")
+            vscode.window.showErrorMessage("The terminal you tried to open is formatted incorrectely.");
         }
     }   
 

@@ -7,7 +7,8 @@ export class RasItem extends vscode.TreeItem{
                 public directory: boolean,
                 public children: any[] | undefined,
                 public resultPath:string | undefined,
-                public readonly collapsibleState: vscode.TreeItemCollapsibleState) {
+                public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+                public contextValue : string) {
         super(label, collapsibleState )
     }
 }
