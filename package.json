@@ -242,7 +242,7 @@
 				},
 				{
 					"command": "galasa-rasRemote.open",
-					"when": "view == galasa-rasRemote && viewItem == testartifact",
+					"when": "view == galasa-rasRemote && viewItem == rasitem",
 					"group": "inline"
 				}
 			]

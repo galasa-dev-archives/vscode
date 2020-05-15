@@ -178,6 +178,7 @@ export function activate(context: vscode.ExtensionContext) {
                 return textDoc.document.fileName.includes(run.label);
             });
             if (!filterActiveDocs || filterActiveDocs.length < 1) {
+                
                 //TODO
             } else {
                 vscode.window.showInformationMessage("You have already opened this file.");
@@ -186,6 +187,19 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showErrorMessage("You tried to display a directory, " + run.label);
         }
     });
+
+    const myProvider = new class implements vscode.TextDocumentContentProvider {
+
+		// emitter and its event
+		onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
+		onDidChange = this.onDidChangeEmitter.event;
+
+		provideTextDocumentContent(uri: vscode.Uri): string {
+			return "test";
+		}
+    }
+    
+    vscode.workspace.registerTextDocumentContentProvider()
 
     // General Galasa commands
     vscode.commands.registerCommand('galasa.specifyTestClass', config => {

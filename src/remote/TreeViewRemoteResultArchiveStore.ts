@@ -26,16 +26,16 @@ export class RemoteRASProvider implements vscode.TreeDataProvider<RasItem> {
                 const rasServices = responseBody.rasServices;
                 rasServices.forEach((rasService:any) => {
                     const temp = rasService.structure;
-                    list.push(new RasItem(temp.name, temp.directory, temp.children, temp.resultPath, vscode.TreeItemCollapsibleState.Collapsed))
+                    list.push(new RasItem(temp.name, temp.directory, temp.children, temp.resultPath, vscode.TreeItemCollapsibleState.Collapsed, ""))
                 });
                 return list;
             } else {
                 if(element instanceof RasItem) {
                     element.children?.forEach(child=> {
                         if (!child.directory) {
-                            list.push(new RasItem(child.name, false, undefined, child.resultPath, vscode.TreeItemCollapsibleState.None))
+                            list.push(new RasItem(child.name, false, undefined, child.resultPath, vscode.TreeItemCollapsibleState.None, "rasitem"))
                         } else { 
-                            list.push(new RasItem(child.name, true, child.children, undefined, vscode.TreeItemCollapsibleState.Collapsed));
+                            list.push(new RasItem(child.name, true, child.children, undefined, vscode.TreeItemCollapsibleState.Collapsed, ""));
                         } 
                     });
                     return list;
