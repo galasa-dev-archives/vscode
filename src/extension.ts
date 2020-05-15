@@ -11,6 +11,7 @@ import { GalasaProperties } from './remote/GalasaProperties';
 import { RemoteRASProvider } from './remote/TreeViewRemoteResultArchiveStore';
 import { submitRuns } from './remote/SubmitRuns';
 import { RasItem } from './remote/RasItem';
+import { returnRemoteDocument, returnRemoteTerminal } from './remote/OpenRemoteFile';
 const galasaPath = process.env.HOME + "/" + ".galasa";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -19,6 +20,9 @@ export function activate(context: vscode.ExtensionContext) {
     const bootstrap : string | undefined = vscode.workspace.getConfiguration("galasa").get("bootstrap-endpoint");
     const props = new GalasaProperties(bootstrap);
     const api =  new DefaultApi(props.getEndpointUrl());
+
+
+    //vscode.workspace.registerTextDocumentContentProvider("RemoteTesting", myProvider);
 
     //Setup Workspace
     vscode.commands.registerCommand('galasa-test.setupWorkspace', () => {
@@ -128,8 +132,8 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("galasa-ras.refresh", () => localRasProvider.refresh());
     vscode.commands.registerCommand('galasa-ras.open', async (run : TestArtifact) => {
         if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) {
-            if (run.label.includes(".gz")) { // GALASA TERMINAL SCREEN
-                new TerminalView(run.path);
+            if (run.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
+                new TerminalView(fs.readFileSync(run.path), undefined);
             } else {
                 let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
                     return textDoc.document.fileName.includes(run.label);
@@ -174,8 +178,11 @@ export function activate(context: vscode.ExtensionContext) {
                 return textDoc.document.fileName.includes(run.label);
             });
             if (!filterActiveDocs || filterActiveDocs.length < 1) {
-                
-                //TODO
+                if (run.label.endsWith(".gz")) {
+                    returnRemoteTerminal(api,run);
+                } else {
+                    returnRemoteDocument(api, run);
+                }
             } else {
                 vscode.window.showInformationMessage("You have already opened this file.");
             }              
@@ -183,19 +190,6 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showErrorMessage("You tried to display a directory, " + run.label);
         }
     });
-
-    const myProvider = new class implements vscode.TextDocumentContentProvider {
-
-		// emitter and its event
-		onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
-		onDidChange = this.onDidChangeEmitter.event;
-
-		provideTextDocumentContent(uri: vscode.Uri): string {
-			return "test";
-		}
-    }
-    
-    vscode.workspace.registerTextDocumentContentProvider()
 
     // General Galasa commands
     vscode.commands.registerCommand('galasa.specifyTestClass', config => {
