@@ -2,11 +2,9 @@ import { DefaultApi, TestRunRequest, CPSRequest } from "galasa-web-api";
 import { window, workspace } from "vscode";
 import { findTestArtifact } from "../DebugConfigHandler";
 import { TestCase } from "../TestExtractor";
-import { readFileSync } from "fs";
+import { readFileSync, createReadStream } from "fs";
 
-export async function submitRuns(api : DefaultApi, testClass : TestCase) {
-
-    window.showInformationMessage(getRandomUid().toString());
+export async function submitRuns(api : DefaultApi, testClass : TestCase) : Promise<number | undefined> {
 
     const testStreamRequest : CPSRequest = {namespace : "framework", prefix : "test", suffix : "streams"};
     const testStreamResponse : any = (await api.propertystoreGet(testStreamRequest)).body;
@@ -42,21 +40,29 @@ export async function submitRuns(api : DefaultApi, testClass : TestCase) {
     }
 
     const propertiesFiles = await workspace.findFiles("**/*.properties");
-    let fileNames : any[] = [];
+    let fileNames : any[] = [""];
     propertiesFiles.forEach(file => {
         fileNames.push(file.path);
     });
-    const overridesFile : string = await window.showQuickPick(fileNames, {placeHolder : "Overrides File"});
+    const overridesFile = await window.showQuickPick(fileNames, {placeHolder : "Overrides File"});
 
-    let overridesMap : Map<string, string> = new Map<string,string>();
-    readFileSync(overridesFile).toString().split("\n").forEach(line => {
-        const pairing = line.split("=");
-        overridesMap.set(pairing[0],pairing[1]);
-    });
+    let overrides = undefined;
+    if(overridesFile == undefined) {
+        return;
+    } else if(overridesFile != "") {
+        let overridesMap : Map<string, string> = new Map<string,string>();
+        readFileSync(overridesFile).toString().split(/\r?\n/).forEach(line => {
+            const pairing = line.split("=");
+            overridesMap.set(pairing[0],pairing[1]);
+        });
 
-    const overrides = JSON.parse(JSON.stringify(overridesMap))
+        overrides = Object.create(null);
+        for (let [k,v] of overridesMap) {
+            overrides[k] = v;
+        }
+    }
 
-    const traceOption = (await window.showQuickPick(["True", "False"], {placeHolder : "Overrides File"}));
+    const traceOption = (await window.showQuickPick(["True", "False"], {placeHolder : "Trace?"}));
     if(traceOption == undefined) {
         return;
     }
@@ -74,7 +80,11 @@ export async function submitRuns(api : DefaultApi, testClass : TestCase) {
         trace : trace
     };
 
-    // api.runsIdPost(getRandomUid(), request);
+    const uid = getRandomUid()
+
+    api.runsIdPost(uid, request);
+
+    return uid;
 }
 
 function getRandomUid() : number {

@@ -94,6 +94,11 @@
 				"icon": "$(refresh)"
 			},
 			{
+				"command": "galasa-testRemote.refresh",
+				"title": "Refresh the Test Progression",
+				"icon": "$(refresh)"
+			},
+			{
 				"command": "galasa-test.setupWorkspace",
 				"title": "Setup Galasa Workspace",
 				"icon": "$(root-folder)"
@@ -128,6 +133,10 @@
 				{
 					"id": "galasa-testrunner",
 					"name": "Test Runner"
+				},
+				{
+					"id": "galasa-testRemote",
+					"name": "Remote Test Progression"
 				},
 				{
 					"id": "galasa-ras",
@@ -207,6 +216,11 @@
 					"command": "galasa-test.simbank",
 					"when": "view == galasa-testrunner",
 					"group": "navigation@1"
+				},
+				{
+					"command": "galasa-testRemote.refresh",
+					"when": "view == galasa-testRemote",
+					"group": "navigation"
 				},
 				{
 					"command": "galasa-ras.refresh",

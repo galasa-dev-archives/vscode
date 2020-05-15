@@ -11,6 +11,7 @@ import { GalasaProperties } from './remote/GalasaProperties';
 import { RemoteRASProvider } from './remote/TreeViewRemoteResultArchiveStore';
 import { submitRuns } from './remote/SubmitRuns';
 import { RasItem } from './remote/RasItem';
+import { RemoteTestExtractor } from './remote/RemoteTestExtractor'
 const galasaPath = process.env.HOME + "/" + ".galasa";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -88,20 +89,15 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     //Remote Testing
-    vscode.commands.registerCommand("galasa-test.remoteTest", (run : TestCase) => {
-        let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
-            return textDoc.document.fileName.includes(run.label);
-        });
-        if (!filterActiveDocs || filterActiveDocs.length < 1) {
-            vscode.workspace.openTextDocument(run.pathToFile).then(doc => {
-                vscode.window.showInformationMessage("Opened " + run.label + ", the test will now be built and debugged.");
-                vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,false);
-            });
-        } else {
-            vscode.window.showInformationMessage("You have already opened this testcase");
+    vscode.commands.registerCommand("galasa-test.remoteTest", async (run : TestCase) => {
+        const runId = await submitRuns(api, run);
+        if(!runId) {
+            vscode.window.showInformationMessage("Remote Test " + run.label + " cancelled");
         }
-        submitRuns(api, run);
     });
+    const remoteTestExtractor = new RemoteTestExtractor(api);
+    vscode.window.registerTreeDataProvider("galasa-testRemote", remoteTestExtractor);
+    vscode.commands.registerCommand("galasa-testRemote.refresh", () => {remoteTestExtractor.refresh();});
 
     // Test Runner
     const testExtractor = new TestExtractor();
