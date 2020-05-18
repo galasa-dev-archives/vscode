@@ -3,8 +3,9 @@ import { window, workspace } from "vscode";
 import { findTestArtifact } from "../DebugConfigHandler";
 import { TestCase } from "../TestExtractor";
 import { readFileSync, createReadStream } from "fs";
+import { GalasaProperties } from "./GalasaProperties";
 
-export async function submitRuns(api : DefaultApi, testClass : TestCase) : Promise<number | undefined> {
+export async function submitRuns(api : DefaultApi, testClass : TestCase, props : GalasaProperties) : Promise<number | undefined> {
 
     const testStreamRequest : CPSRequest = {namespace : "framework", prefix : "test", suffix : "streams"};
     const testStreamResponse : any = (await api.propertystoreGet(testStreamRequest)).body;
@@ -80,9 +81,15 @@ export async function submitRuns(api : DefaultApi, testClass : TestCase) : Promi
         trace : trace
     };
 
-    const uid = getRandomUid()
+    const uid = getRandomUid();
+    await api.runsIdPost(uid, request);
 
-    api.runsIdPost(uid, request);
+    const runsResponse = (await api.runsIdGet(uid)).body;
+    if(runsResponse.runs) {
+        runsResponse.runs.forEach(run => {
+            props.addRun(run.name);
+        });
+    }
 
     return uid;
 }

@@ -2,16 +2,19 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { DefaultApi } from "galasa-web-api";
 import { RasItem } from './RasItem';
+import { RemoteTestCase } from './RemoteTestExtractor';
 
 
 export class RemoteRASProvider implements vscode.TreeDataProvider<RasItem> {
     private api:DefaultApi;
+    private run:RemoteTestCase | undefined;
 
     private _onDidChangeTreeData: vscode.EventEmitter<RasItem | undefined> = new vscode.EventEmitter<RasItem | undefined>();
     readonly onDidChangeTreeData: vscode.Event<RasItem | undefined> = this._onDidChangeTreeData.event;
 
     constructor(api: DefaultApi) {
         this.api = api;
+        this.run = undefined;
     }
 
     getTreeItem(element:RasItem): vscode.TreeItem {
@@ -20,25 +23,34 @@ export class RemoteRASProvider implements vscode.TreeDataProvider<RasItem> {
 
     async getChildren(element?: vscode.TreeItem): Promise<RasItem[] | undefined> {
         let list: RasItem[] = [];
+        if (!this.run) {
+            return list;
+        }
         if (this.api) {
             if (!element) {
-                const responseBody:any =  (await this.api.resultarchiveGet()).body;
-                const rasServices = responseBody.rasServices;
-                rasServices.forEach((rasService:any) => {
-                    const temp = rasService.structure;
-                    list.push(new RasItem(temp.name, temp.directory, temp.children, temp.resultPath, vscode.TreeItemCollapsibleState.Collapsed, ""))
+                const artifacts:any[] = this.run.data.artifactFiles
+                artifacts.forEach((artifact:any) => {
+                    if (artifact.children) {
+                        list.push(new RasItem(artifact.name, true, artifact.children, undefined, vscode.TreeItemCollapsibleState.Collapsed, ""))  
+                    } else {
+                        list.push(new RasItem(artifact.name, false, undefined, artifact.content, vscode.TreeItemCollapsibleState.None, "rasitem"))
+                    }  
                 });
                 return list;
             } else {
                 if(element instanceof RasItem) {
-                    element.children?.forEach(child=> {
-                        if (!child.directory) {
-                            list.push(new RasItem(child.name, false, undefined, child.resultPath, vscode.TreeItemCollapsibleState.None, "rasitem"))
-                        } else { 
-                            list.push(new RasItem(child.name, true, child.children, undefined, vscode.TreeItemCollapsibleState.Collapsed, ""));
-                        } 
-                    });
-                    return list;
+                    if (element.children) {
+                        element.children.forEach(child => {
+                            if (child.children) {
+                                list.push(new RasItem(child.name, true, child.children, undefined, vscode.TreeItemCollapsibleState.Collapsed, ""))  
+                            } else {
+                                list.push(new RasItem(child.name, false, undefined, child.content, vscode.TreeItemCollapsibleState.None, "rasitem"))
+                            }  
+                        })
+                        return list;
+                    } else {
+                        return undefined;
+                    }
                 } else {
                     return undefined;
                 }
@@ -48,6 +60,10 @@ export class RemoteRASProvider implements vscode.TreeDataProvider<RasItem> {
 
     public refresh(): void {
         this._onDidChangeTreeData.fire();
+    }
+
+    public setRun(run:RemoteTestCase) {
+        this.run = run;
     }
 }
 
