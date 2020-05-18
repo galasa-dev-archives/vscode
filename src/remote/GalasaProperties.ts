@@ -22,7 +22,7 @@ export class GalasaProperties {
     }
 
     public addRun(runName : string) {
-        if(fs.readFileSync(this.trackedRuns).toString() == "") {
+        if(fs.readFileSync(this.trackedRuns).toString().trim() == "") {
             fs.appendFileSync(this.trackedRuns, runName);
         } else {
             fs.appendFileSync(this.trackedRuns, "," + runName);
@@ -30,7 +30,7 @@ export class GalasaProperties {
     }
 
     public removeRun(runName : string) {
-        if(fs.readFileSync(this.trackedRuns).toString() == runName) {
+        if(fs.readFileSync(this.trackedRuns).toString().trim() == runName) {
             fs.writeFileSync(this.trackedRuns, "");
         } else if (fs.readFileSync(this.trackedRuns).toString().indexOf(runName) == 0) {
             fs.writeFileSync(this.trackedRuns, fs.readFileSync(this.trackedRuns).toString().replace(runName + ",", ""));
@@ -40,10 +40,9 @@ export class GalasaProperties {
     }
 
     public getTrackedRuns() : string[] {
-        let data = fs.readFileSync(this.trackedRuns).toString().split(",");
-        for (let index = 0; index < data.length; index++) {
-            data[index] = data[index].trim();
+        if(fs.readFileSync(this.trackedRuns).toString().trim() == "") {
+            return [];
         }
-        return data;
+        return fs.readFileSync(this.trackedRuns).toString().trim().split(",");
     }
 }

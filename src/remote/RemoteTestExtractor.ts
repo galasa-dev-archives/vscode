@@ -61,7 +61,7 @@ export class RemoteTestCase extends vscode.TreeItem {
             case "discarding":
             case "ending":
             case "finished":
-                if(data.testStructure.result == "passed") {
+                if(data.testStructure.result == "Passed") {
                     this.iconPath = new vscode.ThemeIcon("check");
                 } else {
                     this.iconPath = new vscode.ThemeIcon("close");

@@ -245,7 +245,7 @@
 			"view/item/context": [
 				{
 					"command": "galasa-testRemote.delete",
-					"when": "view == galasa-testrunner"
+					"when": "view == galasa-testRemote"
 				},
 				{
 					"command": "galasa-test.debug",
