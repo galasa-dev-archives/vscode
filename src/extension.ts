@@ -101,6 +101,9 @@ export function activate(context: vscode.ExtensionContext) {
     const remoteTestExtractor = new RemoteTestExtractor(api, props);
     vscode.window.registerTreeDataProvider("galasa-testRemote", remoteTestExtractor);
     vscode.commands.registerCommand("galasa-testRemote.refresh", () => {remoteTestExtractor.refresh();});
+    vscode.commands.registerCommand("galasa-testRemote.openLog", (run: TestCase) => {
+
+    });
 
     // Test Runner
     const testExtractor = new TestExtractor();
