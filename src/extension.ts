@@ -19,9 +19,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     //Setup API
     const bootstrap : string | undefined = vscode.workspace.getConfiguration("galasa").get("bootstrap-endpoint");
-    const props = new GalasaProperties(bootstrap);
+    const props = new GalasaProperties(bootstrap, galasaPath);
     const api =  new DefaultApi(props.getEndpointUrl());
-
 
     //vscode.workspace.registerTextDocumentContentProvider("RemoteTesting", myProvider);
 
@@ -94,12 +93,12 @@ export function activate(context: vscode.ExtensionContext) {
 
     //Remote Testing
     vscode.commands.registerCommand("galasa-test.remoteTest", async (run : TestCase) => {
-        const runId = await submitRuns(api, run);
+        const runId = await submitRuns(api, run, props);
         if(!runId) {
             vscode.window.showInformationMessage("Remote Test " + run.label + " cancelled");
         }
     });
-    const remoteTestExtractor = new RemoteTestExtractor(api);
+    const remoteTestExtractor = new RemoteTestExtractor(api, props);
     vscode.window.registerTreeDataProvider("galasa-testRemote", remoteTestExtractor);
     vscode.commands.registerCommand("galasa-testRemote.refresh", () => {remoteTestExtractor.refresh();});
 
