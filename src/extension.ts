@@ -12,7 +12,6 @@ import { RemoteRASProvider } from './remote/TreeViewRemoteResultArchiveStore';
 import { submitRuns } from './remote/SubmitRuns';
 import { RasItem } from './remote/RasItem';
 import { RemoteTestExtractor, RemoteTestCase } from './remote/RemoteTestExtractor'
-import { returnRemoteDocument, returnRemoteTerminal } from './remote/OpenRemoteFile';
 const galasaPath = process.env.HOME + "/" + ".galasa";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -101,11 +100,20 @@ export function activate(context: vscode.ExtensionContext) {
     const remoteTestExtractor = new RemoteTestExtractor(api, props);
     vscode.window.registerTreeDataProvider("galasa-testRemote", remoteTestExtractor);
     vscode.commands.registerCommand("galasa-testRemote.refresh", () => {remoteTestExtractor.refresh();});
-    vscode.commands.registerCommand("galasa-testRemote.openLog", (run: TestCase) => {
+    vscode.commands.registerCommand("galasa-testRemote.openLog", (run: RemoteTestCase) => {
+        props.getLog(run.data.runlog, run.data.testStructure.runName);
     });
     vscode.commands.registerCommand("galasa-testRemote.delete", (run : RemoteTestCase) => {
-        props.removeRun(run.data.testSturcture.runName);
+        props.removeRun(run.data.testStructure.runName);
     });
+    const remoteRasProvider = new RemoteRASProvider(api);
+    vscode.window.registerTreeDataProvider("galasa-rasRemote", remoteRasProvider);
+    vscode.commands.registerCommand("galasa-rasRemote.refresh", () => remoteRasProvider.refresh());
+    vscode.commands.registerCommand("galasa-testRemote.artifacts", (run:RemoteTestCase) => {
+        remoteRasProvider.setRun(run);
+        remoteRasProvider.refresh();
+    });
+    
 
     // Test Runner
     const testExtractor = new TestExtractor();
@@ -167,29 +175,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
         localRasProvider.refresh();
     });
-
-    //Remote Result Archive Store
-    const remoteRasProvider = new RemoteRASProvider(api);
-    vscode.window.registerTreeDataProvider("galasa-rasRemote", remoteRasProvider);
-    vscode.commands.registerCommand("galasa-rasRemote.refresh", () => remoteRasProvider.refresh());
-    vscode.commands.registerCommand('galasa-rasRemote.open', async (run : RasItem) => {
-        if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) { 
-            let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
-                return textDoc.document.fileName.includes(run.label);
-            });
-            if (!filterActiveDocs || filterActiveDocs.length < 1) {
-                if (run.label.endsWith(".gz")) {
-                    returnRemoteTerminal(api,run);
-                } else {
-                    returnRemoteDocument(api, run);
-                }
-            } else {
-                vscode.window.showInformationMessage("You have already opened this file.");
-            }              
-        } else {
-            vscode.window.showErrorMessage("You tried to display a directory, " + run.label);
-        }
-    });
+    
 
     // General Galasa commands
     vscode.commands.registerCommand('galasa.specifyTestClass', config => {
