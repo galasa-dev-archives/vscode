@@ -121,6 +121,10 @@
 				"command": "galasa-test.remoteTest",
 				"title": "Launch Remote Galasa test",
 				"icon": "$(cloud-upload)"
+			},
+			{
+				"command": "galasa-testRemote.delete",
+				"title": "Delete"
 			}
 		],
 		"viewsContainers": {
@@ -243,6 +247,10 @@
 				}
 			],
 			"view/item/context": [
+				{
+					"command": "galasa-testRemote.delete",
+					"when": "view == galasa-testrunner"
+				},
 				{
 					"command": "galasa-test.debug",
 					"when": "view == galasa-testrunner",
