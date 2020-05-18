@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
-import { DefaultApi, RASRequest } from 'galasa-web-api';
+import { DefaultApi } from 'galasa-web-api';
 import { GalasaProperties } from './GalasaProperties';
 const fs = require('fs');
 const path = require('path');
 
-export class RemoteTestExtractor implements vscode.TreeDataProvider<TestCase> {
+export class RemoteTestExtractor implements vscode.TreeDataProvider<RemoteTestCase> {
 
-    private _onDidChangeTreeData: vscode.EventEmitter<TestCase | undefined> = new vscode.EventEmitter<TestCase | undefined>();
-    readonly onDidChangeTreeData: vscode.Event<TestCase | undefined> = this._onDidChangeTreeData.event;
+    private _onDidChangeTreeData: vscode.EventEmitter<RemoteTestCase | undefined> = new vscode.EventEmitter<RemoteTestCase | undefined>();
+    readonly onDidChangeTreeData: vscode.Event<RemoteTestCase | undefined> = this._onDidChangeTreeData.event;
 
     private api : DefaultApi;
     private props : GalasaProperties;
@@ -21,7 +21,7 @@ export class RemoteTestExtractor implements vscode.TreeDataProvider<TestCase> {
 		this._onDidChangeTreeData.fire();
 	}
 
-    getTreeItem(element: TestCase): vscode.TreeItem {
+    getTreeItem(element: RemoteTestCase): vscode.TreeItem {
 		return element;
 	}
 
@@ -29,10 +29,10 @@ export class RemoteTestExtractor implements vscode.TreeDataProvider<TestCase> {
         return this.getRemoteTests();
     }
 
-    async getRemoteTests() : Promise<TestCase[]> {
+    async getRemoteTests() : Promise<RemoteTestCase[]> {
         const trackedRuns = this.props.getTrackedRuns();
         
-        let testFiles : TestCase[] = [];
+        let testFiles : RemoteTestCase[] = [];
         for(const runId of trackedRuns) {
             const runData : any = (await this.api.resultarchivePost({runName : runId})).body;
             let label = runId + " - " + runData.testStructure.testShortName + " - ";
@@ -41,14 +41,14 @@ export class RemoteTestExtractor implements vscode.TreeDataProvider<TestCase> {
             } else {
                 label = label + runData.testStructure.status;
             }
-            testFiles.push(new TestCase(label, runData));
+            testFiles.push(new RemoteTestCase(label, runData));
         }
         
         return testFiles;
     }
 }
 
-export class TestCase extends vscode.TreeItem {
+export class RemoteTestCase extends vscode.TreeItem {
 
     constructor(
         public readonly label: string,
@@ -61,10 +61,10 @@ export class TestCase extends vscode.TreeItem {
             case "discarding":
             case "ending":
             case "finished":
-                if(data.testStructure.result == "failed") {
-                    this.iconPath = new vscode.ThemeIcon("close");
-                } else {
+                if(data.testStructure.result == "passed") {
                     this.iconPath = new vscode.ThemeIcon("check");
+                } else {
+                    this.iconPath = new vscode.ThemeIcon("close");
                 }
                 break;
             case "running":

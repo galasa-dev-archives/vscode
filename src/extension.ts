@@ -11,7 +11,7 @@ import { GalasaProperties } from './remote/GalasaProperties';
 import { RemoteRASProvider } from './remote/TreeViewRemoteResultArchiveStore';
 import { submitRuns } from './remote/SubmitRuns';
 import { RasItem } from './remote/RasItem';
-import { RemoteTestExtractor } from './remote/RemoteTestExtractor'
+import { RemoteTestExtractor, RemoteTestCase } from './remote/RemoteTestExtractor'
 import { returnRemoteDocument, returnRemoteTerminal } from './remote/OpenRemoteFile';
 const galasaPath = process.env.HOME + "/" + ".galasa";
 
@@ -101,6 +101,9 @@ export function activate(context: vscode.ExtensionContext) {
     const remoteTestExtractor = new RemoteTestExtractor(api, props);
     vscode.window.registerTreeDataProvider("galasa-testRemote", remoteTestExtractor);
     vscode.commands.registerCommand("galasa-testRemote.refresh", () => {remoteTestExtractor.refresh();});
+    vscode.commands.registerCommand("galasa-testRemote.delete", (run : RemoteTestCase) => {
+        props.removeRun(run.data.testSturcture.runName);
+    });
 
     // Test Runner
     const testExtractor = new TestExtractor();
