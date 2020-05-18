@@ -99,6 +99,10 @@
 				"icon": "$(refresh)"
 			},
 			{
+				"command": "galasa-testRemote.openLog",
+				"title": "Run Log"
+			},
+			{
 				"command": "galasa-test.setupWorkspace",
 				"title": "Setup Galasa Workspace",
 				"icon": "$(root-folder)"
@@ -121,6 +125,10 @@
 			{
 				"command": "galasa-testRemote.delete",
 				"title": "Delete"
+			},
+			{
+				"command": "galasa-testRemote.artifacts",
+				"title": "Show artifacts"
 			}
 		],
 		"viewsContainers": {
@@ -266,6 +274,14 @@
 					"command": "galasa-rasRemote.open",
 					"when": "view == galasa-rasRemote && viewItem == rasitem",
 					"group": "inline"
+				},
+				{
+					"command": "galasa-testRemote.openLog",
+					"when": "view == galasa-testRemote"
+				},
+				{
+					"command": "galasa-testRemote.artifacts",
+					"when": "view == galasa-testRemote"
 				}
 			]
 		}

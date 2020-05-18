@@ -1,5 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as vscode from 'vscode';
+import { RemoteProvider } from "./RemoteProvider";
 
 export class GalasaProperties {
 
@@ -44,5 +46,20 @@ export class GalasaProperties {
             return [];
         }
         return fs.readFileSync(this.trackedRuns).toString().trim().split(",");
+    }
+
+     async getLog(logFile:string, runName: string) {
+        let returnString = "";
+        returnString = logFile.toString();
+
+        const provider = new RemoteProvider(runName + ".log", returnString);
+        
+
+        vscode.workspace.registerTextDocumentContentProvider("remote", provider);
+
+        let uri = vscode.Uri.parse('remote:' + runName+ ".log");
+        let doc = await vscode.workspace.openTextDocument(uri);
+
+        await vscode.window.showTextDocument(doc, { preview: false });
     }
 }
