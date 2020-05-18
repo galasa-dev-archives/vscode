@@ -31,9 +31,9 @@ export class RemoteRASProvider implements vscode.TreeDataProvider<RasItem> {
                 const artifacts:any[] = this.run.data.artifactFiles
                 artifacts.forEach((artifact:any) => {
                     if (artifact.children) {
-                        list.push(new RasItem(artifact.name, true, artifact.children, vscode.TreeItemCollapsibleState.Collapsed, ""))  
+                        list.push(new RasItem(artifact.name, true, artifact.children, undefined, vscode.TreeItemCollapsibleState.Collapsed, ""))  
                     } else {
-                        list.push(new RasItem(artifact.name, false, undefined, vscode.TreeItemCollapsibleState.None, "rasitem"))
+                        list.push(new RasItem(artifact.name, false, undefined, artifact.content, vscode.TreeItemCollapsibleState.None, "rasitem"))
                     }  
                 });
                 return list;
@@ -42,9 +42,9 @@ export class RemoteRASProvider implements vscode.TreeDataProvider<RasItem> {
                     if (element.children) {
                         element.children.forEach(child => {
                             if (child.children) {
-                                list.push(new RasItem(child.name, true, child.children, vscode.TreeItemCollapsibleState.Collapsed, ""))  
+                                list.push(new RasItem(child.name, true, child.children, undefined, vscode.TreeItemCollapsibleState.Collapsed, ""))  
                             } else {
-                                list.push(new RasItem(child.name, false, undefined, vscode.TreeItemCollapsibleState.None, "rasitem"))
+                                list.push(new RasItem(child.name, false, undefined, child.content, vscode.TreeItemCollapsibleState.None, "rasitem"))
                             }  
                         })
                         return list;

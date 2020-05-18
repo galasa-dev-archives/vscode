@@ -12,6 +12,7 @@ import { RemoteRASProvider } from './remote/TreeViewRemoteResultArchiveStore';
 import { submitRuns } from './remote/SubmitRuns';
 import { RasItem } from './remote/RasItem';
 import { RemoteTestExtractor, RemoteTestCase } from './remote/RemoteTestExtractor'
+import { RemoteProvider } from './remote/RemoteProvider';
 const galasaPath = process.env.HOME + "/" + ".galasa";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -113,6 +114,35 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("galasa-testRemote.artifacts", (run:RemoteTestCase) => {
         remoteRasProvider.setRun(run);
         remoteRasProvider.refresh();
+    });
+    vscode.commands.registerCommand("galasa-rasRemote.open", async (item:RasItem) => {
+        if (item.collapsibleState === vscode.TreeItemCollapsibleState.None ) {
+            if (item.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
+                new TerminalView(undefined, item.data);
+            } else {
+                let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
+                    return textDoc.document.fileName.includes(item.label);
+                });
+                if (!filterActiveDocs || filterActiveDocs.length < 1) {
+                    let returnString = "";
+                    returnString = item.data.toString();
+
+                    const provider = new RemoteProvider(item.label, returnString);
+                    
+
+                    vscode.workspace.registerTextDocumentContentProvider("remote", provider);
+
+                    let uri = vscode.Uri.parse('remote:' + item.label);
+                    let doc = await vscode.workspace.openTextDocument(uri);
+
+                    await vscode.window.showTextDocument(doc, { preview: false });
+                } else {
+                    vscode.window.showInformationMessage("You have already opened this file.");
+                }
+            }            
+        } else {
+            vscode.window.showErrorMessage("You tried to display a directory, " + item.label);
+        }
     });
     
 

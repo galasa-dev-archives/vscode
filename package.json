@@ -147,16 +147,16 @@
 					"name": "Test Runner"
 				},
 				{
-					"id": "galasa-testRemote",
-					"name": "Remote Test Progression"
-				},
-				{
 					"id": "galasa-ras",
 					"name": "Result Archive Store"
 				},
 				{
+					"id": "galasa-testRemote",
+					"name": "Remote Test Progression"
+				},
+				{
 					"id": "galasa-rasRemote",
-					"name": "Remote Result Archive Store"
+					"name": "Remote Artifacts"
 				}
 			]
 		},
