@@ -3,7 +3,7 @@
 	"displayName": "Galasa",
 	"description": "",
 	"publisher": "Galasa",
-	"version": "0.8.0",
+	"version": "0.7.0",
 	"icon": "resources/GalasaLogo.png",
 	"engines": {
 		"vscode": "^1.44.0"
@@ -149,6 +149,14 @@
 				{
 					"id": "galasa-ras",
 					"name": "Result Archive Store"
+				},
+				{
+					"id": "galasa-testRemote",
+					"name": "Remote Test Progression"
+				},
+				{
+					"id": "galasa-rasRemote",
+					"name": "Remote Artifacts"
 				}
 			]
 		},
@@ -191,6 +199,11 @@
 					"type": "string",
 					"default": "LATEST",
 					"description": "%galasavscode.config.galasa.version%"
+				},
+				"galasa.bootstrap-endpoint": {
+					"type": "string",
+					"default": "",
+					"description": "%galasavscode.config.galasa.bootstrap-endpoint%"
 				}
 			}
 		},
@@ -248,6 +261,11 @@
 					"group": "inline"
 				},
 				{
+					"command": "galasa-test.remoteTest",
+					"when": "view == galasa-testrunner",
+					"group": "inline"
+				},
+				{
 					"command": "galasa-ras.open",
 					"when": "view == galasa-ras && viewItem == testartifact",
 					"group": "inline"
@@ -284,7 +302,6 @@
 		"gulp": "^4.0.2",
 		"http": "0.0.1-security",
 		"request": "^2.88.2",
-		"rimraf": "^3.0.2",
 		"typescript": "^3.8.3",
 		"unzipper": "^0.10.11"
 	},

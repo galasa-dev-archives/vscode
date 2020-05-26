@@ -26,14 +26,14 @@ export async function getDebugConfig(testClass : TestCase, context : ExtensionCo
         request: "launch",
         classPaths: [context.extensionPath + "/lib/galasa-boot.jar"],
         mainClass: "dev.galasa.boot.Launcher",
-        args: maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion() + "/obr " + workspaceObr + "--test " + findTestArtifact(testClass)
+        args: maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion(context) + "/obr " + workspaceObr + "--test " + findTestArtifact(testClass)
     }
 }
 
-export function getGalasaVersion() : string {
+export function getGalasaVersion(context : ExtensionContext) : string  {
     let version : string | undefined = workspace.getConfiguration("galasa").get("version");
     if(!version || version == "LATEST") {
-        version = "0.7.0";
+        version = JSON.parse(fs.readFileSync(context.extensionPath + "/package.json").toString()).version + "";
     }
     
     return version;
@@ -53,7 +53,7 @@ export async function buildLocalObr(context : ExtensionContext) : Promise<string
             "<version>"+ version + "</version>" +
             "<scope>compile</scope></dependency>\n"
     });
-    let galasaVersion = getGalasaVersion();
+    let galasaVersion = getGalasaVersion(context);
     pomData = pomData.replace(/%%dependencies%%/g, dependencies).replace(/%%version%%/g, galasaVersion);
 
     if(!fs.existsSync(context.extensionPath + "/galasa-workspace-obr")) {
