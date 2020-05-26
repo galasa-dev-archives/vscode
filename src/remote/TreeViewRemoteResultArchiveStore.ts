@@ -1,18 +1,18 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { DefaultApi } from "galasa-web-api";
+import * as ras from "galasa-ras-api"
 import { RasItem } from './RasItem';
 import { RemoteTestCase } from './RemoteTestExtractor';
 
 
 export class RemoteRASProvider implements vscode.TreeDataProvider<RasItem> {
-    private api:DefaultApi;
+    private api:ras.DefaultApi;
     private run:RemoteTestCase | undefined;
 
     private _onDidChangeTreeData: vscode.EventEmitter<RasItem | undefined> = new vscode.EventEmitter<RasItem | undefined>();
     readonly onDidChangeTreeData: vscode.Event<RasItem | undefined> = this._onDidChangeTreeData.event;
 
-    constructor(api: DefaultApi) {
+    constructor(api: ras.DefaultApi) {
         this.api = api;
         this.run = undefined;
     }

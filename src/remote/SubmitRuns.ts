@@ -1,14 +1,14 @@
-import { DefaultApi, TestRunRequest, CPSRequest } from "galasa-web-api";
+import * as cps from "galasa-cps-api";
+import * as runs from "galasa-runs-api";
 import { window, workspace } from "vscode";
 import { findTestArtifact } from "../DebugConfigHandler";
 import { TestCase } from "../TestExtractor";
 import { readFileSync, createReadStream } from "fs";
 import { GalasaProperties } from "./GalasaProperties";
 
-export async function submitRuns(api : DefaultApi, testClass : TestCase, props : GalasaProperties) : Promise<number | undefined> {
+export async function submitRuns(cpsApi : cps.DefaultApi, runsApi: runs.DefaultApi, testClass : TestCase, props : GalasaProperties) : Promise<number | undefined> {
 
-    const testStreamRequest : CPSRequest = {namespace : "framework", prefix : "test", suffix : "streams"};
-    const testStreamResponse : any = (await api.propertystoreGet(testStreamRequest)).body;
+    const testStreamResponse : any = (await cpsApi.cpsNamespaceGet("framework", "test", "streams")).body;
 
     const testStreamResponses : string = testStreamResponse.value;
     const testStreams : string[] = testStreamResponses.split(",");
@@ -22,8 +22,7 @@ export async function submitRuns(api : DefaultApi, testClass : TestCase, props :
         return;
     }
 
-    const obrRequest : CPSRequest = {namespace : "framework", prefix : "test.stream", suffix : "obr", infixes : [testStream]};
-    const obrResponse : any = (await api.propertystoreGet(obrRequest)).body;
+    const obrResponse : any = (await cpsApi.cpsNamespaceGet("framework", "test.stream", "obr", [testStream])).body;
     const obr = obrResponse.value;
 
     if(!obr) {
@@ -31,8 +30,7 @@ export async function submitRuns(api : DefaultApi, testClass : TestCase, props :
         return;
     }
 
-    const mavenRepoRequest : CPSRequest = {namespace : "framework", prefix : "test.stream", suffix : "maven.repo", infixes : [testStream]};
-    const mavenRepoResponse : any = (await api.propertystoreGet(mavenRepoRequest)).body;
+    const mavenRepoResponse : any = (await cpsApi.cpsNamespaceGet("framework", "test.stream", "maven.repo", [testStream])).body;
     const mavenRepo = mavenRepoResponse.value;
 
     if(!mavenRepo) {
@@ -71,7 +69,7 @@ export async function submitRuns(api : DefaultApi, testClass : TestCase, props :
 
     const className = findTestArtifact(testClass);
 
-    const request : TestRunRequest = {
+    const request : runs.TestRunRequest = {
         classNames : [className],
         requestorType : "Request",
         testStream : testStream,
@@ -82,9 +80,9 @@ export async function submitRuns(api : DefaultApi, testClass : TestCase, props :
     };
 
     const uid = getRandomUid();
-    await api.runsIdPost(uid, request);
+    await runsApi.runsIdPost(uid, request);
 
-    const runsResponse = (await api.runsIdGet(uid)).body;
+    const runsResponse = (await runsApi.runsIdGet(uid)).body;
     if(runsResponse.runs) {
         runsResponse.runs.forEach(run => {
             props.addRun(run.name);
