@@ -6,7 +6,9 @@ import {TerminalView} from "./ui/TerminalView";
 const path = require('path');
 import * as fs from 'fs';
 import { createExampleFiles, launchSimbank } from './Examples';
-import { DefaultApi } from 'galasa-web-api';
+import * as cps from 'galasa-cps-api';
+import * as ras from 'galasa-ras-api';
+import * as runs from 'galasa-runs-api';
 import { GalasaProperties } from './remote/GalasaProperties';
 import { RemoteRASProvider } from './remote/TreeViewRemoteResultArchiveStore';
 import { submitRuns } from './remote/SubmitRuns';
@@ -20,7 +22,9 @@ export function activate(context: vscode.ExtensionContext) {
     //Setup API
     const bootstrap : string | undefined = vscode.workspace.getConfiguration("galasa").get("bootstrap-endpoint");
     const props = new GalasaProperties(bootstrap, galasaPath);
-    const api =  new DefaultApi(props.getEndpointUrl());
+    const cpsApi =  new cps.DefaultApi(props.getEndpointUrl());
+    const rasApi =  new ras.DefaultApi(props.getEndpointUrl());
+    const runsApi =  new runs.DefaultApi(props.getEndpointUrl());
 
     //vscode.workspace.registerTextDocumentContentProvider("RemoteTesting", myProvider);
 
@@ -93,12 +97,12 @@ export function activate(context: vscode.ExtensionContext) {
 
     //Remote Testing
     vscode.commands.registerCommand("galasa-test.remoteTest", async (run : TestCase) => {
-        const runId = await submitRuns(api, run, props);
+        const runId = await submitRuns(cpsApi, runsApi, run, props);
         if(!runId) {
             vscode.window.showInformationMessage("Remote Test " + run.label + " cancelled");
         }
     });
-    const remoteTestExtractor = new RemoteTestExtractor(api, props);
+    const remoteTestExtractor = new RemoteTestExtractor(rasApi, props);
     vscode.window.registerTreeDataProvider("galasa-testRemote", remoteTestExtractor);
     vscode.commands.registerCommand("galasa-testRemote.refresh", () => {remoteTestExtractor.refresh();});
     vscode.commands.registerCommand("galasa-testRemote.openLog", (run: RemoteTestCase) => {
@@ -108,7 +112,7 @@ export function activate(context: vscode.ExtensionContext) {
         props.removeRun(run.data.testStructure.runName);
         remoteTestExtractor.refresh();
     });
-    const remoteRasProvider = new RemoteRASProvider(api);
+    const remoteRasProvider = new RemoteRASProvider(rasApi);
     vscode.window.registerTreeDataProvider("galasa-rasRemote", remoteRasProvider);
     vscode.commands.registerCommand("galasa-rasRemote.refresh", () => remoteRasProvider.refresh());
     vscode.commands.registerCommand("galasa-testRemote.artifacts", (run:RemoteTestCase) => {
