@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
 import { TestExtractor, TestCase } from './TestExtractor';
-import { RASProvider, TestArtifact} from './TreeViewLocalResultArchiveStore';
+import { RASProvider} from './TreeViewLocalResultArchiveStore';
 import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfigHandler';
 import {TerminalView} from "./ui/TerminalView";
-const path = require('path');
 import * as fs from 'fs';
 import { createExampleFiles, launchSimbank } from './Examples';
 // import * as cps from 'galasa-cps-api';
@@ -19,6 +18,8 @@ const galasaPath = process.env.HOME + "/" + ".galasa";
 
 export function activate(context: vscode.ExtensionContext) {
 
+    setupWorkspace();
+
     //Setup API
     // const bootstrap : string | undefined = vscode.workspace.getConfiguration("galasa").get("bootstrap-endpoint");
     // const props = new GalasaProperties(bootstrap, galasaPath);
@@ -30,37 +31,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     //Setup Workspace
     vscode.commands.registerCommand('galasa-test.setupWorkspace', () => {
-        let created : string[] = [];
-        if(!fs.existsSync(galasaPath + "/credentials.properties")) {
-            fs.writeFile(galasaPath + "/credentials.properties", "", function (err) {
-                if (err) throw err;
-            });
-            created.push("credentials.properties");
-        }
-        if(!fs.existsSync(galasaPath + "/cps.properties")) {
-            fs.writeFile(galasaPath + "/cps.properties", "", function (err) {
-                if (err) throw err;
-            });
-            created.push("cps.properties");
-        }
-        if(!fs.existsSync(galasaPath + "/bootstrap.properties")) {
-            fs.writeFile(galasaPath + "/bootstrap.properties", "", function (err) {
-                if (err) throw err;
-            });
-            created.push("bootstrap.properties");
-        }
-        if(!fs.existsSync(galasaPath + "/dss.properties")) {
-            fs.writeFile(galasaPath + "/dss.properties", "", function (err) {
-                if (err) throw err;
-            });
-            created.push("dss.properties");
-        }
-        if(!fs.existsSync(galasaPath + "/overrides.properties")) {
-            fs.writeFile(galasaPath + "/overrides.properties", "", function (err) {
-                if (err) throw err;
-            });
-            created.push("overrides.properties");
-        }
+        let created : string[] = setupWorkspace();
+        
         if(created.length > 0) {
             let createdString : string = "Created:"
             created.forEach(element => {
@@ -159,42 +131,61 @@ export function activate(context: vscode.ExtensionContext) {
     const localRasProvider = new RASProvider(galasaPath);
     vscode.window.registerTreeDataProvider("galasa-ras", localRasProvider);
     vscode.commands.registerCommand("galasa-ras.refresh", () => localRasProvider.refresh());
-    vscode.commands.registerCommand('galasa-ras.open', async (run : TestArtifact) => {
-        if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) {
-            if (run.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
-                new TerminalView(fs.readFileSync(run.path), undefined);
-            } else {
-                let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
-                    return textDoc.document.fileName.includes(run.label);
-                });
-                if (!filterActiveDocs || filterActiveDocs.length < 1) {
-                    vscode.workspace.openTextDocument(run.path).then(doc => {
-                            vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
-                      });
-                } else {
-                    vscode.window.showInformationMessage("You have already opened this file.");
-                }
-            }            
-        } else {
-            vscode.window.showErrorMessage("You tried to display a directory, " + run.label);
-        }
-    });
-    vscode.commands.registerCommand("galasa-ras.clearAll", () => {
-        let input = vscode.window.showInputBox({placeHolder: "Type YES if you want to PERMANELTY clear out your local RAS."});
-        if (input) {
-            input.then((text) => {
-                if (text === "YES") {
-                    localRasProvider.clearAll();
-                    vscode.window.showInformationMessage("The Result Archive Store has been fully cleared out.");
-                    localRasProvider.refresh();
-                } else {
-                    vscode.window.showInformationMessage("The Result Archive Store has not been affected.");
-                }
-            });
-        } else {
-            vscode.window.showErrorMessage("There was an error trying to clear the Result Archive Store.");
-        }
-        localRasProvider.refresh();
-    });
+    //TODO fix to opening stuff in RAS
+    // vscode.commands.registerCommand('galasa-ras.open', async (run : TestArtifact) => {
+    //     if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) {
+    //         if (run.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
+    //             new TerminalView(fs.readFileSync(run.path), undefined);
+    //         } else {
+    //             let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
+    //                 return textDoc.document.fileName.includes(run.label);
+    //             });
+    //             if (!filterActiveDocs || filterActiveDocs.length < 1) {
+    //                 vscode.workspace.openTextDocument(run.path).then(doc => {
+    //                         vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
+    //                   });
+    //             } else {
+    //                 vscode.window.showInformationMessage("You have already opened this file.");
+    //             }
+    //         }            
+    //     } else {
+    //         vscode.window.showErrorMessage("You tried to display a directory, " + run.label);
+    //     }
+    // });
     
+}
+
+function setupWorkspace() : string[] {
+    let created : string[] = []
+    if(!fs.existsSync(galasaPath + "/credentials.properties")) {
+        fs.writeFile(galasaPath + "/credentials.properties", "", function (err) {
+            if (err) throw err;
+        });
+        created.push("credentials.properties");
+    }
+    if(!fs.existsSync(galasaPath + "/cps.properties")) {
+        fs.writeFile(galasaPath + "/cps.properties", "", function (err) {
+            if (err) throw err;
+        });
+        created.push("cps.properties");
+    }
+    if(!fs.existsSync(galasaPath + "/bootstrap.properties")) {
+        fs.writeFile(galasaPath + "/bootstrap.properties", "", function (err) {
+            if (err) throw err;
+        });
+        created.push("bootstrap.properties");
+    }
+    if(!fs.existsSync(galasaPath + "/dss.properties")) {
+        fs.writeFile(galasaPath + "/dss.properties", "", function (err) {
+            if (err) throw err;
+        });
+        created.push("dss.properties");
+    }
+    if(!fs.existsSync(galasaPath + "/overrides.properties")) {
+        fs.writeFile(galasaPath + "/overrides.properties", "", function (err) {
+            if (err) throw err;
+        });
+        created.push("overrides.properties");
+    }
+    return created;
 }

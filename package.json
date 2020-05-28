@@ -18,7 +18,6 @@
 		"onCommand:galasa-test.debug",
 		"onCommand:galasa-ras.refresh",
 		"onCommand:galasa-ras.open",
-		"onCommand:galasa-ras.clearAll",
 		"onCommand:galasa-test.setupWorkspace",
 		"onCommand:galasa-test.createExamples",
 		"onDebug"
@@ -45,11 +44,6 @@
 				"command": "galasa-ras.open",
 				"title": "Open a file from the RAS",
 				"icon": "$(go-to-file)"
-			},
-			{
-				"command": "galasa-ras.clearAll",
-				"title": "Clear your local RAS",
-				"icon": "$(clear-all)"
 			},
 			{
 				"command": "galasa-test.setupWorkspace",
@@ -132,11 +126,6 @@
 				},
 				{
 					"command": "galasa-ras.refresh",
-					"when": "view == galasa-ras",
-					"group": "navigation"
-				},
-				{
-					"command": "galasa-ras.clearAll",
 					"when": "view == galasa-ras",
 					"group": "navigation"
 				}
