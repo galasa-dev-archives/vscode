@@ -8,6 +8,7 @@
 	"engines": {
 		"vscode": "^1.44.0"
 	},
+	"homepage": "https://github.com/Microsoft/vscode-docker/blob/master/README.md",
 	"categories": [
 		"Debuggers"
 	],
@@ -205,6 +206,6 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/galasa-dev/vscode.git"
-	},
-	"homepage": "https://github.com/galasa-dev/vscode"
+	}
+	
 }
