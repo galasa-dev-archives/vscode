@@ -14,18 +14,10 @@
 	"activationEvents": [
 		"onView:galasa-testrunner",
 		"onView:galasa-ras",
-		"onView:galasa-rasRemote",
-		"onCommand:galasa.specifyTestClass",
-		"onCommand:galasa.bootjar",
-		"onCommand:galasa.localmaven",
-		"onCommand:galasa.remotemaven",
-		"onCommand:galasa.version",
 		"onCommand:galasa-test.refresh",
 		"onCommand:galasa-test.debug",
 		"onCommand:galasa-ras.refresh",
 		"onCommand:galasa-ras.open",
-		"onCommand:galasa-rasRemote.open",
-		"onCommand:galasa-rasRemote.refresh",
 		"onCommand:galasa-ras.clearAll",
 		"onCommand:galasa-test.setupWorkspace",
 		"onCommand:galasa-test.createExamples",
@@ -34,30 +26,6 @@
 	"main": "./out/extension",
 	"contributes": {
 		"commands": [
-			{
-				"command": "galasa.specifyTestClass",
-				"title": "Specify Test Class"
-			},
-			{
-				"command": "galasa.bootjar",
-				"title": "Boot Jar"
-			},
-			{
-				"command": "galasa.localmaven",
-				"title": "Local Maven"
-			},
-			{
-				"command": "galasa.remotemaven",
-				"title": "Remote Maven"
-			},
-			{
-				"command": "galasa.version",
-				"title": "Galasa Version"
-			},
-			{
-				"command": "galasa.remoteTest",
-				"title": "Galasa RemoteTest end-point"
-			},
 			{
 				"command": "galasa-test.refresh",
 				"title": "Refresh the process of looking for Galasa tests",
@@ -84,25 +52,6 @@
 				"icon": "$(clear-all)"
 			},
 			{
-				"command": "galasa-rasRemote.open",
-				"title": "Open a file from the remote RAS",
-				"icon": "$(go-to-file)"
-			},
-			{
-				"command": "galasa-rasRemote.refresh",
-				"title": "Refresh the remmote RAS",
-				"icon": "$(refresh)"
-			},
-			{
-				"command": "galasa-testRemote.refresh",
-				"title": "Refresh the Test Progression",
-				"icon": "$(refresh)"
-			},
-			{
-				"command": "galasa-testRemote.openLog",
-				"title": "Run Log"
-			},
-			{
 				"command": "galasa-test.setupWorkspace",
 				"title": "Setup Galasa Workspace",
 				"icon": "$(root-folder)"
@@ -116,19 +65,6 @@
 				"command": "galasa-test.simbank",
 				"title": "Launch Simbank",
 				"icon": "$(rocket)"
-			},
-			{
-				"command": "galasa-test.remoteTest",
-				"title": "Launch Remote Galasa test",
-				"icon": "$(cloud-upload)"
-			},
-			{
-				"command": "galasa-testRemote.delete",
-				"title": "Delete"
-			},
-			{
-				"command": "galasa-testRemote.artifacts",
-				"title": "Show artifacts"
 			}
 		],
 		"viewsContainers": {
@@ -152,28 +88,6 @@
 				}
 			]
 		},
-		"debuggers": [
-			{
-				"type": "galasa",
-				"label": "Galasa Debug",
-				"runtime": "java",
-				"languages": [
-					"java"
-				],
-				"initialConfigurations": [
-					{
-						"type": "java",
-						"request": "launch",
-						"name": "Galasa Debug",
-						"classPaths": [
-							"${command:galasa.bootjar}"
-						],
-						"mainClass": "dev.galasa.boot.Launcher",
-						"args": "${command:galasa.localmaven} ${command:galasa.remotemaven} --obr mvn:dev.galasa/dev.galasa.uber.obr/${command:galasa.version}/obr --test ${command:galasa.specifyTestClass}"
-					}
-				]
-			}
-		],
 		"configuration": {
 			"title": "Galasa",
 			"properties": {
@@ -217,11 +131,6 @@
 					"group": "navigation@1"
 				},
 				{
-					"command": "galasa-testRemote.refresh",
-					"when": "view == galasa-testRemote",
-					"group": "navigation"
-				},
-				{
 					"command": "galasa-ras.refresh",
 					"when": "view == galasa-ras",
 					"group": "navigation"
@@ -230,18 +139,9 @@
 					"command": "galasa-ras.clearAll",
 					"when": "view == galasa-ras",
 					"group": "navigation"
-				},
-				{
-					"command": "galasa-rasRemote.refresh",
-					"when": "view == galasa-rasRemote",
-					"group": "navigation"
 				}
 			],
 			"view/item/context": [
-				{
-					"command": "galasa-testRemote.delete",
-					"when": "view == galasa-testRemote"
-				},
 				{
 					"command": "galasa-test.debug",
 					"when": "view == galasa-testrunner",
@@ -251,19 +151,6 @@
 					"command": "galasa-ras.open",
 					"when": "view == galasa-ras && viewItem == testartifact",
 					"group": "inline"
-				},
-				{
-					"command": "galasa-rasRemote.open",
-					"when": "view == galasa-rasRemote && viewItem == rasitem",
-					"group": "inline"
-				},
-				{
-					"command": "galasa-testRemote.openLog",
-					"when": "view == galasa-testRemote"
-				},
-				{
-					"command": "galasa-testRemote.artifacts",
-					"when": "view == galasa-testRemote"
 				}
 			]
 		}
@@ -282,7 +169,6 @@
 		"@types/vscode": "^1.44.0",
 		"glob": "^7.1.6",
 		"gulp": "^4.0.2",
-		"http": "0.0.1-security",
 		"request": "^2.88.2",
 		"rimraf": "^3.0.2",
 		"typescript": "^3.8.3",

@@ -81,20 +81,6 @@ export function activate(context: vscode.ExtensionContext) {
         launchSimbank(context);
     });
 
-    // Configuration
-    vscode.commands.registerCommand('galasa.bootjar', config => {
-        return context.extensionPath + "/lib/galasa-boot.jar";
-    });
-    vscode.commands.registerCommand('galasa.localmaven', config => {
-        return "--localmaven file:" + vscode.workspace.getConfiguration("galasa").get("maven-local");
-    });
-    vscode.commands.registerCommand('galasa.remotemaven', config => {
-        return "--remotemaven " + vscode.workspace.getConfiguration("galasa").get("maven-remote");
-    });
-    vscode.commands.registerCommand('galasa.version', config => {
-        return getGalasaVersion(context);
-    });
-
     //Remote Testing
     // vscode.commands.registerCommand("galasa-test.remoteTest", async (run : TestCase) => {
     //     const runId = await submitRuns(cpsApi, runsApi, run, props);
@@ -209,17 +195,6 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showErrorMessage("There was an error trying to clear the Result Archive Store.");
         }
         localRasProvider.refresh();
-    });
-    
-
-    // General Galasa commands
-    vscode.commands.registerCommand('galasa.specifyTestClass', config => {
-        const active = vscode.window.activeTextEditor;
-        if(active) {
-            const fileName = active.document.fileName;
-            let testCase = new TestCase(fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('.java')), fileName);
-            return findTestArtifact(testCase);
-        }
     });
     
 }
