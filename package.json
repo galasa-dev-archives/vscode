@@ -8,6 +8,7 @@
 	"engines": {
 		"vscode": "^1.44.0"
 	},
+	"homepage": "https://github.com/Microsoft/vscode-docker/blob/master/README.md",
 	"categories": [
 		"Debuggers"
 	],
@@ -18,9 +19,12 @@
 		"onCommand:galasa-test.debug",
 		"onCommand:galasa-ras.refresh",
 		"onCommand:galasa-ras.open",
-		"onCommand:galasa-ras.clearAll",
 		"onCommand:galasa-test.setupWorkspace",
 		"onCommand:galasa-test.createExamples",
+		"onCommand:galasa-ras.artifacts",
+		"onCommand:galasa-ras.runlog",
+		"onCommand:galasa-ras.delete",
+		"onCommand:galasa-artifacts.open",
 		"onDebug"
 	],
 	"main": "./out/extension",
@@ -47,11 +51,6 @@
 				"icon": "$(go-to-file)"
 			},
 			{
-				"command": "galasa-ras.clearAll",
-				"title": "Clear your local RAS",
-				"icon": "$(clear-all)"
-			},
-			{
 				"command": "galasa-test.setupWorkspace",
 				"title": "Setup Galasa Workspace",
 				"icon": "$(root-folder)"
@@ -65,6 +64,23 @@
 				"command": "galasa-test.simbank",
 				"title": "Launch Simbank",
 				"icon": "$(rocket)"
+			},
+			{
+				"command": "galasa-ras.runlog",
+				"title": "Run Log"
+			},
+			{
+				"command": "galasa-ras.artifacts",
+				"title": "Artifacts"
+			},
+			{
+				"command": "galasa-ras.delete",
+				"title": "Delete"
+			},
+			{
+				"command": "galasa-artifacts.open",
+				"title": "Open",
+				"icon": "$(go-to-file)"
 			}
 		],
 		"viewsContainers": {
@@ -84,7 +100,11 @@
 				},
 				{
 					"id": "galasa-ras",
-					"name": "Result Archive Store"
+					"name": "Local Runs"
+				},
+				{
+					"id": "galasa-artifacts",
+					"name": "Artifacts"
 				}
 			]
 		},
@@ -134,11 +154,6 @@
 					"command": "galasa-ras.refresh",
 					"when": "view == galasa-ras",
 					"group": "navigation"
-				},
-				{
-					"command": "galasa-ras.clearAll",
-					"when": "view == galasa-ras",
-					"group": "navigation"
 				}
 			],
 			"view/item/context": [
@@ -150,6 +165,23 @@
 				{
 					"command": "galasa-ras.open",
 					"when": "view == galasa-ras && viewItem == testartifact",
+					"group": "inline"
+				},
+				{
+					"command": "galasa-ras.runlog",
+					"when": "view == galasa-ras"
+				},
+				{
+					"command": "galasa-ras.artifacts",
+					"when": "view == galasa-ras"
+				},
+				{
+					"command": "galasa-ras.delete",
+					"when": "view == galasa-ras"
+				},
+				{
+					"command": "galasa-artifacts.open",
+					"when": "view == galasa-artifacts && viewItem == file",
 					"group": "inline"
 				}
 			]
@@ -183,6 +215,6 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/galasa-dev/vscode.git"
-	},
-	"homepage": "https://github.com/galasa-dev/vscode"
+	}
+	
 }

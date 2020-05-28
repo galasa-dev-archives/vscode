@@ -1,113 +1,138 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import * as rimraf from "rimraf";
 
 
-export class RASProvider implements vscode.TreeDataProvider<Directory | TestArtifact> {
-    private _onDidChangeTreeData: vscode.EventEmitter<Directory | TestArtifact | undefined> = new vscode.EventEmitter<Directory | TestArtifact | undefined>();
-    readonly onDidChangeTreeData: vscode.Event<Directory | TestArtifact | undefined> = this._onDidChangeTreeData.event;
+export class RASProvider implements vscode.TreeDataProvider<LocalRun | Timing> {
+    private _onDidChangeTreeData: vscode.EventEmitter<LocalRun | Timing | undefined> = new vscode.EventEmitter<LocalRun | Timing | undefined>();
+    readonly onDidChangeTreeData: vscode.Event<LocalRun | Timing | undefined> = this._onDidChangeTreeData.event;
 
     constructor(private galasaRoot: string | undefined) { }
 
-    getTreeItem(element: Directory | TestArtifact): vscode.TreeItem {
+    getTreeItem(element: LocalRun | Timing): vscode.TreeItem {
         return element;
     }
 
-    getChildren(element?: vscode.TreeItem): (Directory | TestArtifact)[] | undefined {
+    getChildren(element?: vscode.TreeItem): (LocalRun | Timing)[] | undefined {
         if (this.galasaRoot === "" || !this.galasaRoot) {
             vscode.window.showErrorMessage("You need to update your galasa path in your configurations of the Galasa extension.");
             return undefined;
         }
         if (!element) {
-            return this.getDirectories(this.galasaRoot + "/ras").sort((run1, run2) => {
-                if(run1 instanceof TestArtifact || run1 instanceof Directory) {
-                    if(run2 instanceof TestArtifact || run2 instanceof Directory) {
-                        if(fs.statSync(run1.path).mtime > fs.statSync(run2.path).mtime) {
-                            return -1;
-                        } else if (fs.statSync(run1.path).mtime = fs.statSync(run2.path).mtime) {
-                            return 0;
-                        }
-                    }
-                }
-                return 1;
-            });
+            let timings : Timing[] = [];
+            timings.push(new Timing("Today", vscode.TreeItemCollapsibleState.Collapsed));
+            timings.push(new Timing("Yesterday", vscode.TreeItemCollapsibleState.Collapsed));
+            timings.push(new Timing("This Week", vscode.TreeItemCollapsibleState.Collapsed));
+            timings.push(new Timing("Last Week", vscode.TreeItemCollapsibleState.Collapsed));
+            timings.push(new Timing("Later", vscode.TreeItemCollapsibleState.Collapsed));
+            return timings;
+        } else if (element.label == "Today") {
+            const endDate = new Date();
+            let startDate = new Date();
+            startDate.setHours(0,0,0,0);
+            return this.getRuns(this.galasaRoot, startDate, endDate);
+        } else if (element.label == "Yesterday") {
+            let endDate = new Date();
+            let startDate = new Date();
+            endDate.setHours(0,0,0,0);
+            startDate.setDate(startDate.getDate() - 1);
+            startDate.setHours(0,0,0,0);
+            return this.getRuns(this.galasaRoot, startDate, endDate);
+        } else if (element.label == "This Week") {
+            let endDate = new Date();
+            endDate.setDate(endDate.getDate() - 1);
+            endDate.setHours(0,0,0,0);
+            let startDate = new Date(endDate);
+            startDate.setDate(startDate.getDate() - 6);
+            return this.getRuns(this.galasaRoot, startDate, endDate);
+        } else if (element.label == "Last Week") {
+            let endDate = new Date();
+            endDate.setDate(endDate.getDate() - 7);
+            endDate.setHours(0,0,0,0);
+            let startDate = new Date(endDate);
+            startDate.setDate(startDate.getDate() - 7);
+            return this.getRuns(this.galasaRoot, startDate, endDate);
+        } else if (element.label == "Later") {
+            let endDate = new Date();
+            endDate.setDate(endDate.getDate() - 14);
+            endDate.setHours(0,0,0,0);
+            return this.getRuns(this.galasaRoot, undefined, endDate);
         } else {
-            if(element instanceof TestArtifact || element instanceof Directory) {
-                return this.getDirectories(element.path);
-            } else {
-                return undefined;
-            }
+            return undefined;
         }
-    }
-
-    private getDirectories(path: string): (Directory | TestArtifact)[] {
-        let list: (Directory | TestArtifact)[] = Array(0);
-        if (fs.existsSync(path)) {
-            fs.readdirSync(path).forEach(file => {
-                if (fs.statSync(path  + "/" + file).isDirectory()) {
-                    list.push(new Directory(file, this.toDate(fs.statSync(path  + "/" + file)), vscode.TreeItemCollapsibleState.Collapsed, path  + "/" + file));
-                } else {
-                    list.push(new TestArtifact(file, "", vscode.TreeItemCollapsibleState.None, path  + "/" + file, "testartifact"));
-                }
-            });
-            return list;
-        } else {
-            vscode.window.showErrorMessage("The Galasa extension was not able to find the correct directories.");
-            return [];
-        }
-       
-    }
-
-    private toDate(date: fs.Stats): string {
-        const mtime = date.mtime;
-        return "Changes: " + mtime.getDate() + "/" + mtime.getMonth() + " - " + (mtime.getHours()) +  ":" + mtime.getMinutes() + ":" + mtime.getSeconds();
     }
 
     public refresh(): void {
         this._onDidChangeTreeData.fire();
     }
 
-    public clearAll(): void {
-        fs.readdirSync(this.galasaRoot + "/ras").forEach((file) => {
-            let filePath = this.galasaRoot + "/ras/" + file;
-            if(fs.statSync(filePath).isDirectory()) {
-                rimraf(filePath, () => {return file + "cleared out of the RAS";});
-            } else {
-                fs.unlinkSync(filePath);
-            }
-        });
+    getRuns(path : string, start : Date | undefined, end : Date) : LocalRun[] {
+        let runs : LocalRun[] = [];
+        if (fs.existsSync(path + "/ras")) {
+            fs.readdirSync(path+ "/ras").forEach(file => {
+                const filepath = path  + "/ras/" + file;
+                if(fs.statSync(filepath).isDirectory() && fs.existsSync(filepath + "/structure.json")) {
+                    const structure : any = JSON.parse(fs.readFileSync(path  + "/ras/" + file + "/structure.json").toString());
+                    const status = structure.status;
+                    let result = undefined;
+                    if(status == "finished") {
+                        result = structure.result;
+                    }
+                    const runStart = new Date(structure.startTime);
+                    if(!start && runStart < end) {
+                        runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result, filepath));
+                    } else if (start && runStart > start && runStart < end) {
+                        runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result, filepath));
+                    }
+                }
+            });
+        }
+        return runs;
     }
 }
 
 
-export class Directory extends vscode.TreeItem {
+export class LocalRun extends vscode.TreeItem {
     constructor(
         public readonly label: string,
-        private lastTimeChanged: string,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-        public readonly path:string
+        private readonly status: string,
+        private readonly result: string | undefined,
+        public readonly path : string
     ) {
         super(label, collapsibleState);
-    }
 
-    get description(): string {
-        return this.lastTimeChanged;
+        switch (status) {
+            case "stopping":
+            case "discarding":
+            case "ending":
+            case "finished":
+                if(result == "Passed") {
+                    this.iconPath = new vscode.ThemeIcon("check");
+                } else {
+                    this.iconPath = new vscode.ThemeIcon("close");
+                }
+                break;
+            case "running":
+                this.iconPath = new vscode.ThemeIcon("debug-start");
+                break;
+            case "started":
+            case "generating":
+            case "building":
+            case "provstart":
+            default:
+                this.iconPath = new vscode.ThemeIcon("loading");
+                break;
+        }
     }
+    
 }
 
-export class TestArtifact extends vscode.TreeItem {
+export class Timing extends vscode.TreeItem {
     constructor(
         public readonly label: string,
-        private lastTimeChanged: string,
-        public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-        public readonly path:string,
-        public contextValue : string
+        public readonly collapsibleState: vscode.TreeItemCollapsibleState
     ) {
         super(label, collapsibleState);
-    }
-
-    get description(): string {
-        return this.lastTimeChanged;
     }
 }
 
