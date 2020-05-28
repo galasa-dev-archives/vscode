@@ -20,6 +20,9 @@
 		"onCommand:galasa-ras.open",
 		"onCommand:galasa-test.setupWorkspace",
 		"onCommand:galasa-test.createExamples",
+		"onCommand:galasa-ras.artifacts",
+		"onCommand:galasa-ras.runlog",
+		"onCommand:galasa-artifacts.open",
 		"onDebug"
 	],
 	"main": "./out/extension",
@@ -59,6 +62,19 @@
 				"command": "galasa-test.simbank",
 				"title": "Launch Simbank",
 				"icon": "$(rocket)"
+			},
+			{
+				"command": "galasa-ras.runlog",
+				"title": "Run Log"
+			},
+			{
+				"command": "galasa-ras.artifacts",
+				"title": "Artifacts"
+			},
+			{
+				"command": "galasa-artifacts.open",
+				"title": "Open",
+				"icon": "$(go-to-file)"
 			}
 		],
 		"viewsContainers": {
@@ -78,7 +94,11 @@
 				},
 				{
 					"id": "galasa-ras",
-					"name": "Result Archive Store"
+					"name": "Local Runs"
+				},
+				{
+					"id": "galasa-artifacts",
+					"name": "Artifacts"
 				}
 			]
 		},
@@ -139,6 +159,19 @@
 				{
 					"command": "galasa-ras.open",
 					"when": "view == galasa-ras && viewItem == testartifact",
+					"group": "inline"
+				},
+				{
+					"command": "galasa-ras.runlog",
+					"when": "view == galasa-ras"
+				},
+				{
+					"command": "galasa-ras.artifacts",
+					"when": "view == galasa-ras"
+				},
+				{
+					"command": "galasa-artifacts.open",
+					"when": "view == galasa-artifacts && viewItem == file",
 					"group": "inline"
 				}
 			]

@@ -79,9 +79,9 @@ export class RASProvider implements vscode.TreeDataProvider<LocalRun | Timing> {
                     }
                     const runStart = new Date(structure.startTime);
                     if(!start && runStart < end) {
-                        runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result));
+                        runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result, filepath));
                     } else if (start && runStart > start && runStart < end) {
-                        runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result));
+                        runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result, filepath));
                     }
                 }
             });
@@ -96,7 +96,8 @@ export class LocalRun extends vscode.TreeItem {
         public readonly label: string,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
         private readonly status: string,
-        private readonly result: string | undefined
+        private readonly result: string | undefined,
+        public readonly path : string
     ) {
         super(label, collapsibleState);
 

@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
 import { TestExtractor, TestCase } from './TestExtractor';
-import { RASProvider} from './TreeViewLocalResultArchiveStore';
+import { RASProvider, LocalRun} from './TreeViewLocalResultArchiveStore';
 import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfigHandler';
 import {TerminalView} from "./ui/TerminalView";
 import * as fs from 'fs';
 import { createExampleFiles, launchSimbank } from './Examples';
+import { ArtifactProvider, ArtifactItem } from './TreeViewArtifacts';
 // import * as cps from 'galasa-cps-api';
 // import * as ras from 'galasa-ras-api';
 // import * as runs from 'galasa-runs-api';
@@ -127,32 +128,36 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.debug.startDebugging(undefined, await getDebugConfig(run, context));
     });
 
-    //Local Result Archive Store
+    //Local Runs
     const localRasProvider = new RASProvider(galasaPath);
     vscode.window.registerTreeDataProvider("galasa-ras", localRasProvider);
     vscode.commands.registerCommand("galasa-ras.refresh", () => localRasProvider.refresh());
-    //TODO fix to opening stuff in RAS
-    // vscode.commands.registerCommand('galasa-ras.open', async (run : TestArtifact) => {
-    //     if (run.collapsibleState === vscode.TreeItemCollapsibleState.None ) {
-    //         if (run.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
-    //             new TerminalView(fs.readFileSync(run.path), undefined);
-    //         } else {
-    //             let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
-    //                 return textDoc.document.fileName.includes(run.label);
-    //             });
-    //             if (!filterActiveDocs || filterActiveDocs.length < 1) {
-    //                 vscode.workspace.openTextDocument(run.path).then(doc => {
-    //                         vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
-    //                   });
-    //             } else {
-    //                 vscode.window.showInformationMessage("You have already opened this file.");
-    //             }
-    //         }            
-    //     } else {
-    //         vscode.window.showErrorMessage("You tried to display a directory, " + run.label);
-    //     }
-    // });
-    
+    vscode.commands.registerCommand('galasa-ras.runlog', (run : LocalRun) => {
+        vscode.workspace.openTextDocument(run.path + "/run.log").then(doc => {
+            vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,true);
+        });
+    });
+    const localArtifactProvider = new ArtifactProvider();
+    vscode.window.registerTreeDataProvider("galasa-artifacts", localArtifactProvider);
+    vscode.commands.registerCommand('galasa-ras.artifacts', (run : LocalRun) => {
+        localArtifactProvider.setRun(run);
+    });
+    vscode.commands.registerCommand("galasa-artifacts.open", (artifact : ArtifactItem) => {
+        if (artifact.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
+            new TerminalView(fs.readFileSync(artifact.path), undefined);
+        } else {
+            let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
+                return textDoc.document.fileName.includes(artifact.label);
+            });
+            if (!filterActiveDocs || filterActiveDocs.length < 1) {
+                vscode.workspace.openTextDocument(artifact.path).then(doc => {
+                        vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
+                    });
+            } else {
+                vscode.window.showInformationMessage("You have already opened this file.");
+            }
+        }
+    });
 }
 
 function setupWorkspace() : string[] {
