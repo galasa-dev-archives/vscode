@@ -38,7 +38,7 @@ You are able to connect with the Simbank-environment using a 3270-emulator and a
 
 
 
-4. Firstly build *YOUR_PACKAGE_NAME*Manager with maven, then build *YOUR_PACKAGE_NAME*Tests.
+4. Firstly do a `mvn install` on  *YOUR_PACKAGE_NAME*.manager, then a `mvn install` on *YOUR_PACKAGE_NAME*.tests.
 
 
 
