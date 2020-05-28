@@ -23,6 +23,7 @@
 		"onCommand:galasa-test.createExamples",
 		"onCommand:galasa-ras.artifacts",
 		"onCommand:galasa-ras.runlog",
+		"onCommand:galasa-ras.delete",
 		"onCommand:galasa-artifacts.open",
 		"onDebug"
 	],
@@ -71,6 +72,10 @@
 			{
 				"command": "galasa-ras.artifacts",
 				"title": "Artifacts"
+			},
+			{
+				"command": "galasa-ras.delete",
+				"title": "Delete"
 			},
 			{
 				"command": "galasa-artifacts.open",
@@ -168,6 +173,10 @@
 				},
 				{
 					"command": "galasa-ras.artifacts",
+					"when": "view == galasa-ras"
+				},
+				{
+					"command": "galasa-ras.delete",
 					"when": "view == galasa-ras"
 				},
 				{

@@ -6,6 +6,7 @@ import {TerminalView} from "./ui/TerminalView";
 import * as fs from 'fs';
 import { createExampleFiles, launchSimbank } from './Examples';
 import { ArtifactProvider, ArtifactItem } from './TreeViewArtifacts';
+import rimraf = require('rimraf');
 // import * as cps from 'galasa-cps-api';
 // import * as ras from 'galasa-ras-api';
 // import * as runs from 'galasa-runs-api';
@@ -141,6 +142,10 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerTreeDataProvider("galasa-artifacts", localArtifactProvider);
     vscode.commands.registerCommand('galasa-ras.artifacts', (run : LocalRun) => {
         localArtifactProvider.setRun(run);
+    });
+    vscode.commands.registerCommand("galasa-ras.delete", (run : LocalRun) => {
+        rimraf(run.path, () => {});
+        localRasProvider.refresh();
     });
     vscode.commands.registerCommand("galasa-artifacts.open", (artifact : ArtifactItem) => {
         if (artifact.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
