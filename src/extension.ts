@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import { createExampleFiles, launchSimbank } from './Examples';
 import { ArtifactProvider, ArtifactItem } from './TreeViewArtifacts';
 import rimraf = require('rimraf');
+import { EnvironmentProvider } from './TreeViewEnvironmentProperties';
 // import * as cps from 'galasa-cps-api';
 // import * as ras from 'galasa-ras-api';
 // import * as runs from 'galasa-runs-api';
@@ -126,9 +127,11 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
             vscode.window.showInformationMessage("You have already opened this testcase");
         }
-        vscode.workspace.saveAll();
-        vscode.debug.startDebugging(undefined, await getDebugConfig(run, context));
+        vscode.debug.startDebugging(undefined, await getDebugConfig(run, galasaPath ,context));
     });
+
+    //Environment Properties
+    const environmentProvider = new EnvironmentProvider();
 
     //Local Runs
     const localRasProvider = new RASProvider(galasaPath);

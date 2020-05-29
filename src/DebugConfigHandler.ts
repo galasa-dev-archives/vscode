@@ -1,11 +1,9 @@
 import { DebugConfiguration, workspace, ExtensionContext, window, tasks, Task, TaskScope, ShellExecution } from 'vscode';
 import { TestCase } from './TestExtractor';
 import * as fs from 'fs';
-import * as vscode from "vscode";
-import rimraf = require('rimraf');
 var path = require('path');
 
-export async function getDebugConfig(testClass : TestCase, context : ExtensionContext) : Promise<DebugConfiguration> {
+export async function getDebugConfig(testClass : TestCase, galasaPath : string, context : ExtensionContext) : Promise<DebugConfiguration> {
     let maven = "";
     let localMaven : string | undefined = workspace.getConfiguration("galasa").get("maven-local");
     if(localMaven && localMaven.trim().length != 0) {
@@ -15,6 +13,8 @@ export async function getDebugConfig(testClass : TestCase, context : ExtensionCo
     if(remoteMaven && remoteMaven.trim().length != 0) {
         maven = maven + "--remotemaven " + workspace.getConfiguration("galasa").get("maven-remote") + " ";
     }
+
+    const bootstrapURI = "--bootstrap file:" + galasaPath + "/bootstrap.properties ";
 
     const workspaceObr = await buildLocalObr(context);
 
@@ -26,7 +26,8 @@ export async function getDebugConfig(testClass : TestCase, context : ExtensionCo
         request: "launch",
         classPaths: [context.extensionPath + "/lib/galasa-boot.jar"],
         mainClass: "dev.galasa.boot.Launcher",
-        args: maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion(context) + "/obr " + workspaceObr + "--test " + findTestArtifact(testClass)
+        args: maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion(context) + "/obr " 
+            + workspaceObr + bootstrapURI + "--test " + findTestArtifact(testClass)
     }
 }
 

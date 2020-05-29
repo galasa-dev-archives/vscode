@@ -4,7 +4,7 @@ import * as unzipper from "unzipper";
 import * as rimraf from "rimraf";
 
 export function launchSimbank(context : vscode.ExtensionContext) {
-    let terminal = vscode.window.createTerminal();
+    let terminal = vscode.window.createTerminal("SimBank");
     terminal.show();
     terminal.sendText("java -jar " + context.extensionPath + "/lib/galasa-simplatform.jar");
 }

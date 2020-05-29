@@ -99,6 +99,10 @@
 					"name": "Test Runner"
 				},
 				{
+					"id": "galasa-environment",
+					"name": "Environment Properties"
+				},
+				{
 					"id": "galasa-ras",
 					"name": "Local Runs"
 				},
