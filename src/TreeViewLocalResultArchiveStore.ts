@@ -79,7 +79,7 @@ export class RASProvider implements vscode.TreeDataProvider<LocalRun | Timing> {
                     }
                     const runStart = new Date(structure.startTime);
                     if(!start && runStart < end) {
-                        runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result, filepath, ""));
+                        runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result, filepath, "localrun"));
                     } else if (start && runStart > start && runStart < end) {
                         runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result, filepath, "localrun"));
                     }

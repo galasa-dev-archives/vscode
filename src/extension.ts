@@ -9,6 +9,7 @@ import { ArtifactProvider, ArtifactItem } from './TreeViewArtifacts';
 import rimraf = require('rimraf');
 import { EnvironmentProvider, Property } from './TreeViewEnvironmentProperties';
 import { selectEnvrionment, addProperty, editProperty, deleteProperty, deleteEnvironment } from './EnvironmentController';
+import {CodeProvider} from "./CodeProvider";
 // import * as cps from 'galasa-cps-api';
 // import * as ras from 'galasa-ras-api';
 // import * as runs from 'galasa-runs-api';
@@ -32,22 +33,6 @@ export function activate(context: vscode.ExtensionContext) {
     // const runsApi =  new runs.DefaultApi(props.getEndpointUrl());
 
     //vscode.workspace.registerTextDocumentContentProvider("RemoteTesting", myProvider);
-
-    //Setup Workspace
-    vscode.commands.registerCommand('galasa-test.setupWorkspace', () => {
-        let created : string[] = setupWorkspace();
-        
-        if(created.length > 0) {
-            let createdString : string = "Created:"
-            created.forEach(element => {
-                createdString = createdString + " " + element + ",";
-            });
-            createdString = createdString.substring(0, createdString.length - 1);
-            vscode.window.showInformationMessage(createdString);
-        } else {
-            vscode.window.showInformationMessage("Workspace already setup");
-        }
-    });
 
     //Examples
     vscode.commands.registerCommand('galasa-test.createExamples', () => {
@@ -122,12 +107,19 @@ export function activate(context: vscode.ExtensionContext) {
             } else {
                 vscode.window.showErrorMessage("You do not have a viable Galasa test opened.")
             }
-            
         } else {
             vscode.window.showErrorMessage("Could not retrieve the currently active text editor.")
         }
+    });
+    let codelensProvider = new CodeProvider();
+    vscode.languages.registerCodeLensProvider({language: "java"}, codelensProvider);
 
-        //vscode.debug.startDebugging(undefined, await getDebugConfig(new TestCase(), galasaPath ,context));
+    vscode.commands.registerCommand("galasa-test.export", async () => {
+        vscode.workspace.workspaceFolders?.forEach(folder => {
+            if (vscode.window.activeTextEditor?.document.uri.fsPath.indexOf(folder.uri.fsPath) != -1) {
+                
+            } 
+        })
     });
 
     //Environment Properties

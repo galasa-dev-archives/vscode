@@ -13,6 +13,7 @@
 		"Debuggers"
 	],
 	"activationEvents": [
+		"*",
 		"onView:galasa-ras",
 		"onCommand:galasa-test.refresh",
 		"onCommand:galasa-test.debug",
@@ -35,29 +36,14 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "galasa-test.refresh",
-				"title": "Refresh the process of looking for Galasa tests",
-				"icon": "$(refresh)"
-			},
-			{
 				"command": "galasa-test.debug",
 				"title": "Debug Galasa test locally",
 				"icon": "/resources/GalasaLogo.svg"
 			},
 			{
-				"command": "galasa-ras.refresh",
-				"title": "Refresh the local RAS",
-				"icon": "$(refresh)"
-			},
-			{
 				"command": "galasa-ras.open",
 				"title": "Open a file from the RAS",
 				"icon": "$(go-to-file)"
-			},
-			{
-				"command": "galasa-test.setupWorkspace",
-				"title": "Setup Galasa Workspace",
-				"icon": "$(root-folder)"
 			},
 			{
 				"command": "galasa-test.createExamples",
@@ -68,6 +54,11 @@
 				"command": "galasa-test.simbank",
 				"title": "Launch Simbank",
 				"icon": "$(rocket)"
+			},
+			{
+				"command": "galasa-ras.refresh",
+				"title": "Refresh the local RAS",
+				"icon": "$(refresh)"
 			},
 			{
 				"command": "galasa-ras.runlog",
@@ -108,6 +99,11 @@
 				"command": "galasa-environment.deleteEnv",
 				"title": "Delete Environment",
 				"icon": "$(chrome-close)"
+			},
+			{
+				"command": "galasa-test.export",
+				"title": "Export run to launch.json",
+				"icon": "$(rocket)"
 			}
 		],
 		"viewsContainers": {
@@ -158,26 +154,6 @@
 		"menus": {
 			"view/title": [
 				{
-					"command": "galasa-test.refresh",
-					"when": "view == galasa-ras",
-					"group": "navigation@4"
-				},
-				{
-					"command": "galasa-test.setupWorkspace",
-					"when": "view == galasa-ras",
-					"group": "navigation@3"
-				},
-				{
-					"command": "galasa-test.createExamples",
-					"when": "view == galasa-ras",
-					"group": "navigation@2"
-				},
-				{
-					"command": "galasa-test.simbank",
-					"when": "view == galasa-ras",
-					"group": "navigation@1"
-				},
-				{
 					"command": "galasa-environment.search",
 					"when": "view == galasa-environment",
 					"group": "navigation"
@@ -193,9 +169,19 @@
 					"group": "navigation"
 				},
 				{
+					"command": "galasa-test.simbank",
+					"when": "view == galasa-ras",
+					"group": "navigation@1"
+				},
+				{
+					"command": "galasa-test.createExamples",
+					"when": "view == galasa-ras",
+					"group": "navigation@2"
+				},
+				{
 					"command": "galasa-ras.refresh",
 					"when": "view == galasa-ras",
-					"group": "navigation"
+					"group": "navigation@3"
 				}
 			],
 			"view/item/context": [
@@ -228,6 +214,10 @@
 			"editor/title": [
 				{
 					"command" : "galasa-test.debug",
+					"group": "navigation"
+				},
+				{
+					"command" : "galasa-test.export",
 					"group": "navigation"
 				}
 			]
