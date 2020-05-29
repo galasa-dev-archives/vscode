@@ -8,4 +8,4 @@ vsc-extension-quickstart.md
 *.vsix
 out
 node_modules
-galasa-workspace-obr
+galasa-workspace

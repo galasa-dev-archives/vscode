@@ -40,6 +40,10 @@ export function getGalasaVersion(context : ExtensionContext) : string  {
     return version;
 }
 
+function buildOverrides() {
+    
+}
+
 export async function buildLocalObr(context : ExtensionContext) : Promise<string> {
     let pomData = fs.readFileSync(context.extensionPath +"/lib/obr-pom.xml").toString();
     let dependencies = "";
@@ -57,12 +61,12 @@ export async function buildLocalObr(context : ExtensionContext) : Promise<string
     let galasaVersion = getGalasaVersion(context);
     pomData = pomData.replace(/%%dependencies%%/g, dependencies).replace(/%%version%%/g, galasaVersion);
 
-    if(!fs.existsSync(context.extensionPath + "/galasa-workspace-obr")) {
-        fs.mkdirSync(context.extensionPath + "/galasa-workspace-obr");
+    if(!fs.existsSync(context.extensionPath + "/galasa-workspace/obr")) {
+        fs.mkdirSync(context.extensionPath + "/galasa-workspace/obr");
     }
-    fs.writeFileSync(context.extensionPath + "/galasa-workspace-obr/pom.xml", pomData);
+    fs.writeFileSync(context.extensionPath + "/galasa-workspace/obr/pom.xml", pomData);
 
-    return "--obr file:" + context.extensionPath + "/galasa-workspace-obr/target/repository.obr ";
+    return "--obr file:" + context.extensionPath + "/galasa-workspace/obr/target/repository.obr ";
 }
 
 export function findTestArtifact(testClass : TestCase) : string {
