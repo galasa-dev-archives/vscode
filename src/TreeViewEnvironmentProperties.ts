@@ -10,12 +10,13 @@ export class EnvironmentProvider implements vscode.TreeDataProvider<Property> {
         if(!fs.existsSync(this.configPath)) {
             fs.writeFileSync(this.configPath, "");
             this.envPath = undefined;
-        }
-        const content = fs.readFileSync(this.configPath).toString().trim();
-        if(content == "") {
-            this.envPath = undefined;
         } else {
-            this.envPath = content;
+            const content = fs.readFileSync(this.configPath).toString().trim();
+            if(content == "") {
+                this.envPath = undefined;
+            } else {
+                this.envPath = content;
+            }
         }
     }
 

@@ -152,6 +152,10 @@
 					"type": "string",
 					"default": "LATEST",
 					"description": "%galasavscode.config.galasa.version%"
+				},
+				"galasa.requestor": {
+					"type": "string",
+					"default": "unknown"
 				}
 			}
 		},

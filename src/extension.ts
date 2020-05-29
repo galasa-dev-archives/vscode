@@ -118,7 +118,8 @@ export function activate(context: vscode.ExtensionContext) {
         if (activeDoc) {
             if (activeDoc.document.getText().indexOf("@Test") != -1 && activeDoc.document.getText().indexOf("import dev.galasa.Test;") != -1 && activeDoc.document.uri.fsPath.endsWith(".java")) {
                 let path = activeDoc.document.uri.fsPath;
-                vscode.debug.startDebugging(undefined, await getDebugConfig(new TestCase(path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf(".java")), path), galasaPath , context));
+                const test = new TestCase(path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf(".java")), path);
+                vscode.debug.startDebugging(undefined, await getDebugConfig(test, galasaPath, context, environmentProvider));
             } else {
                 vscode.window.showErrorMessage("You do not have a viable Galasa test opened.")
             }

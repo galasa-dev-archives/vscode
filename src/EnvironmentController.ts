@@ -81,6 +81,7 @@ export async function deleteEnvironment(galasaPath : string, environmentProvider
     }
     if(environmentProvider.getEnvironment() == galasaPath + "/vscode/" + chosen.replace(/[^A-Za-z0-9_-]/g, "") + ".properties") {
         environmentProvider.setEnvironment(undefined);
+        fs.writeFileSync(galasaPath +"/vscode/envconfig", "");
     }
     rimraf(galasaPath + "/vscode/" + chosen.replace(/[^A-Za-z0-9_-]/g, "") + ".properties", () => {});
 }
