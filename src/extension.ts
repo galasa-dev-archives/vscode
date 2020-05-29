@@ -9,6 +9,7 @@ import { ArtifactProvider, ArtifactItem } from './TreeViewArtifacts';
 import rimraf = require('rimraf');
 import { EnvironmentProvider, Property } from './TreeViewEnvironmentProperties';
 import { selectEnvrionment, addProperty, editProperty, deleteProperty, deleteEnvironment } from './EnvironmentController';
+import { showOverview } from './ui/RunOverview';
 // import * as cps from 'galasa-cps-api';
 // import * as ras from 'galasa-ras-api';
 // import * as runs from 'galasa-runs-api';
@@ -177,11 +178,20 @@ export function activate(context: vscode.ExtensionContext) {
             });
             if (!filterActiveDocs || filterActiveDocs.length < 1) {
                 vscode.workspace.openTextDocument(artifact.path).then(doc => {
-                        vscode.window.showTextDocument(doc,vscode.ViewColumn.Beside,true);
+                        vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,true);
                     });
             } else {
                 vscode.window.showInformationMessage("You have already opened this file.");
             }
+        }
+    });
+    let activeLabel = "";
+    vscode.commands.registerCommand("galasa-ras.overview", (run : LocalRun) => {
+        if(activeLabel != run.label) {
+            activeLabel = run.label;
+        } else {
+            activeLabel = "";
+            showOverview(run);
         }
     });
 }

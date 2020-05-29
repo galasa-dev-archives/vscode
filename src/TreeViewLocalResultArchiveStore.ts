@@ -79,9 +79,9 @@ export class RASProvider implements vscode.TreeDataProvider<LocalRun | Timing> {
                     }
                     const runStart = new Date(structure.startTime);
                     if(!start && runStart < end) {
-                        runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result, filepath, ""));
+                        runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result, filepath, "localrun", structure));
                     } else if (start && runStart > start && runStart < end) {
-                        runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result, filepath, "localrun"));
+                        runs.push(new LocalRun(file + " - " + structure.testShortName, vscode.TreeItemCollapsibleState.None, status, result, filepath, "localrun", structure));
                     }
                 }
             });
@@ -98,7 +98,8 @@ export class LocalRun extends vscode.TreeItem {
         private readonly status: string,
         private readonly result: string | undefined,
         public readonly path : string,
-        public contextValue : string
+        public contextValue : string,
+        public readonly structure : any
     ) {
         super(label, collapsibleState);
 
@@ -123,6 +124,16 @@ export class LocalRun extends vscode.TreeItem {
             default:
                 this.iconPath = new vscode.ThemeIcon("loading");
                 break;
+        }
+
+        this.command = getCommand(this);
+
+        function getCommand(klass : any): vscode.Command | undefined {
+            return {
+                title: "Show Overview",
+                command: "galasa-ras.overview",
+                arguments: [klass]
+            }
         }
     }
     

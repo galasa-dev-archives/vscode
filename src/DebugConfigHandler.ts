@@ -15,7 +15,11 @@ export async function getDebugConfig(testClass : TestCase, galasaPath : string, 
         maven = maven + "--remotemaven " + workspace.getConfiguration("galasa").get("maven-remote") + " ";
     }
 
-    const bootstrapURI = "--bootstrap file:" + galasaPath + "/bootstrap.properties ";
+    let bootstrap = workspace.getConfiguration("galasa").get("bootstrap");
+    if(!bootstrap) {
+        bootstrap = "file:" + galasaPath + "/bootstrap.properties";
+    }
+    const bootstrapURI = "--bootstrap " + bootstrap + " ";
 
     const overridesURI = buildOverrides(galasaPath, context, environmentProvider);
 
