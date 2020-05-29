@@ -19,7 +19,7 @@ Galasa has been architected to ensure that the routine tasks of writing and exec
 
 **Simbank** is an application written to emulate a Z-environment. It has been created to show of the hybrid and scalable capabilities of the Galasa Framework. This application is a perfect start to learn and/or understand how the framework operates.
 
-![Simbank initial screen](resources/readme/simplatform.PNG)
+![Simbank initial screen](resources/readme/simplatform.png)
 
 Simbank has been built inside the extension to showcase a couple of Galasa capabilities and to be able to start off with writing your own Galasa tests.
 
@@ -85,7 +85,7 @@ Run these Simbank tests by pressing the run-icon next to any test and look at th
 
 You can launch a local Galasa test by pressing the Run-icon next to each of your available tests in your currently active environment
 
-![Running a local test](resources/readme/runningLocal.PNG)
+![Running a local test](resources/readme/runningLocal.png)
 
 ### The status overview of your past tests
 
@@ -94,13 +94,13 @@ This tab allows you to view your past tests with their appropriate statusses.
 Here you are able to *right-click* on each test to retrieve the runlog, artifacts and/or delete an entry.
  If you open the artifacts, the artifacts tab will be filled in with all the artifacts associated to the test that you have *right-clicked*.
 
- ![Status Overview](resources/readme/localRuns.PNG)
+ ![Status Overview](resources/readme/localRuns.png)
 
 These local artifacts are also available through your own file system. They are stored under your user-root in the `.galasa`-folder.
 
 You are able to then click the icon next to the desired artifact to open a file in a `vscode`-window.
 
-![Opening a file](resources/readme/openFile.PNG)
+![Opening a file](resources/readme/openFile.png)
 
 ## License
 
