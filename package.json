@@ -13,7 +13,6 @@
 		"Debuggers"
 	],
 	"activationEvents": [
-		"onView:galasa-testrunner",
 		"onView:galasa-ras",
 		"onCommand:galasa-test.refresh",
 		"onCommand:galasa-test.debug",
@@ -38,7 +37,7 @@
 			{
 				"command": "galasa-test.debug",
 				"title": "Debug Galasa test locally",
-				"icon": "$(debug-start)"
+				"icon": "/resources/GalasaLogo.svg"
 			},
 			{
 				"command": "galasa-ras.refresh",
@@ -95,10 +94,6 @@
 		"views": {
 			"galasa": [
 				{
-					"id": "galasa-testrunner",
-					"name": "Test Runner"
-				},
-				{
 					"id": "galasa-environment",
 					"name": "Environment Properties"
 				},
@@ -136,22 +131,22 @@
 			"view/title": [
 				{
 					"command": "galasa-test.refresh",
-					"when": "view == galasa-testrunner",
+					"when": "view == galasa-ras",
 					"group": "navigation@4"
 				},
 				{
 					"command": "galasa-test.setupWorkspace",
-					"when": "view == galasa-testrunner",
+					"when": "view == galasa-ras",
 					"group": "navigation@3"
 				},
 				{
 					"command": "galasa-test.createExamples",
-					"when": "view == galasa-testrunner",
+					"when": "view == galasa-ras",
 					"group": "navigation@2"
 				},
 				{
 					"command": "galasa-test.simbank",
-					"when": "view == galasa-testrunner",
+					"when": "view == galasa-ras",
 					"group": "navigation@1"
 				},
 				{
@@ -161,11 +156,6 @@
 				}
 			],
 			"view/item/context": [
-				{
-					"command": "galasa-test.debug",
-					"when": "view == galasa-testrunner",
-					"group": "inline"
-				},
 				{
 					"command": "galasa-ras.runlog",
 					"when": "view == galasa-ras && viewItem == localrun"
@@ -182,6 +172,12 @@
 					"command": "galasa-artifacts.open",
 					"when": "view == galasa-artifacts && viewItem == file",
 					"group": "inline"
+				}
+			],
+			"editor/title": [
+				{
+					"command" : "galasa-test.debug",
+					"group": "navigation"
 				}
 			]
 		}

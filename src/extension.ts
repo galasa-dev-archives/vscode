@@ -112,22 +112,21 @@ export function activate(context: vscode.ExtensionContext) {
     
 
     // Test Runner
-    const testExtractor = new TestExtractor();
-    vscode.window.registerTreeDataProvider("galasa-testrunner", testExtractor);
-    vscode.commands.registerCommand('galasa-test.refresh', () => {testExtractor.refresh();});
-    vscode.commands.registerCommand('galasa-test.debug', async (run : TestCase) => {
-        let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
-            return textDoc.document.fileName.includes(run.label);
-        });
-        if (!filterActiveDocs || filterActiveDocs.length < 1) {
-            vscode.workspace.openTextDocument(run.pathToFile).then(doc => {
-                vscode.window.showInformationMessage("Opened " + run.label + ", the test will now be built and debugged.");
-                vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,false);
-            });
+    vscode.commands.registerCommand('galasa-test.debug', async () => {
+        const activeDoc = vscode.window.activeTextEditor;
+        if (activeDoc) {
+            if (activeDoc.document.getText().indexOf("@Test") != -1 && activeDoc.document.getText().indexOf("import dev.galasa.Test;") != -1 && activeDoc.document.uri.fsPath.endsWith(".java")) {
+                let path = activeDoc.document.uri.fsPath;
+                vscode.debug.startDebugging(undefined, await getDebugConfig(new TestCase(path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf(".java")), path), galasaPath , context));
+            } else {
+                vscode.window.showErrorMessage("You do not have a viable Galasa test opened.")
+            }
+            
         } else {
-            vscode.window.showInformationMessage("You have already opened this testcase");
+            vscode.window.showErrorMessage("Could not retrieve the currently active text editor.")
         }
-        vscode.debug.startDebugging(undefined, await getDebugConfig(run, galasaPath ,context));
+
+        //vscode.debug.startDebugging(undefined, await getDebugConfig(new TestCase(), galasaPath ,context));
     });
 
     //Environment Properties
