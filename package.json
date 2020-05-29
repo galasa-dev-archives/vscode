@@ -163,21 +163,16 @@
 					"group": "inline"
 				},
 				{
-					"command": "galasa-ras.open",
-					"when": "view == galasa-ras && viewItem == testartifact",
-					"group": "inline"
-				},
-				{
 					"command": "galasa-ras.runlog",
-					"when": "view == galasa-ras"
+					"when": "view == galasa-ras && viewItem == localrun"
 				},
 				{
 					"command": "galasa-ras.artifacts",
-					"when": "view == galasa-ras"
+					"when": "view == galasa-ras && viewItem == localrun"
 				},
 				{
 					"command": "galasa-ras.delete",
-					"when": "view == galasa-ras"
+					"when": "view == galasa-ras && viewItem == localrun"
 				},
 				{
 					"command": "galasa-artifacts.open",
