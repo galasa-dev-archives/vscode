@@ -126,6 +126,7 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
             vscode.window.showInformationMessage("You have already opened this testcase");
         }
+        vscode.workspace.saveAll();
         vscode.debug.startDebugging(undefined, await getDebugConfig(run, context));
     });
 
