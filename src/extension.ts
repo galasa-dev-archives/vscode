@@ -132,7 +132,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     //Environment Properties
-    const environmentProvider = new EnvironmentProvider();
+    const environmentProvider = new EnvironmentProvider(galasaPath);
     vscode.window.registerTreeDataProvider("galasa-environment", environmentProvider);
     vscode.commands.registerCommand("galasa-environment.search", () => {
         selectEnvrionment(galasaPath, environmentProvider);
