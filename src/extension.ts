@@ -7,7 +7,8 @@ import * as fs from 'fs';
 import { createExampleFiles, launchSimbank } from './Examples';
 import { ArtifactProvider, ArtifactItem } from './TreeViewArtifacts';
 import rimraf = require('rimraf');
-import { EnvironmentProvider } from './TreeViewEnvironmentProperties';
+import { EnvironmentProvider, Property } from './TreeViewEnvironmentProperties';
+import { selectEnvrionment, addProperty, editProperty, deleteProperty, deleteEnvironment } from './EnvironmentController';
 // import * as cps from 'galasa-cps-api';
 // import * as ras from 'galasa-ras-api';
 // import * as runs from 'galasa-runs-api';
@@ -130,7 +131,23 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     //Environment Properties
-    const environmentProvider = new EnvironmentProvider();
+    const environmentProvider = new EnvironmentProvider(galasaPath);
+    vscode.window.registerTreeDataProvider("galasa-environment", environmentProvider);
+    vscode.commands.registerCommand("galasa-environment.search", () => {
+        selectEnvrionment(galasaPath, environmentProvider);
+    });
+    vscode.commands.registerCommand("galasa-environment.add", () => {
+        addProperty(environmentProvider);
+    });
+    vscode.commands.registerCommand("galasa-environment.deleteEnv", () => {
+        deleteEnvironment(galasaPath, environmentProvider);
+    });
+    vscode.commands.registerCommand("galasa-environment.edit", (property : Property) => {
+        editProperty(property, environmentProvider);
+    });
+    vscode.commands.registerCommand("galasa-environment.delete", (property : Property) => {
+        deleteProperty(property, environmentProvider);
+    });
 
     //Local Runs
     const localRasProvider = new RASProvider(galasaPath);
@@ -199,6 +216,10 @@ function setupWorkspace() : string[] {
             if (err) throw err;
         });
         created.push("overrides.properties");
+    }
+    if(!fs.existsSync(galasaPath + "/vscode")) {
+        fs.mkdirSync(galasaPath + "/vscode");
+        created.push("vscode");
     }
     return created;
 }

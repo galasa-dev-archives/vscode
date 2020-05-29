@@ -24,6 +24,11 @@
 		"onCommand:galasa-ras.runlog",
 		"onCommand:galasa-ras.delete",
 		"onCommand:galasa-artifacts.open",
+		"onCommand:galasa-environment.search",
+		"onCommand:galasa-environment.add",
+		"onCommand:galasa-environment.edit",
+		"onCommand:galasa-environment.delete",
+		"onCommand:galasa-environment.deleteEnv",
 		"onDebug"
 	],
 	"main": "./out/extension",
@@ -80,6 +85,29 @@
 				"command": "galasa-artifacts.open",
 				"title": "Open",
 				"icon": "$(go-to-file)"
+			},
+			{
+				"command": "galasa-environment.search",
+				"title": "Select Environment",
+				"icon": "$(search)"
+			},
+			{
+				"command": "galasa-environment.add",
+				"title": "Add Property",
+				"icon": "$(add)"
+			},
+			{
+				"command": "galasa-environment.edit",
+				"title": "Edit Value"
+			},
+			{
+				"command": "galasa-environment.delete",
+				"title": "Delete"
+			},
+			{
+				"command": "galasa-environment.deleteEnv",
+				"title": "Delete Environment",
+				"icon": "$(chrome-close)"
 			}
 		],
 		"viewsContainers": {
@@ -150,6 +178,21 @@
 					"group": "navigation@1"
 				},
 				{
+					"command": "galasa-environment.search",
+					"when": "view == galasa-environment",
+					"group": "navigation"
+				},
+				{
+					"command": "galasa-environment.add",
+					"when": "view == galasa-environment",
+					"group": "navigation"
+				},
+				{
+					"command": "galasa-environment.deleteEnv",
+					"when": "view == galasa-environment",
+					"group": "navigation"
+				},
+				{
 					"command": "galasa-ras.refresh",
 					"when": "view == galasa-ras",
 					"group": "navigation"
@@ -172,6 +215,14 @@
 					"command": "galasa-artifacts.open",
 					"when": "view == galasa-artifacts && viewItem == file",
 					"group": "inline"
+				},
+				{
+					"command": "galasa-environment.edit",
+					"when": "view == galasa-environment"
+				},
+				{
+					"command": "galasa-environment.delete",
+					"when": "view == galasa-environment"
 				}
 			],
 			"editor/title": [
