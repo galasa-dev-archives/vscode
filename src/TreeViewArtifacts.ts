@@ -61,6 +61,16 @@ export class ArtifactItem extends vscode.TreeItem{
                 public readonly collapsibleState: vscode.TreeItemCollapsibleState,
                 public contextValue : string) {
         super(label, collapsibleState )
+
+        this.command = getCommand(this);
+
+        function getCommand(klass : any): vscode.Command | undefined {
+            return {
+                title: "Open file",
+                command: "galasa-artifacts.open",
+                arguments: [klass]
+            }
+        }
     }
 }
 
