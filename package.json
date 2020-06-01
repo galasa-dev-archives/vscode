@@ -6,7 +6,7 @@
 	"version": "0.8.0",
 	"icon": "resources/GalasaLogo.png",
 	"engines": {
-		"vscode": "^1.44.0"
+		"vscode": "^1.45.1"
 	},
 	"homepage": "https://github.com/Microsoft/vscode-docker/blob/master/README.md",
 	"categories": [
@@ -207,6 +207,7 @@
 			],
 			"editor/title": [
 				{
+					"when": "resourceLangId == java",
 					"command": "galasa-test.debug",
 					"group": "navigation"
 				}
