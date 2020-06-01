@@ -17,7 +17,7 @@ export async function getDebugConfig(testClass : TestCase, galasaPath : string, 
 
     let bootstrap = workspace.getConfiguration("galasa").get("bootstrap");
     if(!bootstrap) {
-        bootstrap = "file:" + galasaPath + "/bootstrap.properties";
+        bootstrap = "file:" + path.join(galasaPath, "bootstrap.properties");
     }
     const bootstrapURI = "--bootstrap " + bootstrap + " ";
 
@@ -31,7 +31,7 @@ export async function getDebugConfig(testClass : TestCase, galasaPath : string, 
         name: "Galasa Debug",
         type: "java",
         request: "launch",
-        classPaths: [context.extensionPath + "/lib/galasa-boot.jar"],
+        classPaths: [path.join(context.extensionPath, "lib", "galasa-boot.jar")],
         mainClass: "dev.galasa.boot.Launcher",
         args: maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion(context) + "/obr " 
             + workspaceObr + bootstrapURI + overridesURI + "--test " + findTestArtifact(testClass)
@@ -41,20 +41,20 @@ export async function getDebugConfig(testClass : TestCase, galasaPath : string, 
 export function getGalasaVersion(context : ExtensionContext) : string  {
     let version : string | undefined = workspace.getConfiguration("galasa").get("version");
     if(!version || version == "LATEST") {
-        version = JSON.parse(fs.readFileSync(context.extensionPath + "/package.json").toString()).version + "";
+        version = JSON.parse(fs.readFileSync(path.join(context.extensionPath, "package.json")).toString()).version + "";
     }
     
     return version;
 }
 
 function buildOverrides(galasaPath : string, context : ExtensionContext, environmentProvider : EnvironmentProvider) : string {
-    if(!fs.existsSync(context.extensionPath + "/galasa-workspace")) {
-        fs.mkdirSync(context.extensionPath + "/galasa-workspace");
+    if(!fs.existsSync(path.join(context.extensionPath, "galasa-workspace"))) {
+        fs.mkdirSync(path.join(context.extensionPath, "galasa-workspace"));
     }
-    if(!fs.existsSync(context.extensionPath + "/galasa-workspace/overrides")) {
-        fs.mkdirSync(context.extensionPath + "/galasa-workspace/overrides");
+    if(!fs.existsSync(path.join(context.extensionPath, "galasa-workspace", "overrides"))) {
+        fs.mkdirSync(path.join(context.extensionPath, "galasa-workspace", "overrides"));
     }
-    const filepath = context.extensionPath + "/galasa-workspace/overrides/generated_overrides.properties";
+    const filepath = path.join(context.extensionPath, "galasa-workspace", "overrides", "generated_overrides.properties");
     const envPath = environmentProvider.getEnvironment();
     if(!envPath) {
         fs.writeFileSync(filepath, "");
@@ -63,12 +63,12 @@ function buildOverrides(galasaPath : string, context : ExtensionContext, environ
         fs.writeFileSync(filepath, environmentPropContent);
     }
     
-    fs.appendFileSync(filepath, "framework.resultarchive.store=file:" + galasaPath + "/ras\n");
-    fs.appendFileSync(filepath, "framework.credentials.store=file:" + galasaPath + "/credentials.properties\n");
+    fs.appendFileSync(filepath, "framework.resultarchive.store=file:" + path.join(galasaPath, "ras") + "\n");
+    fs.appendFileSync(filepath, "framework.credentials.store=file:" + path.join(galasaPath, "credentials.properties") + "\n");
 
     let bootstrap = workspace.getConfiguration("galasa").get("bootstrap");
     if(!bootstrap) {
-        bootstrap = "file:" + galasaPath + "/bootstrap.properties";
+        bootstrap = "file:" + path.join(galasaPath, "bootstrap.properties");
     }
     fs.appendFileSync(filepath, "framework.bootstrap.url=" + bootstrap + "\n");
 
@@ -82,7 +82,7 @@ function buildOverrides(galasaPath : string, context : ExtensionContext, environ
 }
 
 export async function buildLocalObr(context : ExtensionContext) : Promise<string> {
-    let pomData = fs.readFileSync(context.extensionPath +"/lib/obr-pom.xml").toString();
+    let pomData = fs.readFileSync(path.join(context.extensionPath, "lib", "obr-pom.xml")).toString();
     let dependencies = "";
 
     const manifests = await workspace.findFiles("**/MANIFEST.MF");
@@ -98,15 +98,15 @@ export async function buildLocalObr(context : ExtensionContext) : Promise<string
     let galasaVersion = getGalasaVersion(context);
     pomData = pomData.replace(/%%dependencies%%/g, dependencies).replace(/%%version%%/g, galasaVersion);
 
-    if(!fs.existsSync(context.extensionPath + "/galasa-workspace")) {
-        fs.mkdirSync(context.extensionPath + "/galasa-workspace");
+    if(!fs.existsSync(path.join(context.extensionPath, "galasa-workspace"))) {
+        fs.mkdirSync(path.join(context.extensionPath, "galasa-workspace"));
     }
-    if(!fs.existsSync(context.extensionPath + "/galasa-workspace/obr")) {
-        fs.mkdirSync(context.extensionPath + "/galasa-workspace/obr");
+    if(!fs.existsSync(path.join(context.extensionPath, "galasa-workspace", "obr"))) {
+        fs.mkdirSync(path.join(context.extensionPath, "galasa-workspace", "obr"));
     }
-    fs.writeFileSync(context.extensionPath + "/galasa-workspace/obr/pom.xml", pomData);
+    fs.writeFileSync(path.join(context.extensionPath, "galasa-workspace", "obr", "pom.xml"), pomData);
 
-    return "--obr file:" + context.extensionPath + "/galasa-workspace/obr/target/repository.obr ";
+    return "--obr file:" + path.join(context.extensionPath, "galasa-workspace", "obr", "target", "repository.obr") + " ";
 }
 
 export function findTestArtifact(testClass : TestCase) : string {
@@ -129,7 +129,7 @@ function findPomField(directory : string, field : string) : string {
             }
         });
         if(pom != "") {
-            let data = fs.readFileSync(directory + "/" + pom).toString();
+            let data = fs.readFileSync(path.join(directory, pom)).toString();
             if((field == "artifactId" || field == "version")&& data.includes("<parent>")) {
                 data = data.substring(data.indexOf("</parent>"));
             }
@@ -141,5 +141,5 @@ function findPomField(directory : string, field : string) : string {
 }
 
 function getBuildWorkspaceObrTask(context : ExtensionContext) : Task {
-    return new Task({type : "shell"}, TaskScope.Workspace.toString(), "Workspace Obr", new ShellExecution("mvn install -f " + context.extensionPath + "/galasa-workspace/obr/"));
+    return new Task({type : "shell"}, TaskScope.Workspace.toString(), "Workspace Obr", new ShellExecution("mvn install -f " + path.join(context.extensionPath, "galasa-workspace", "obr")));
 }

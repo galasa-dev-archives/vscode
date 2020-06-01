@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-
+import * as path from 'path';
 
 export class RASProvider implements vscode.TreeDataProvider<LocalRun | Timing> {
     private _onDidChangeTreeData: vscode.EventEmitter<LocalRun | Timing | undefined> = new vscode.EventEmitter<LocalRun | Timing | undefined>();
@@ -65,13 +65,13 @@ export class RASProvider implements vscode.TreeDataProvider<LocalRun | Timing> {
         this._onDidChangeTreeData.fire();
     }
 
-    getRuns(path : string, start : Date | undefined, end : Date) : LocalRun[] {
+    getRuns(galasaPath : string, start : Date | undefined, end : Date) : LocalRun[] {
         let runs : LocalRun[] = [];
-        if (fs.existsSync(path + "/ras")) {
-            fs.readdirSync(path+ "/ras").forEach(file => {
-                const filepath = path  + "/ras/" + file;
-                if(fs.statSync(filepath).isDirectory() && fs.existsSync(filepath + "/structure.json")) {
-                    const structure : any = JSON.parse(fs.readFileSync(path  + "/ras/" + file + "/structure.json").toString());
+        if (fs.existsSync(path.join(galasaPath, "ras"))) {
+            fs.readdirSync(path.join(galasaPath, "ras")).forEach(file => {
+                const filepath = path.join(galasaPath, "ras", file);
+                if(fs.statSync(filepath).isDirectory() && fs.existsSync(path.join(filepath, "structure.json"))) {
+                    const structure : any = JSON.parse(fs.readFileSync(path.join(galasaPath , "ras", file, "structure.json")).toString());
                     const status = structure.status;
                     let result = undefined;
                     if(status == "finished") {

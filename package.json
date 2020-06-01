@@ -217,11 +217,11 @@
 			],
 			"editor/title": [
 				{
-					"command" : "galasa-test.debug",
+					"command": "galasa-test.debug",
 					"group": "navigation"
 				},
 				{
-					"command" : "galasa-test.export",
+					"command": "galasa-test.export",
 					"group": "navigation"
 				}
 			]
@@ -256,5 +256,4 @@
 		"type": "git",
 		"url": "https://github.com/galasa-dev/vscode.git"
 	}
-	
 }

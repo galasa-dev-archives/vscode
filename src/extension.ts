@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
-import { TestExtractor, TestCase } from './TestExtractor';
+import { TestCase } from './TestExtractor';
 import { RASProvider, LocalRun} from './TreeViewLocalResultArchiveStore';
 import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfigHandler';
-import {TerminalView} from "./ui/TerminalView";
+import { TerminalView } from "./ui/TerminalView";
 import * as fs from 'fs';
+import * as path from 'path';
 import { createExampleFiles, launchSimbank } from './Examples';
 import { ArtifactProvider, ArtifactItem } from './TreeViewArtifacts';
 import rimraf = require('rimraf');
@@ -103,8 +104,13 @@ export function activate(context: vscode.ExtensionContext) {
         const activeDoc = vscode.window.activeTextEditor;
         if (activeDoc) {
             if (activeDoc.document.getText().indexOf("@Test") != -1 && activeDoc.document.getText().indexOf("import dev.galasa.Test;") != -1 && activeDoc.document.uri.fsPath.endsWith(".java")) {
-                let path = activeDoc.document.uri.fsPath;
-                const test = new TestCase(path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf(".java")), path);
+                let docPath = activeDoc.document.uri.fsPath;
+                let test : TestCase;
+                if(docPath.lastIndexOf("/") != -1) {
+                    test = new TestCase(docPath.substring(docPath.lastIndexOf("/") + 1, docPath.lastIndexOf(".java")), docPath);
+                } else {
+                    test = new TestCase(docPath.substring(docPath.lastIndexOf("\\") + 1, docPath.lastIndexOf(".java")), docPath);
+                }
                 vscode.debug.startDebugging(undefined, await getDebugConfig(test, galasaPath, context, environmentProvider));
             } else {
                 vscode.window.showErrorMessage("You do not have a viable Galasa test opened.")
@@ -148,7 +154,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerTreeDataProvider("galasa-ras", localRasProvider);
     vscode.commands.registerCommand("galasa-ras.refresh", () => localRasProvider.refresh());
     vscode.commands.registerCommand('galasa-ras.runlog', (run : LocalRun) => {
-        vscode.workspace.openTextDocument(run.path + "/run.log").then(doc => {
+        vscode.workspace.openTextDocument(path.join(run.path, "run.log")).then(doc => {
             vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,true);
         });
     });
@@ -190,38 +196,38 @@ export function activate(context: vscode.ExtensionContext) {
 
 function setupWorkspace() : string[] {
     let created : string[] = []
-    if(!fs.existsSync(galasaPath + "/credentials.properties")) {
-        fs.writeFile(galasaPath + "/credentials.properties", "", function (err) {
+    if(!fs.existsSync(path.join(galasaPath, "credentials.properties"))) {
+        fs.writeFile(path.join(galasaPath, "credentials.properties"), "", function (err) {
             if (err) throw err;
         });
         created.push("credentials.properties");
     }
-    if(!fs.existsSync(galasaPath + "/cps.properties")) {
-        fs.writeFile(galasaPath + "/cps.properties", "", function (err) {
+    if(!fs.existsSync(path.join(galasaPath, "cps.properties"))) {
+        fs.writeFile(path.join(galasaPath, "cps.properties"), "", function (err) {
             if (err) throw err;
         });
         created.push("cps.properties");
     }
-    if(!fs.existsSync(galasaPath + "/bootstrap.properties")) {
-        fs.writeFile(galasaPath + "/bootstrap.properties", "", function (err) {
+    if(!fs.existsSync(path.join(galasaPath, "bootstrap.properties"))) {
+        fs.writeFile(path.join(galasaPath, "bootstrap.properties"), "", function (err) {
             if (err) throw err;
         });
         created.push("bootstrap.properties");
     }
-    if(!fs.existsSync(galasaPath + "/dss.properties")) {
-        fs.writeFile(galasaPath + "/dss.properties", "", function (err) {
+    if(!fs.existsSync(path.join(galasaPath, "dss.properties"))) {
+        fs.writeFile(path.join(galasaPath, "dss.properties"), "", function (err) {
             if (err) throw err;
         });
         created.push("dss.properties");
     }
-    if(!fs.existsSync(galasaPath + "/overrides.properties")) {
-        fs.writeFile(galasaPath + "/overrides.properties", "", function (err) {
+    if(!fs.existsSync(path.join(galasaPath, "overrides.properties"))) {
+        fs.writeFile(path.join(galasaPath, "overrides.properties"), "", function (err) {
             if (err) throw err;
         });
         created.push("overrides.properties");
     }
-    if(!fs.existsSync(galasaPath + "/vscode")) {
-        fs.mkdirSync(galasaPath + "/vscode");
+    if(!fs.existsSync(path.join(galasaPath, "vscode"))) {
+        fs.mkdirSync(path.join(galasaPath, "vscode"));
         created.push("vscode");
     }
     return created;

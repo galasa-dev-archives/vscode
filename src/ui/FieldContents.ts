@@ -25,7 +25,7 @@ export class FieldContents {
                 convString[i] = chars[i];
             }
 
-            let test =""
+            let test = "";
             convString.forEach(item => {test = test + item});
             this.text = test;
         }

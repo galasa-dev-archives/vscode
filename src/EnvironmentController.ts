@@ -1,13 +1,14 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as path from 'path';
 import { EnvironmentProvider, Property } from './TreeViewEnvironmentProperties';
 import rimraf = require('rimraf');
 
 export async function selectEnvrionment(galasaPath : string, environmentProvider : EnvironmentProvider) {
     let files : string[] = [];
-    fs.readdirSync(galasaPath + "/vscode").forEach(file => {
+    fs.readdirSync(path.join(galasaPath, "vscode")).forEach(file => {
         if(file.endsWith(".properties")) {
-            const name = fs.readFileSync(galasaPath + "/vscode/" + file).toString().split(/\r?\n/)[0].replace("#", "")
+            const name = fs.readFileSync(path.join(galasaPath, "vscode", file)).toString().split(/\r?\n/)[0].replace("#", "")
             files.push(name);
         }
     });
@@ -22,15 +23,15 @@ export async function selectEnvrionment(galasaPath : string, environmentProvider
         if(newName == "Create New Environment") {
             vscode.window.showWarningMessage("Invalid New Galasa Environment Name");
             return;
-        } else if(fs.existsSync(newFileName)) {
+        } else if(fs.existsSync(path.join(galasaPath, "vscode", newFileName))) {
             vscode.window.showWarningMessage("New Galasa Environment Name already exists or is too similar");
             return;
         }
-        fs.writeFileSync(galasaPath + "/vscode/" + newFileName, "#" + newName + "\n");
-        environmentProvider.setEnvironment(galasaPath + "/vscode/" + newFileName);
+        fs.writeFileSync(path.join(galasaPath, "vscode", newFileName), "#" + newName + "\n");
+        environmentProvider.setEnvironment(path.join(galasaPath, "vscode", newFileName));
     } else if(chosen) {
         const filename = chosen.replace(/[^A-Za-z0-9_-]/g, "") + ".properties";
-        environmentProvider.setEnvironment(galasaPath + "/vscode/" + filename);
+        environmentProvider.setEnvironment(path.join(galasaPath, "vscode", filename));
     }
 }
 
@@ -65,9 +66,9 @@ export async function addProperty(environmentProvider : EnvironmentProvider) {
 
 export async function deleteEnvironment(galasaPath : string, environmentProvider : EnvironmentProvider) {
     let files : string[] = [];
-    fs.readdirSync(galasaPath + "/vscode").forEach(file => {
+    fs.readdirSync(path.join(galasaPath, "vscode")).forEach(file => {
         if(file.endsWith(".properties")) {
-            const name = fs.readFileSync(galasaPath + "/vscode/" + file).toString().split(/\r?\n/)[0].replace("#", "")
+            const name = fs.readFileSync(path.join(galasaPath, "vscode", file)).toString().split(/\r?\n/)[0].replace("#", "")
             files.push(name);
         }
     });
@@ -79,11 +80,11 @@ export async function deleteEnvironment(galasaPath : string, environmentProvider
     if(!chosen) {
         return;
     }
-    if(environmentProvider.getEnvironment() == galasaPath + "/vscode/" + chosen.replace(/[^A-Za-z0-9_-]/g, "") + ".properties") {
+    if(environmentProvider.getEnvironment() == path.join(galasaPath, "vscode", chosen.replace(/[^A-Za-z0-9_-]/g, "") + ".properties")) {
         environmentProvider.setEnvironment(undefined);
-        fs.writeFileSync(galasaPath +"/vscode/envconfig", "");
+        fs.writeFileSync(path.join(galasaPath, "vscode", "envconfig"), "");
     }
-    rimraf(galasaPath + "/vscode/" + chosen.replace(/[^A-Za-z0-9_-]/g, "") + ".properties", () => {});
+    rimraf(path.join(galasaPath, "vscode", chosen.replace(/[^A-Za-z0-9_-]/g, "") + ".properties"), () => {});
 }
 
 export async function editProperty(property : Property, environmentProvider : EnvironmentProvider) {

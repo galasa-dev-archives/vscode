@@ -1,12 +1,13 @@
 import * as vscode from "vscode";
 import * as fs from 'fs';
+import * as path from 'path';
 import * as unzipper from "unzipper";
 import * as rimraf from "rimraf";
 
 export function launchSimbank(context : vscode.ExtensionContext) {
     let terminal = vscode.window.createTerminal("SimBank");
     terminal.show();
-    terminal.sendText("java -jar " + context.extensionPath + "/lib/galasa-simplatform.jar");
+    terminal.sendText("java -jar " + path.join(context.extensionPath, "lib", "galasa-simplatform.jar"));
 }
 
 export async function createExampleFiles(context : vscode.ExtensionContext) {
@@ -43,33 +44,40 @@ async function generateExampleCode(packageName : string, context : vscode.Extens
     if(vscode.workspace.workspaceFolders) {
         let workpath = getWorkspacePath();
         if(workpath) {
-            const fileContents = fs.createReadStream(context.extensionPath + "/lib/galasa-simbanktests-parent-examples.zip");
+            const fileContents = fs.createReadStream(path.join(context.extensionPath, "lib", "galasa-simbanktests-parent-examples.zip"));
             fileContents.pipe(unzipper.Extract({ path: workpath }));
 
             let watcher = vscode.workspace.createFileSystemWatcher("**/dev.galasa.simbank.*");
             watcher.onDidCreate(async project => {
                 try {
                     await Promise.resolve(() => setTimeout(() => {}, 100));
-                    const exampleName = project.toString().substring(project.toString().lastIndexOf("/") + 1);
+                    let exampleName = "";
+                    if(project.toString().lastIndexOf("/") != -1) {
+                        exampleName = project.toString().substring(project.toString().lastIndexOf("/") + 1);
+                    } else {
+                        exampleName = project.toString().substring(project.toString().lastIndexOf("\\") + 1);
+                    }
                     const projectName = exampleName.toString().replace("dev.galasa.simbank", packageName);
-                    if(!fs.existsSync(workpath + "/" + projectName) && (exampleName == "dev.galasa.simbank.manager" || exampleName == "dev.galasa.simbank.tests")) {
-                        copyDirectory(workpath + "/examples/" + exampleName, workpath + "/" + projectName)
+                    if(workpath && !fs.existsSync(path.join(workpath, projectName)) && (exampleName == "dev.galasa.simbank.manager" || exampleName == "dev.galasa.simbank.tests")) {
+                        copyDirectory(path.join(workpath, "examples", exampleName), path.join(workpath, projectName));
 
-                        let pomData = fs.readFileSync(workpath + "/" + projectName + "/pom-example.xml").toString();
+                        let pomData = fs.readFileSync(path.join(workpath, projectName, "pom-example.xml")).toString();
                         pomData = pomData.replace(/%%prefix%%/g, packageName);
-                        fs.writeFileSync(workpath + "/" + projectName + "/pom-example.xml", pomData);
-                        fs.renameSync(workpath + "/" + projectName + "/pom-example.xml", workpath + "/" + projectName + "/pom.xml");
+                        fs.writeFileSync(path.join(workpath, projectName, "pom-example.xml"), pomData);
+                        fs.renameSync(path.join(workpath, projectName, "pom-example.xml"), path.join(workpath, projectName, "pom.xml"));
 
-                        if(fs.existsSync(workpath + "/" + packageName + ".manager") && fs.existsSync(workpath + "/" + packageName + ".tests")) {
-                            rimraf(workpath + "/examples", () => {});
+                        if(fs.existsSync(path.join(workpath, packageName + ".manager")) && fs.existsSync(path.join(workpath, packageName + ".tests"))) {
+                            rimraf(path.join(workpath, "examples"), () => {});
                             watcher.dispose();
                         }
                     }
                 } catch(err) {
                     vscode.window.showErrorMessage("Error loading example tests, please update the Galasa plugin and try again");
-                    rimraf(workpath + "/" + packageName + ".manager", () => {});
-                    rimraf(workpath + "/" + packageName + ".tests", () => {});
-                    rimraf(workpath + "/examples", () => {});
+                    if(workpath) {
+                        rimraf(path.join(workpath, packageName + ".manager"), () => {});
+                        rimraf(path.join(workpath, packageName + ".tests"), () => {});
+                        rimraf(path.join(workpath, "examples"), () => {});
+                    }
                 } finally {
                     if(javaExt) {
                         let config = vscode.workspace.getConfiguration();
@@ -96,10 +104,10 @@ export function getWorkspacePath() : string | undefined {
 function copyDirectory(source : string, target : string) {
     fs.mkdirSync(target);
     fs.readdirSync(source).forEach(file => {
-        if(fs.statSync(source + "/" + file).isFile()) {
-            fs.copyFileSync(source + "/" + file, target + "/" + file);
+        if(fs.statSync(path.join(source, file)).isFile()) {
+            fs.copyFileSync(path.join(source, file), path.join(target, file));
         } else {
-            copyDirectory(source + "/" + file, target + "/" + file);
+            copyDirectory(path.join(source, file), path.join(target, file));
         }
     });
 }

@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as path from 'path';
 
 export class EnvironmentProvider implements vscode.TreeDataProvider<Property> {
     private _onDidChangeTreeData: vscode.EventEmitter<Property | undefined> = new vscode.EventEmitter<Property | undefined>();
     readonly onDidChangeTreeData: vscode.Event<Property | undefined> = this._onDidChangeTreeData.event;
 
     constructor(galasaPath: string) { 
-        this.configPath = galasaPath +"/vscode/envconfig";
+        this.configPath = path.join(galasaPath, "vscode", "envconfig");
         if(!fs.existsSync(this.configPath)) {
             fs.writeFileSync(this.configPath, "");
             this.envPath = undefined;

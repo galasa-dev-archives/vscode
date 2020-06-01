@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as path from 'path';
 import { LocalRun } from './TreeViewLocalResultArchiveStore';
 
 
@@ -20,7 +21,7 @@ export class ArtifactProvider implements vscode.TreeDataProvider<ArtifactItem> {
             if(!this.run) {
                 return undefined
             } else {
-                return this.getArtifacts(this.run.path + "/artifacts");
+                return this.getArtifacts(path.join(this.run.path + "/artifacts"));
             }
         } else if(fs.statSync(element.path).isDirectory()) {
             return this.getArtifacts(element.path);
@@ -29,11 +30,11 @@ export class ArtifactProvider implements vscode.TreeDataProvider<ArtifactItem> {
         }
     }
 
-    private getArtifacts(path : string) : ArtifactItem[] {
+    private getArtifacts(docPath : string) : ArtifactItem[] {
         let items : ArtifactItem[] = [];
-        fs.readdirSync(path).forEach(file => {
+        fs.readdirSync(docPath).forEach(file => {
             if(this.run) {
-                const filePath = path + "/" + file;
+                const filePath = path.join(docPath, file);
                 if(fs.statSync(filePath).isDirectory()) {
                     items.push(new ArtifactItem(file, filePath, vscode.TreeItemCollapsibleState.Collapsed, "directory"));
                 } else {
