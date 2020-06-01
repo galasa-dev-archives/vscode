@@ -15,6 +15,48 @@ Galasa has been architected to ensure that the routine tasks of writing and exec
 
 ## Overview of the Galasa extension features
 
+### User configuration
+
+![Galasa Configuration](resources/readme/config.png)
+
+1. Maven-local: If you have a local Maven repository to pull from you can specify this here to take priority over the remote Maven repository
+2. Maven-remote: URI for remote Maven Repository
+3. Requestor: Defining the name of the Requestor when Requesting a Galasa Run
+4. Version: The currently built Galasa version, you would like to use
+
+### Launching a Galasa Test
+
+There are multiple ways to launch a Galasa test in this extension, you are able to use the incode-button or are able to press the button in the upper-right side corner of your screen.
+
+_Running a Galasa test requires you to have built the whole of Galasa for the version that you are currently writing a test for._
+
+Click the `Debug Galasa Test` to start debugging your test. Or you can press the Galasa-icon in the upper-right corner to run the same opened test.
+
+![Incode Runner](resources/readme/incode.png)
+
+### Setting up custom Environment Properties
+
+
+Environment properties are there for you to define specific properties that are to be used in `overrides.properties`-file in your `.galasa`-folder. These properties allow you to define specific meta-data for certain tests. You are able to switch between these environments and add properties with their associated values as you wish. If you have utilised an environment of properties fully you are able to even delete this environment.
+
+1. Creating a new environment
+2. Adding environment properties to be used for your Galasa-tests
+3. Deleting an environment
+
+![Environment Properties](resources/readme/environment.png)
+
+### Looking at your run-history
+
+You are presented a historic-view of all your Galasa runs. You can interact with them in a couple of ways.
+
+1. Double clicking on a run will give you an overview of the test-structure
+2. Showing a list of the generated-artifacts in the artifacts tab. You are then able to open these files and visualise them.
+3. Showing a run log
+4. Deleting a run log
+
+
+![Local Runs](resources/readme/localRuns.png)
+
 ### Generating a testing-environment for running Simbank
 
 **Simbank** simulates a mainframe application. It has been created to show off the hybrid and scalable capabilities of the Galasa Framework without having to deal with the complexities of connecting to an actual mainframe. It is a perfect start to learn and/or understand how the framework operates.
@@ -29,9 +71,9 @@ You can connect with the Simbank-environment using a 3270-emulator and are able 
 
 _All Galasa-related files can be found in the .galasa folder under your user's root._
 
-1. Click the _rocket-icon_ to launch an instance of Simbank running locally on your machine using the Java 8 JDK.
+1. Click the _rocket-icon_ under local runs to launch an instance of Simbank running locally on your machine using the Java 8 JDK.
 
-2. Initialise your Galasa environment. (Setup Galasa Workspace icon) _This should have been done during the first launch of the Galasa extension, but can become malformed during runtime of the extension._
+2. Initialise your Galasa environment. (Setup Galasa Workspace icon under local runs) _This should have been done during the first launch of the Galasa extension, but can become malformed during runtime of the extension._
 
 3. Initialise your workspace with the Simbank manager and the accompanied Galasa tests. (Create Simbank examples icon). You are able to give this package a desired name. _YOUR_PACKAGE_NAME_
 
@@ -72,26 +114,6 @@ _All Galasa-related files can be found in the .galasa folder under your user's r
 6. Refresh the test runner tab and you should be able to see the provisioned Simbank Galasa Tests.
    Run these Simbank tests by pressing the run-icon next to any test and look at the process in the popped-up terminal.
 
-### Launching a Galasa Test locally.
-
-You can launch a local Galasa test by pressing the Run-icon next to each of your available tests in your currently active environment
-
-![Running a local test](resources/readme/runningLocal.png)
-
-### The status overview of your past tests
-
-This tab allows you to view your past tests with their appropriate statusses.
-
-Here you are able to _right-click_ on each test to retrieve the runlog, artifacts and/or delete an entry.
-If you open the artifacts, the artifacts tab will be populated with all the artifacts associated with the test that you have _right-clicked_.
-
-![Status Overview](resources/readme/localRuns.png)
-
-These local artifacts are also available through your own file system. They are stored under your user-root in the `.galasa`-folder.
-
-You are able to then click the icon next to the desired artifact to open a file in a `vscode`-window.
-
-![Opening a file](resources/readme/openFile.png)
 
 ## License
 

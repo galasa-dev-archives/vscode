@@ -99,11 +99,6 @@
 				"command": "galasa-environment.deleteEnv",
 				"title": "Delete Environment",
 				"icon": "$(chrome-close)"
-			},
-			{
-				"command": "galasa-test.export",
-				"title": "Export run to launch.json",
-				"icon": "$(rocket)"
 			}
 		],
 		"viewsContainers": {
@@ -202,11 +197,6 @@
 					"when": "view == galasa-ras && viewItem == localrun"
 				},
 				{
-					"command": "galasa-artifacts.open",
-					"when": "view == galasa-artifacts && viewItem == file",
-					"group": "inline"
-				},
-				{
 					"command": "galasa-environment.edit",
 					"when": "view == galasa-environment"
 				},
@@ -218,10 +208,6 @@
 			"editor/title": [
 				{
 					"command": "galasa-test.debug",
-					"group": "navigation"
-				},
-				{
-					"command": "galasa-test.export",
 					"group": "navigation"
 				}
 			]

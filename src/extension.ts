@@ -122,13 +122,13 @@ export function activate(context: vscode.ExtensionContext) {
     let codelensProvider = new CodeProvider();
     vscode.languages.registerCodeLensProvider({language: "java"}, codelensProvider);
 
-    vscode.commands.registerCommand("galasa-test.export", async () => {
-        vscode.workspace.workspaceFolders?.forEach(folder => {
-            if (vscode.window.activeTextEditor?.document.uri.fsPath.indexOf(folder.uri.fsPath) != -1) {
+    // vscode.commands.registerCommand("galasa-test.export", async () => {
+    //     vscode.workspace.workspaceFolders?.forEach(folder => {
+    //         if (vscode.window.activeTextEditor?.document.uri.fsPath.indexOf(folder.uri.fsPath) != -1) {
                 
-            } 
-        })
-    });
+    //         }
+    //     });
+    // };
 
     //Environment Properties
     const environmentProvider = new EnvironmentProvider(galasaPath);
@@ -167,19 +167,25 @@ export function activate(context: vscode.ExtensionContext) {
         rimraf(run.path, () => {});
         localRasProvider.refresh();
     });
+    let active = "";
     vscode.commands.registerCommand("galasa-artifacts.open", (artifact : ArtifactItem) => {
-        if (artifact.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
-            new TerminalView(fs.readFileSync(artifact.path), undefined);
+        if(active != artifact.label) {
+            active = artifact.label;
         } else {
-            let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
-                return textDoc.document.fileName.includes(artifact.label);
-            });
-            if (!filterActiveDocs || filterActiveDocs.length < 1) {
-                vscode.workspace.openTextDocument(artifact.path).then(doc => {
-                        vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,true);
-                    });
+            active = "";
+            if (artifact.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
+                new TerminalView(fs.readFileSync(artifact.path), undefined);
             } else {
-                vscode.window.showInformationMessage("You have already opened this file.");
+                let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
+                    return textDoc.document.fileName.includes(artifact.label);
+                });
+                if (!filterActiveDocs || filterActiveDocs.length < 1) {
+                    vscode.workspace.openTextDocument(artifact.path).then(doc => {
+                            vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,true);
+                        });
+                } else {
+                    vscode.window.showInformationMessage("You have already opened this file.");
+                }
             }
         }
     });
