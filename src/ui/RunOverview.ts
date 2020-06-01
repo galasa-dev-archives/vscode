@@ -64,6 +64,8 @@ export function showOverview(run : LocalRun) {
             afters = afters.substring(2);
         }
 
+        let exception = run.structure.methods[i].exception;
+
         methodData = methodData + 
             `<table><tr><td>Method Name</td><td>${run.structure.methods[i].methodName}</td></tr>
             <tr><td>Class Name</td><td>${run.structure.methods[i].className}</td></tr>
@@ -75,8 +77,13 @@ export function showOverview(run : LocalRun) {
             <tr><td>Run Log Start</td><td>${run.structure.methods[i].runLogStart}</td></tr>
             <tr><td>Run Log End</td><td>${run.structure.methods[i].runLogEnd}</td></tr>
             <tr><td>Start Time</td><td>${run.structure.methods[i].startTime}</td></tr>
-            <tr><td>End Time</td><td>${run.structure.methods[i].endTime}</td></tr>
-            </table><br>`;
+            <tr><td>End Time</td><td>${run.structure.methods[i].endTime}</td></tr>`
+        if(exception) {
+            methodData = methodData + `<tr><td colspan="2">Exception</td></tr>
+                <div><tr><td colspan="2">${exception}</td></tr></div>`;
+        }
+        methodData = methodData + `</table><br>`;
+            
     }
     methodData = methodData + `</div>`;
 

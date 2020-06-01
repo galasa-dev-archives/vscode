@@ -46,11 +46,14 @@ export class EnvironmentProvider implements vscode.TreeDataProvider<Property> {
                 }
             });
         }
+        items.sort(function (a, b) {
+            return a.key.toLowerCase().localeCompare(b.key.toLowerCase());
+        });
         return items;
     }
 
     public refresh(): void {
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
     }
 
     public setEnvironment(envPath : string | undefined) {

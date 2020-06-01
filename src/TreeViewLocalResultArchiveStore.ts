@@ -62,7 +62,14 @@ export class RASProvider implements vscode.TreeDataProvider<LocalRun | Timing> {
     }
 
     public refresh(): void {
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
+        const children = this.getChildren(undefined);
+        if(children) {
+            children.forEach(timing => {
+                this._onDidChangeTreeData.fire(timing);
+            });
+        }
+        
     }
 
     getRuns(galasaPath : string, start : Date | undefined, end : Date) : LocalRun[] {
@@ -86,6 +93,9 @@ export class RASProvider implements vscode.TreeDataProvider<LocalRun | Timing> {
                 }
             });
         }
+        runs.sort((run1, run2) => {
+            return fs.statSync(run2.path).mtime.getTime() - fs.statSync(run1.path).mtime.getTime();
+        });
         return runs;
     }
 }

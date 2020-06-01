@@ -15,13 +15,13 @@ export async function getDebugConfig(testClass : TestCase, galasaPath : string, 
         maven = maven + "--remotemaven " + workspace.getConfiguration("galasa").get("maven-remote") + " ";
     }
 
-    let bootstrap = workspace.getConfiguration("galasa").get("bootstrap");
+    let bootstrap : string | undefined = workspace.getConfiguration("galasa").get("bootstrap");
     if(!bootstrap) {
         bootstrap = "file:" + path.join(galasaPath, "bootstrap.properties");
     }
     const bootstrapURI = "--bootstrap " + bootstrap + " ";
 
-    const overridesURI = buildOverrides(galasaPath, context, environmentProvider);
+    const overridesURI = buildOverrides(galasaPath, context, environmentProvider, bootstrap);
 
     const workspaceObr = await buildLocalObr(context);
 
@@ -47,7 +47,7 @@ export function getGalasaVersion(context : ExtensionContext) : string  {
     return version;
 }
 
-function buildOverrides(galasaPath : string, context : ExtensionContext, environmentProvider : EnvironmentProvider) : string {
+function buildOverrides(galasaPath : string, context : ExtensionContext, environmentProvider : EnvironmentProvider, bootstrap : string) : string {
     if(!fs.existsSync(path.join(context.extensionPath, "galasa-workspace"))) {
         fs.mkdirSync(path.join(context.extensionPath, "galasa-workspace"));
     }
@@ -65,11 +65,6 @@ function buildOverrides(galasaPath : string, context : ExtensionContext, environ
     
     fs.appendFileSync(filepath, "framework.resultarchive.store=file:" + path.join(galasaPath, "ras") + "\n");
     fs.appendFileSync(filepath, "framework.credentials.store=file:" + path.join(galasaPath, "credentials.properties") + "\n");
-
-    let bootstrap = workspace.getConfiguration("galasa").get("bootstrap");
-    if(!bootstrap) {
-        bootstrap = "file:" + path.join(galasaPath, "bootstrap.properties");
-    }
     fs.appendFileSync(filepath, "framework.bootstrap.url=" + bootstrap + "\n");
 
     let requestor = workspace.getConfiguration("galasa").get("requestor");

@@ -21,7 +21,7 @@ import {CodeProvider} from "./CodeProvider";
 // import { RasItem } from './remote/RasItem';
 // import { RemoteTestExtractor, RemoteTestCase } from './remote/RemoteTestExtractor'
 // import { RemoteProvider } from './remote/RemoteProvider';
-const galasaPath = process.env.HOME + "/" + ".galasa";
+const galasaPath = path.join(process.env.HOME ? process.env.HOME : "", ".galasa");
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -103,7 +103,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('galasa-test.debug', async () => {
         const activeDoc = vscode.window.activeTextEditor;
         if (activeDoc) {
-            if (activeDoc.document.getText().indexOf("@Test") != -1 && activeDoc.document.getText().indexOf("import dev.galasa.Test;") != -1 && activeDoc.document.uri.fsPath.endsWith(".java")) {
+            if (activeDoc.document.getText().includes("@Test") && activeDoc.document.getText().includes("import dev.galasa.Test;") && activeDoc.document.uri.fsPath.endsWith(".java")) {
                 let docPath = activeDoc.document.uri.fsPath;
                 let test : TestCase;
                 if(docPath.lastIndexOf("/") != -1) {

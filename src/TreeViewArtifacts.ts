@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { LocalRun } from './TreeViewLocalResultArchiveStore';
 
-
 export class ArtifactProvider implements vscode.TreeDataProvider<ArtifactItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<ArtifactItem | undefined> = new vscode.EventEmitter<ArtifactItem | undefined>();
     readonly onDidChangeTreeData: vscode.Event<ArtifactItem | undefined> = this._onDidChangeTreeData.event;
@@ -21,7 +20,7 @@ export class ArtifactProvider implements vscode.TreeDataProvider<ArtifactItem> {
             if(!this.run) {
                 return undefined
             } else {
-                return this.getArtifacts(path.join(this.run.path + "/artifacts"));
+                return this.getArtifacts(path.join(this.run.path, "artifacts"));
             }
         } else if(fs.statSync(element.path).isDirectory()) {
             return this.getArtifacts(element.path);
@@ -46,7 +45,14 @@ export class ArtifactProvider implements vscode.TreeDataProvider<ArtifactItem> {
     }
 
     public refresh(): void {
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
+        const children = this.getChildren(undefined)
+        if(children) {
+            children.forEach(artifact => {
+                this._onDidChangeTreeData.fire(artifact);
+            });
+        }
+            
     }
 
     public setRun(run : LocalRun) {

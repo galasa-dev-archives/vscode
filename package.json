@@ -224,7 +224,6 @@
 	"dependencies": {
 		"@types/rimraf": "^3.0.0",
 		"@types/unzipper": "^0.10.3",
-		"@types/vscode": "^1.44.0",
 		"glob": "^7.1.6",
 		"gulp": "^4.0.2",
 		"request": "^2.88.2",
@@ -234,7 +233,7 @@
 	},
 	"devDependencies": {
 		"@types/node": "^13.13.5",
-		"@types/vscode": "^1.44.0",
+		"@types/vscode": "^1.45.1",
 		"glob": "^7.1.6",
 		"typescript": "^3.8.3"
 	},
