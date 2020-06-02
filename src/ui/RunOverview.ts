@@ -2,6 +2,13 @@ import * as vscode from "vscode";
 import { LocalRun } from "../TreeViewLocalResultArchiveStore";
 
 export function showOverview(run : LocalRun) {
+    let buttonColour = "";
+    let buttonBack = "0,0,0";
+    switch(vscode.window.activeColorTheme.kind) {
+        case vscode.ColorThemeKind.Dark: buttonColour = "#f2f2f2"; buttonBack = "200, 200, 200"; break;
+        case vscode.ColorThemeKind.Light: buttonColour = "#0d0d0d"; break;
+        case vscode.ColorThemeKind.HighContrast: buttonColour = "#0080ff"; break;
+    }
     const panel = vscode.window.createWebviewPanel("runOverview", "Overview - " + run.label, vscode.ViewColumn.Active, {enableScripts: true});
     const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><style>
     table, th, td {
@@ -27,29 +34,24 @@ export function showOverview(run : LocalRun) {
     }
 
     /* Style the button that is used to open and close the collapsible content */
-    .collapsible {
-      background-color: #eee;
-      color: #444;
+    button {
+      color: ${buttonColour};
+      background: rgba(${buttonBack},0.1);
       cursor: pointer;
-      padding: 18px;
       width: 100%;
       border: none;
-      text-align: left;
       outline: none;
-      font-size: 15px;
     }
     
     /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
     .active, .collapsible:hover {
-      background-color: #ccc;
+        background: rgba(${buttonBack},0.2);
     }
     
     /* Style the collapsible content. Note: hidden by default */
     .content {
-      padding: 0 18px;
       display: none;
       overflow: hidden;
-      background-color: #f1f1f1;
     } 
     </style><title>Terminals</title></head><body><div class="parent">`;
     const endHtml = `</div></body><script>
