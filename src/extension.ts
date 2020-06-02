@@ -160,9 +160,6 @@ export function activate(context: vscode.ExtensionContext) {
     });
     const localArtifactProvider = new ArtifactProvider();
     vscode.window.registerTreeDataProvider("galasa-artifacts", localArtifactProvider);
-    vscode.commands.registerCommand('galasa-ras.artifacts', (run : LocalRun) => {
-        localArtifactProvider.setRun(run);
-    });
     vscode.commands.registerCommand("galasa-ras.delete", (run : LocalRun) => {
         rimraf(run.path, () => {});
         localRasProvider.refresh();
@@ -190,6 +187,7 @@ export function activate(context: vscode.ExtensionContext) {
             activeLabel = run.label;
         } else {
             activeLabel = "";
+            localArtifactProvider.setRun(run);
             showOverview(run);
         }
     });

@@ -17,11 +17,15 @@ export class ArtifactProvider implements vscode.TreeDataProvider<ArtifactItem> {
 
     getChildren(element?: ArtifactItem): ArtifactItem[] | undefined {
         if(!element) {
+            let artifacts: ArtifactItem[] = [];
             if(!this.run) {
                 return undefined
             } else {
-                return this.getArtifacts(path.join(this.run.path, "artifacts"));
+                artifacts.push(new ArtifactItem(this.run.label, "", vscode.TreeItemCollapsibleState.Collapsed, "directory"));
+                return artifacts;
             }
+        } else if (element.path == "" && this.run) {
+            return this.getArtifacts(path.join(this.run.path, "artifacts"));
         } else if(fs.statSync(element.path).isDirectory()) {
             return this.getArtifacts(element.path);
         } else {
