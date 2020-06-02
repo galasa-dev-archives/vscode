@@ -30,19 +30,30 @@ export class EnvironmentProvider implements vscode.TreeDataProvider<Property> {
 
     getChildren(element?: Property): Property[] | undefined {
         if(!element && this.envPath) {
+            return this.getEnvName(this.envPath);
+        } else if (element && element.key == "" && this.envPath) {
             return this.getProperties(this.envPath);
         } else {
             return undefined;
         }
     }
 
-    private getProperties(path : string) : Property[] {
+    private getEnvName(envPath : string) {
         let items : Property[] = [];
-        if(fs.existsSync(path) && fs.statSync(path).isFile()) {
-            fs.readFileSync(path).toString().split(/\r?\n/).forEach(line => {
+        if(fs.existsSync(envPath) && fs.statSync(envPath).isFile()) {
+            const name = fs.readFileSync(envPath).toString().split(/\r?\n/)[0].substring(1).trim();
+            items.push(new Property(name, "", "", "", vscode.TreeItemCollapsibleState.Expanded));
+        }
+        return items;
+    }
+
+    private getProperties(envPath : string) : Property[] {
+        let items : Property[] = [];
+        if(fs.existsSync(envPath) && fs.statSync(envPath).isFile()) {
+            fs.readFileSync(envPath).toString().split(/\r?\n/).forEach(line => {
                 if(!line.startsWith("#") && line != "") {
                     const pairing = line.split("=");
-                    items.push(new Property(pairing[0] + " - " + pairing[1],pairing[0],pairing[1], vscode.TreeItemCollapsibleState.None))
+                    items.push(new Property(pairing[0] + " - " + pairing[1],pairing[0],pairing[1], "property", vscode.TreeItemCollapsibleState.None))
                 }
             });
         }
@@ -72,6 +83,7 @@ export class Property extends vscode.TreeItem{
     constructor(public label: string,
                 public key: string,
                 public value: string,
+                public contextValue: string,
                 public readonly collapsibleState: vscode.TreeItemCollapsibleState) {
         super(label, collapsibleState )
     }

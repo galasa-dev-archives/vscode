@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { LocalRun } from "../TreeViewLocalResultArchiveStore";
 
 export function showOverview(run : LocalRun) {
-    const panel = vscode.window.createWebviewPanel("runOverview", "Overview - " + run.label, vscode.ViewColumn.Active);
+    const panel = vscode.window.createWebviewPanel("runOverview", "Overview - " + run.label, vscode.ViewColumn.Active, {enableScripts: true});
     const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><style>
     table, th, td {
         border: 1px solid #D3D3D3;
@@ -25,8 +25,49 @@ export function showOverview(run : LocalRun) {
             width: 50%;
         }
     }
+
+    /* Style the button that is used to open and close the collapsible content */
+    .collapsible {
+      background-color: #eee;
+      color: #444;
+      cursor: pointer;
+      padding: 18px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 15px;
+    }
+    
+    /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+    .active, .collapsible:hover {
+      background-color: #ccc;
+    }
+    
+    /* Style the collapsible content. Note: hidden by default */
+    .content {
+      padding: 0 18px;
+      display: none;
+      overflow: hidden;
+      background-color: #f1f1f1;
+    } 
     </style><title>Terminals</title></head><body><div class="parent">`;
-    const endHtml = "</div></body></html>";
+    const endHtml = `</div></body><script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+    
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.parentElement.parentElement.parentElement.lastElementChild.lastElementChild.lastElementChild
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    } 
+    </script></html>`;
 
     const metaData = `<div class="side"><h3>Run ID: ${run.label.substring(0, run.label.indexOf(" - "))}</h3>
     <table>
@@ -79,8 +120,8 @@ export function showOverview(run : LocalRun) {
             <tr><td>Start Time</td><td>${run.structure.methods[i].startTime}</td></tr>
             <tr><td>End Time</td><td>${run.structure.methods[i].endTime}</td></tr>`
         if(exception) {
-            methodData = methodData + `<tr><td colspan="2">Exception</td></tr>
-                <div><tr><td colspan="2">${exception}</td></tr></div>`;
+            methodData = methodData + `<tr><td colspan="2"><button type="button" class="collapsible">Exception</button></td></tr>
+                <tr><td colspan="2"><div class="content">${exception}</div></td></tr>`;
         }
         methodData = methodData + `</table><br>`;
             

@@ -201,11 +201,11 @@
 				},
 				{
 					"command": "galasa-environment.edit",
-					"when": "view == galasa-environment"
+					"when": "view == galasa-environment && viewItem == property"
 				},
 				{
 					"command": "galasa-environment.delete",
-					"when": "view == galasa-environment"
+					"when": "view == galasa-environment && viewItem == property"
 				}
 			],
 			"editor/title": [
