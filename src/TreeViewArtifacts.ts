@@ -3,25 +3,25 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { LocalRun } from './TreeViewLocalResultArchiveStore';
 
-export class ArtifactProvider implements vscode.TreeDataProvider<ArtifactItem> {
-    private _onDidChangeTreeData: vscode.EventEmitter<ArtifactItem | undefined> = new vscode.EventEmitter<ArtifactItem | undefined>();
-    readonly onDidChangeTreeData: vscode.Event<ArtifactItem | undefined> = this._onDidChangeTreeData.event;
+export class ArtifactProvider implements vscode.TreeDataProvider<ArtifactItem | ArtifactDirectory> {
+    private _onDidChangeTreeData: vscode.EventEmitter<ArtifactItem | ArtifactDirectory | undefined> = new vscode.EventEmitter<ArtifactItem | ArtifactDirectory | undefined>();
+    readonly onDidChangeTreeData: vscode.Event<ArtifactItem | ArtifactDirectory | undefined> = this._onDidChangeTreeData.event;
 
     constructor() { }
 
     private run : LocalRun | undefined = undefined;
 
-    getTreeItem(element: ArtifactItem): vscode.TreeItem {
+    getTreeItem(element: ArtifactItem | ArtifactDirectory): vscode.TreeItem {
         return element;
     }
 
-    getChildren(element?: ArtifactItem): ArtifactItem[] | undefined {
+    getChildren(element?: ArtifactItem | ArtifactDirectory): (ArtifactItem | ArtifactDirectory)[] | undefined {
         if(!element) {
-            let artifacts: ArtifactItem[] = [];
+            let artifacts: (ArtifactItem | ArtifactDirectory)[] = [];
             if(!this.run) {
                 return undefined
             } else {
-                artifacts.push(new ArtifactItem(this.run.label, "", vscode.TreeItemCollapsibleState.Collapsed, "directory"));
+                artifacts.push(new ArtifactDirectory(this.run.label, "", vscode.TreeItemCollapsibleState.Expanded, "directory"));
                 return artifacts;
             }
         } else if (element.path == "" && this.run) {
@@ -33,13 +33,13 @@ export class ArtifactProvider implements vscode.TreeDataProvider<ArtifactItem> {
         }
     }
 
-    private getArtifacts(docPath : string) : ArtifactItem[] {
-        let items : ArtifactItem[] = [];
+    private getArtifacts(docPath : string) : (ArtifactItem | ArtifactDirectory)[] {
+        let items : (ArtifactItem | ArtifactDirectory)[] = [];
         fs.readdirSync(docPath).forEach(file => {
             if(this.run) {
                 const filePath = path.join(docPath, file);
                 if(fs.statSync(filePath).isDirectory()) {
-                    items.push(new ArtifactItem(file, filePath, vscode.TreeItemCollapsibleState.Collapsed, "directory"));
+                    items.push(new ArtifactDirectory(file, filePath, vscode.TreeItemCollapsibleState.Collapsed, "directory"));
                 } else {
                     items.push(new ArtifactItem(file, filePath, vscode.TreeItemCollapsibleState.None, "file"));
                 }
@@ -71,7 +71,7 @@ export class ArtifactItem extends vscode.TreeItem{
                 public path: string,
                 public readonly collapsibleState: vscode.TreeItemCollapsibleState,
                 public contextValue : string) {
-        super(label, collapsibleState )
+        super(label, collapsibleState)
 
         this.command = getCommand(this);
 
@@ -82,6 +82,16 @@ export class ArtifactItem extends vscode.TreeItem{
                 arguments: [klass]
             }
         }
+    }
+}
+
+export class ArtifactDirectory extends vscode.TreeItem{
+   
+    constructor(public label: string,
+                public path: string,
+                public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+                public contextValue : string) {
+        super(label, collapsibleState)
     }
 }
 
