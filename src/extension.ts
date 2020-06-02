@@ -13,6 +13,7 @@ import { selectEnvrionment, addProperty, editProperty, deleteProperty, deleteEnv
 import { showOverview } from './ui/RunOverview';
 import {CodeProvider} from "./CodeProvider";
 import { GalasaConfigurationProvider } from "./debugger/GalasaConfigurationProvider";
+import commentjson = require('comment-json');
 const galasaPath = path.join(process.env.HOME ? process.env.HOME : "", ".galasa");
 
 export function activate(context: vscode.ExtensionContext) {
@@ -74,19 +75,12 @@ export function activate(context: vscode.ExtensionContext) {
                         fs.writeFileSync(launchPath, JSON.stringify(JSON.parse(launch), undefined, 4));
                     }
                     
-                    let launch;
-                    try {
-                        launch = JSON.parse(fs.readFileSync(launchPath).toString());
-                    } catch (error) {
-                        vscode.window.showErrorMessage("Galasa Plugin cannot currently automatically add json to launch.json with comments");
-                        return;
-                    }
-                    
+                    let launch = commentjson.parse(fs.readFileSync(launchPath).toString());
                     let config = JSON.parse(fs.readFileSync(path.join(context.extensionPath, "package.json")).toString()).contributes.debuggers[0].initialConfigurations[0];
                     config.testclass = findTestArtifact(testcase);
                     config.name = testcase.label;
                     launch.configurations.push(config);
-                    fs.writeFileSync(launchPath, JSON.stringify(launch, undefined, 4));
+                    fs.writeFileSync(launchPath, commentjson.stringify(launch, undefined, 4));
 
                     vscode.workspace.openTextDocument(launchPath).then(doc => {
                         vscode.window.showTextDocument(doc);
