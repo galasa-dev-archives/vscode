@@ -99,6 +99,11 @@
 				"command": "galasa-environment.deleteEnv",
 				"title": "Delete Environment",
 				"icon": "$(chrome-close)"
+			},
+			{
+				"command": "galasa-test.export",
+				"title": "Galasa Export launch.json",
+				"icon": "$(json)"
 			}
 		],
 		"viewsContainers": {
@@ -205,6 +210,11 @@
 				{
 					"when": "resourceLangId == java",
 					"command": "galasa-test.debug",
+					"group": "navigation"
+				},
+				{
+					"when": "resourceLangId == java",
+					"command": "galasa-test.export",
 					"group": "navigation"
 				}
 			]

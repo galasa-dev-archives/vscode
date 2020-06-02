@@ -50,13 +50,53 @@ export function activate(context: vscode.ExtensionContext) {
     let codelensProvider = new CodeProvider();
     vscode.languages.registerCodeLensProvider({language: "java"}, codelensProvider);
 
-    // vscode.commands.registerCommand("galasa-test.export", async () => {
-    //     vscode.workspace.workspaceFolders?.forEach(folder => {
-    //         if (vscode.window.activeTextEditor?.document.uri.fsPath.indexOf(folder.uri.fsPath) != -1) {
-                
-    //         }
-    //     });
-    // };
+    vscode.commands.registerCommand("galasa-test.export", async () => {
+        const activeDoc = vscode.window.activeTextEditor;
+        if (activeDoc) {
+            if (activeDoc.document.getText().includes("@Test") && activeDoc.document.getText().includes("import dev.galasa.Test;") && activeDoc.document.uri.fsPath.endsWith(".java")) {
+                if (vscode.workspace.workspaceFolders) {
+                    const launchPath = path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, ".vscode", "launch.json");
+                    let testcase;
+                    let filename = activeDoc.document.fileName;
+                    if (activeDoc.document.uri.fsPath.lastIndexOf("/") != -1) {
+                        testcase = new TestCase(filename.substring(filename.lastIndexOf("/") + 1, filename.lastIndexOf(".java")), activeDoc.document.uri.fsPath);
+                    } else {
+                        testcase = new TestCase(filename.substring(filename.lastIndexOf("\\") + 1, filename.lastIndexOf(".java")), activeDoc.document.uri.fsPath);
+                    }
+                    if (fs.existsSync(launchPath)) {
+                        let launch = JSON.parse(fs.readFileSync(launchPath).toString());
+                        let config = JSON.parse(fs.readFileSync(path.join(context.extensionPath, "package.json")).toString()).contributes.debuggers[0].initialConfigurations[0];
+                        config.testclass = findTestArtifact(testcase);
+                        launch.configurations.push(config);
+                        fs.writeFileSync(launchPath, JSON.stringify(launch, undefined, 4));
+                    } else {
+                        if (!fs.existsSync(path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, ".vscode"))) {
+                            fs.mkdirSync(path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, ".vscode"));
+                        }
+                        let launch: any = `{
+                            "version": "0.2.0",
+                            "configurations": [
+
+                            ]
+                        }`;
+                        launch = JSON.parse(launch);
+                        let config = JSON.parse(fs.readFileSync(path.join(context.extensionPath, "package.json")).toString()).contributes.debuggers[0].initialConfigurations[0];
+                        config.testclass = findTestArtifact(testcase);
+                        launch.configurations.push(config);
+                        fs.writeFileSync(launchPath, JSON.stringify(launch, undefined, 4));
+                    }
+                    vscode.workspace.openTextDocument(launchPath).then(doc => {
+                        vscode.window.showTextDocument(doc);
+                    });
+                }
+               
+            } else {
+                vscode.window.showErrorMessage("You do not have a viable Galasa test opened.")
+            }
+        } else {
+            vscode.window.showErrorMessage("Could not retrieve the currently active text editor.")
+        }
+    });
 
     //Environment Properties
     const environmentProvider = new EnvironmentProvider(galasaPath);
