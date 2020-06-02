@@ -172,19 +172,15 @@ export function activate(context: vscode.ExtensionContext) {
         if(active != artifact.label) {
             active = artifact.label;
         } else {
-            active = "";
-            if (artifact.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
-                new TerminalView(fs.readFileSync(artifact.path), undefined);
-            } else {
-                let filterActiveDocs = vscode.window.visibleTextEditors.filter(textDoc => {
-                    return textDoc.document.fileName.includes(artifact.label);
-                });
-                if (!filterActiveDocs || filterActiveDocs.length < 1) {
+            if (!fs.statSync(artifact.path).isDirectory()) {
+                active = "";
+                if (artifact.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
+                    new TerminalView(fs.readFileSync(artifact.path), undefined);
+                } else {
                     vscode.workspace.openTextDocument(artifact.path).then(doc => {
                             vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,true);
-                        });
-                } else {
-                    vscode.window.showInformationMessage("You have already opened this file.");
+                    });
+
                 }
             }
         }
