@@ -180,7 +180,6 @@ export function activate(context: vscode.ExtensionContext) {
                     vscode.workspace.openTextDocument(artifact.path).then(doc => {
                             vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,true);
                     });
-
                 }
             }
         }
