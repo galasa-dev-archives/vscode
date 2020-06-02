@@ -236,6 +236,11 @@
 								"description": "Test Bundle, package and class of test to be run",
 								"default": "bundlename/testclass"
 							},
+							"environment": {
+								"type": "string",
+								"description": "Galasa Environment Properties to run against",
+								"default": ""
+							},
 							"args": {
 								"type": "string",
 								"description": "Extra arguments to be run with your Galasa Test",
@@ -250,6 +255,7 @@
 						"request": "launch",
 						"name": "Default Galasa",
 						"testclass": "bundlename/testclass",
+						"environment": "",
 						"args": ""
 					}
 				],
@@ -262,6 +268,7 @@
 							"request": "launch",
 							"name": "Default Galasa",
 							"testclass": "bundlename/testclass",
+							"environment": "",
 							"args": ""
 						}
 					}

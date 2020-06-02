@@ -63,28 +63,31 @@ export function activate(context: vscode.ExtensionContext) {
                     } else {
                         testcase = new TestCase(filename.substring(filename.lastIndexOf("\\") + 1, filename.lastIndexOf(".java")), activeDoc.document.uri.fsPath);
                     }
-                    if (fs.existsSync(launchPath)) {
-                        let launch = JSON.parse(fs.readFileSync(launchPath).toString());
-                        let config = JSON.parse(fs.readFileSync(path.join(context.extensionPath, "package.json")).toString()).contributes.debuggers[0].initialConfigurations[0];
-                        config.testclass = findTestArtifact(testcase);
-                        launch.configurations.push(config);
-                        fs.writeFileSync(launchPath, JSON.stringify(launch, undefined, 4));
-                    } else {
+                    if(!fs.existsSync(launchPath)) {
                         if (!fs.existsSync(path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, ".vscode"))) {
                             fs.mkdirSync(path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, ".vscode"));
                         }
                         let launch: any = `{
                             "version": "0.2.0",
-                            "configurations": [
-
-                            ]
+                            "configurations": []
                         }`;
-                        launch = JSON.parse(launch);
-                        let config = JSON.parse(fs.readFileSync(path.join(context.extensionPath, "package.json")).toString()).contributes.debuggers[0].initialConfigurations[0];
-                        config.testclass = findTestArtifact(testcase);
-                        launch.configurations.push(config);
-                        fs.writeFileSync(launchPath, JSON.stringify(launch, undefined, 4));
+                        fs.writeFileSync(launchPath, JSON.stringify(JSON.parse(launch), undefined, 4));
                     }
+                    
+                    let launch;
+                    try {
+                        launch = JSON.parse(fs.readFileSync(launchPath).toString());
+                    } catch (error) {
+                        vscode.window.showErrorMessage("Galasa Plugin cannot currently automatically add json to launch.json with comments");
+                        return;
+                    }
+                    
+                    let config = JSON.parse(fs.readFileSync(path.join(context.extensionPath, "package.json")).toString()).contributes.debuggers[0].initialConfigurations[0];
+                    config.testclass = findTestArtifact(testcase);
+                    config.name = testcase.label;
+                    launch.configurations.push(config);
+                    fs.writeFileSync(launchPath, JSON.stringify(launch, undefined, 4));
+
                     vscode.workspace.openTextDocument(launchPath).then(doc => {
                         vscode.window.showTextDocument(doc);
                     });

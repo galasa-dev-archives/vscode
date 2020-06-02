@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { EnvironmentProvider } from './TreeViewEnvironmentProperties';
 var path = require('path');
 
-export async function getDebugConfig(testClass : TestCase | string, galasaPath : string, context : ExtensionContext, environmentProvider : EnvironmentProvider, args? :string) : Promise<DebugConfiguration> {
+export async function getDebugConfig(testClass : TestCase | string, galasaPath : string, context : ExtensionContext, environmentProvider : EnvironmentProvider, args? : string, env? : string) : Promise<DebugConfiguration> {
     let maven = "";
     let localMaven : string | undefined = workspace.getConfiguration("galasa").get("maven-local");
     if(localMaven && localMaven.trim().length != 0) {
@@ -21,7 +21,7 @@ export async function getDebugConfig(testClass : TestCase | string, galasaPath :
     }
     const bootstrapURI = "--bootstrap " + bootstrap + " ";
 
-    const overridesURI = buildOverrides(galasaPath, context, environmentProvider, bootstrap);
+    const overridesURI = buildOverrides(galasaPath, context, environmentProvider, bootstrap, env);
 
     const workspaceObr = await buildLocalObr(context);
 
@@ -56,7 +56,7 @@ export function getGalasaVersion(context : ExtensionContext) : string  {
     return version;
 }
 
-function buildOverrides(galasaPath : string, context : ExtensionContext, environmentProvider : EnvironmentProvider, bootstrap : string) : string {
+function buildOverrides(galasaPath : string, context : ExtensionContext, environmentProvider : EnvironmentProvider, bootstrap : string, env? : string) : string {
     if(!fs.existsSync(path.join(context.extensionPath, "galasa-workspace"))) {
         fs.mkdirSync(path.join(context.extensionPath, "galasa-workspace"));
     }
@@ -64,7 +64,14 @@ function buildOverrides(galasaPath : string, context : ExtensionContext, environ
         fs.mkdirSync(path.join(context.extensionPath, "galasa-workspace", "overrides"));
     }
     const filepath = path.join(context.extensionPath, "galasa-workspace", "overrides", "generated_overrides.properties");
-    const envPath = environmentProvider.getEnvironment();
+    
+    let envPath;
+    if(!env) {
+        envPath = environmentProvider.getEnvironment();
+    } else {
+        envPath = findEnvironment(env, galasaPath);
+    }
+     
     if(!envPath) {
         fs.writeFileSync(filepath, "");
     } else {
@@ -146,4 +153,18 @@ function findPomField(directory : string, field : string) : string {
 
 function getBuildWorkspaceObrTask(context : ExtensionContext) : Task {
     return new Task({type : "shell"}, TaskScope.Workspace.toString(), "Workspace Obr", new ShellExecution("mvn install -f " + path.join(context.extensionPath, "galasa-workspace", "obr")));
+}
+
+function findEnvironment(env : string, galasaPath : string) : string | undefined {
+    let found;
+    fs.readdirSync(path.join(galasaPath, "vscode")).forEach(file => {
+        if(file.endsWith(".properties")) {
+            const envPath = path.join(galasaPath, "vscode", file);
+            const envName = fs.readFileSync(envPath).toString().split(/\r?\n/)[0].substring(1).trim();
+            if(envName == env) {
+                found = envPath;
+            }
+        }
+    });
+    return found;
 }

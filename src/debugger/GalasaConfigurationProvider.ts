@@ -17,18 +17,14 @@ export class GalasaConfigurationProvider implements vscode.DebugConfigurationPro
     resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, config: vscode.DebugConfiguration, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration> {
 
 		if (config.testclass) {
-            this.runJavaDebugger(config)
+            this.runJavaDebugger(config);
         }
 
 		return undefined;
     }
     
     async runJavaDebugger(config : vscode.DebugConfiguration) {
-        if(config.args) {
-            vscode.debug.startDebugging(undefined, await getDebugConfig(config.testclass, this.galasaPath, this.context, this.environmentProvider, config.args));
-        } else {
-            vscode.debug.startDebugging(undefined, await getDebugConfig(config.testclass, this.galasaPath, this.context, this.environmentProvider));
-        }
+        vscode.debug.startDebugging(undefined, await getDebugConfig(config.testclass, this.galasaPath, this.context, this.environmentProvider, config.args, config.environment));
         
     }
 }
