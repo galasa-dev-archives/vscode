@@ -1,16 +1,19 @@
 {
 	"name": "galasa-plugin",
-	"displayName": "Galasa",
-	"description": "",
-	"publisher": "Galasa",
-	"version": "0.8.0",
+	"displayName": "galasa",
+	"description": "The Galasa Visual Studio Code plugin enables the ability to develop and run Galasa tests locally.",
+	"publisher": "galasa",
+	"version": "0.8.1",
+	"preview": true,
 	"icon": "resources/GalasaLogo.png",
 	"engines": {
 		"vscode": "^1.45.1"
 	},
-	"homepage": "https://github.com/Microsoft/vscode-docker/blob/master/README.md",
+	"homepage": "https://galasa.dev",
 	"categories": [
-		"Debuggers"
+		"Debuggers",
+		"Programming Languages",
+		"Other"
 	],
 	"activationEvents": [
 		"*",
