@@ -68,10 +68,6 @@
 				"title": "Run Log"
 			},
 			{
-				"command": "galasa-ras.artifacts",
-				"title": "Artifacts"
-			},
-			{
 				"command": "galasa-ras.delete",
 				"title": "Delete"
 			},
@@ -189,10 +185,6 @@
 			"view/item/context": [
 				{
 					"command": "galasa-ras.runlog",
-					"when": "view == galasa-ras && viewItem == localrun"
-				},
-				{
-					"command": "galasa-ras.artifacts",
 					"when": "view == galasa-ras && viewItem == localrun"
 				},
 				{
