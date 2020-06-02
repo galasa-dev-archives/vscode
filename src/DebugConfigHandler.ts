@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { EnvironmentProvider } from './TreeViewEnvironmentProperties';
 var path = require('path');
 
-export async function getDebugConfig(testClass : TestCase, galasaPath : string, context : ExtensionContext, environmentProvider : EnvironmentProvider) : Promise<DebugConfiguration> {
+export async function getDebugConfig(testClass : TestCase | string, galasaPath : string, context : ExtensionContext, environmentProvider : EnvironmentProvider, args? :string) : Promise<DebugConfiguration> {
     let maven = "";
     let localMaven : string | undefined = workspace.getConfiguration("galasa").get("maven-local");
     if(localMaven && localMaven.trim().length != 0) {
@@ -27,6 +27,15 @@ export async function getDebugConfig(testClass : TestCase, galasaPath : string, 
 
     await tasks.executeTask(getBuildWorkspaceObrTask(context));
     
+    if(testClass instanceof TestCase) {
+        testClass = findTestArtifact(testClass);
+    }
+
+    let extraArgs = "";
+    if(args) {
+        extraArgs = " " + args;
+    }
+    
     return {
         name: "Galasa Debug",
         type: "java",
@@ -34,7 +43,7 @@ export async function getDebugConfig(testClass : TestCase, galasaPath : string, 
         classPaths: [path.join(context.extensionPath, "lib", "galasa-boot.jar")],
         mainClass: "dev.galasa.boot.Launcher",
         args: maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion(context) + "/obr " 
-            + workspaceObr + bootstrapURI + overridesURI + "--test " + findTestArtifact(testClass)
+            + workspaceObr + bootstrapURI + overridesURI + "--test " + testClass + extraArgs
     }
 }
 

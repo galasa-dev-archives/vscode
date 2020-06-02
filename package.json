@@ -208,7 +208,56 @@
 					"group": "navigation"
 				}
 			]
-		}
+		},
+		"debuggers": [
+			{
+				"type": "galasa",
+				"label": "Galasa Debug",
+				"program": "./out/debugAdapter.js",
+				"runtime": "java",
+				"configurationAttributes": {
+					"launch": {
+						"required": [
+							"testclass"
+						],
+						"properties": {
+							"testclass": {
+								"type": "string",
+								"description": "Test Bundle, package and class of test to be run",
+								"default": "bundlename/testclass"
+							},
+							"args": {
+								"type": "string",
+								"description": "Extra arguments to be run with your Galasa Test",
+								"default": ""
+							}
+						}
+					}
+				},
+				"initialConfigurations": [
+					{
+						"type": "galasa",
+						"request": "launch",
+						"name": "Default Galasa",
+						"testclass": "bundlename/testclass",
+						"args": ""
+					}
+				],
+				"configurationSnippets": [
+					{
+						"label": "Galasa Debug: Launch",
+						"description": "A new configuration for debugging a users Galasa Test",
+						"body": {
+							"type": "galasa",
+							"request": "launch",
+							"name": "Default Galasa",
+							"testclass": "bundlename/testclass",
+							"args": ""
+						}
+					}
+				]
+			}
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "tsc -p ./",

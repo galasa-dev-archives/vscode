@@ -12,6 +12,7 @@ import { EnvironmentProvider, Property } from './TreeViewEnvironmentProperties';
 import { selectEnvrionment, addProperty, editProperty, deleteProperty, deleteEnvironment } from './EnvironmentController';
 import { showOverview } from './ui/RunOverview';
 import {CodeProvider} from "./CodeProvider";
+import { GalasaConfigurationProvider } from "./debugger/GalasaConfigurationProvider";
 const galasaPath = path.join(process.env.HOME ? process.env.HOME : "", ".galasa");
 
 export function activate(context: vscode.ExtensionContext) {
@@ -118,6 +119,10 @@ export function activate(context: vscode.ExtensionContext) {
             showOverview(run);
         }
     });
+
+    //Debugger JSON
+    const provider = new GalasaConfigurationProvider(galasaPath, context, environmentProvider); 
+	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('galasa', provider));
 }
 
 function setupWorkspace() : string[] {
