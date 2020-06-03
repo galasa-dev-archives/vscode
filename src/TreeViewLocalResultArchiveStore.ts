@@ -94,7 +94,7 @@ export class RASProvider implements vscode.TreeDataProvider<LocalRun | Timing> {
             });
         }
         runs.sort((run1, run2) => {
-            return fs.statSync(run2.path).mtime.getTime() - fs.statSync(run1.path).mtime.getTime();
+            return new Date(run2.structure.startTime).getTime() - new Date(run1.structure.startTime).getTime();
         });
         return runs;
     }
