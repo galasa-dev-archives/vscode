@@ -63,16 +63,18 @@ export class TerminalView {
           font-family: Menlo, Monaco, "Courier New", monospace;
           
         }
-        .terminal-line {
-            white-space: pre-wrap;
-        }
 
+        body {
+            white-space: break-spaces;
+        }
         .terminal {
+            white-space: break-spaces;
+            overflow-wrap: normal;
+            padding: 5px;
             border: 5px;
             border-style: double;
-            padding : 5px;
-            width: 625px;
-            height: 425px;
+            width: 633px;
+            height: 510px;
         }
         </style></head><body><h1>Terminal Screens of run: ${this.run_id}</h1><h3>Amount of screens:  ${this.images?.length}</h3><div class="main-grid-container">`
 
@@ -93,22 +95,29 @@ export class TerminalView {
                         if (x == field.column && y == field.row) {
                             field.contents.forEach(content => {
                                 if (content.text) {
-                                    terminalLine = terminalLine + content.text;
-                                    x = x + content.text.length - 1;
-                                } else {
-                                    let terminalCharLine = ""
-                                    content.chars?.forEach(char => {
-                                        if (char == null || char == "") {
-                                            terminalCharLine = terminalCharLine + " ";
-                                        }
-                                        else {
+                                    terminalLine = terminalLine + " " + content.text;
+                                    x = x + content.text.length;
+                                    y = y + Math.floor(x / 80);
+                                    x = x % 80;
+                                    lineUsed = true;
+                                } else if (content.chars && content.chars.length > 0) {
+                                    let terminalCharLine = " ";
+                                    if (field.unformatted && field.unformatted == true) {
+                                        terminalCharLine = "";
+                                    }
+                                    content.chars.forEach(char => {
+                                        if (char != null) {
                                             terminalCharLine = terminalCharLine + char;
+                                        } else {
+                                            terminalCharLine = terminalCharLine + " ";
                                         }
                                     });
                                     x = x + terminalCharLine.length;
+                                    y = y + Math.floor(x / 80);
+                                    x = x % 80;
                                     terminalLine = terminalLine + terminalCharLine 
+                                    lineUsed = true;
                                 }
-                                lineUsed = true;
                             });  
                         }
                     });
@@ -116,7 +125,8 @@ export class TerminalView {
                         terminalLine = terminalLine + " ";
                     }
                 }
-                dynamicHTML = dynamicHTML + `<div class="terminal-line">${terminalLine}</div>`;
+                dynamicHTML = dynamicHTML + terminalLine;
+                console.log(terminalLine)
             }
             dynamicHTML = dynamicHTML + `</div>`
         })
