@@ -1,5 +1,12 @@
 # Changelog for Galasa Extension
 
+Bugfixes
+- Terminal views
+- Workspace OBR's are now properly built in order 
+
+Functionality
+- Launch.json export functionality to customise your debug environment with args and environment properties
+
 ## 02/06/2020 - Version 0.8.2
 
 Bugfixes
