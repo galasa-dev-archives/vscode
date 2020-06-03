@@ -63,18 +63,18 @@ export class TerminalView {
           font-family: Menlo, Monaco, "Courier New", monospace;
           
         }
-
+        
         body {
-            white-space: break-spaces;
+            white-space: pre;
         }
         .terminal {
-            white-space: break-spaces;
+            white-space: pre;
             overflow-wrap: normal;
             padding: 5px;
             border: 5px;
             border-style: double;
             width: 633px;
-            height: 510px;
+            height: 375px;
         }
         </style></head><body><h1>Terminal Screens of run: ${this.run_id}</h1><h3>Amount of screens:  ${this.images?.length}</h3><div class="main-grid-container">`
 
@@ -86,6 +86,7 @@ export class TerminalView {
 
         images?.forEach((image,index) => { 
             dynamicHTML = dynamicHTML + `<div class="terminal">`
+            let terminalHTML = "";
             indexArray.push(index)
             for (let y = 0; y < standardRow; y++) {
                 let terminalLine = ""
@@ -125,10 +126,14 @@ export class TerminalView {
                         terminalLine = terminalLine + " ";
                     }
                 }
-                dynamicHTML = dynamicHTML + terminalLine;
-                console.log(terminalLine)
+                terminalHTML = terminalHTML + terminalLine;
             }
-            dynamicHTML = dynamicHTML + `</div>`
+            let broken = [];
+            for(let i = 0, len = terminalHTML.length; i < len; i += 80) {
+                broken.push(terminalHTML.substr(i, 80));
+            }
+            terminalHTML = broken.join("\n");
+            dynamicHTML = dynamicHTML + terminalHTML + `</div>`
         })
         dynamicHTML = dynamicHTML + `</div></body></html>`
 

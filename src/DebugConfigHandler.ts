@@ -24,8 +24,6 @@ export async function getDebugConfig(testClass : TestCase | string, galasaPath :
     const overridesURI = buildOverrides(galasaPath, context, environmentProvider, bootstrap, env);
 
     const workspaceObr = await buildLocalObr(context);
-
-    await tasks.executeTask(getBuildWorkspaceObrTask(context));
     
     if(testClass instanceof TestCase) {
         testClass = findTestArtifact(testClass);
@@ -64,7 +62,7 @@ function buildOverrides(galasaPath : string, context : ExtensionContext, environ
         fs.mkdirSync(path.join(context.extensionPath, "galasa-workspace", "overrides"));
     }
     const filepath = path.join(context.extensionPath, "galasa-workspace", "overrides", "generated_overrides.properties");
-    
+
     let envPath;
     if(!env) {
         envPath = environmentProvider.getEnvironment();
@@ -97,6 +95,9 @@ export async function buildLocalObr(context : ExtensionContext) : Promise<string
     let dependencies = "";
 
     const manifests = await workspace.findFiles("**/MANIFEST.MF");
+    if(manifests.length == 0) {
+        return "";
+    }
     manifests.forEach(file => {
         const bundleName = findPomField(file.toString().replace("%40", "@").replace("file://", ""), "artifactId");
         const groupName = findPomField(file.toString().replace("%40", "@").replace("file://", ""), "groupId");
@@ -116,6 +117,8 @@ export async function buildLocalObr(context : ExtensionContext) : Promise<string
         fs.mkdirSync(path.join(context.extensionPath, "galasa-workspace", "obr"));
     }
     fs.writeFileSync(path.join(context.extensionPath, "galasa-workspace", "obr", "pom.xml"), pomData);
+
+    await tasks.executeTask(getBuildWorkspaceObrTask(context));
 
     return "--obr file:" + path.join(context.extensionPath, "galasa-workspace", "obr", "target", "repository.obr") + " ";
 }
