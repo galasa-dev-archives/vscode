@@ -67,7 +67,11 @@ export class TerminalView {
         body {
             white-space: pre;
         }
+        h1, h3 {
+            text-align: center;
+        }
         .terminal {
+            margin: auto;
             white-space: pre;
             overflow-wrap: normal;
             padding: 5px;
@@ -76,7 +80,7 @@ export class TerminalView {
             width: 633px;
             height: 375px;
         }
-        </style></head><body><h1>Terminal Screens of run: ${this.run_id}</h1><h3>Amount of screens:  ${this.images?.length}</h3><div class="main-grid-container">`
+        </style></head><body><h1>Terminal Screens of run: ${this.run_id}</h1><h3>Number of screens:  ${this.images?.length}</h3><div class="main-grid-container">`;
 
         let dynamicHTML = "";
         
@@ -85,11 +89,11 @@ export class TerminalView {
         let standardRow:number = 24;
 
         images?.forEach((image,index) => { 
-            dynamicHTML = dynamicHTML + `<div class="terminal">`
+            dynamicHTML = dynamicHTML + `<div class="terminal">`;
             let terminalHTML = "";
             indexArray.push(index)
             for (let y = 0; y < standardRow; y++) {
-                let terminalLine = ""
+                let terminalLine = "";
                 for (let x = 0; x < standardCol; x++) {
                     let lineUsed:boolean = false;
                     image.fields.forEach((field) => {
@@ -116,7 +120,7 @@ export class TerminalView {
                                     x = x + terminalCharLine.length;
                                     y = y + Math.floor(x / 80);
                                     x = x % 80;
-                                    terminalLine = terminalLine + terminalCharLine 
+                                    terminalLine = terminalLine + terminalCharLine;
                                     lineUsed = true;
                                 }
                             });  
@@ -133,11 +137,11 @@ export class TerminalView {
                 broken.push(terminalHTML.substr(i, 80));
             }
             terminalHTML = broken.join("\n");
-            dynamicHTML = dynamicHTML + terminalHTML + `</div>`
+            dynamicHTML = dynamicHTML + terminalHTML + `</div>`;
         })
-        dynamicHTML = dynamicHTML + `</div></body></html>`
+        dynamicHTML = dynamicHTML + `</div></body></html>`;
 
-        completeHTML = completeHTML + dynamicHTML
+        completeHTML = completeHTML + dynamicHTML;
 
         return completeHTML;
     }
