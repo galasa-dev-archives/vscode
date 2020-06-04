@@ -8,27 +8,27 @@ export class CodeProvider implements vscode.CodeLensProvider {
     public readonly onDidChangeCodeLenses: vscode.Event<void> = this._onDidChangeCodeLenses.event;
 
     constructor() {
-        this.regex = /(@Test)/g;
+        this.regex = /(^@Test$)/g;
     }
 
     public provideCodeLenses(document: vscode.TextDocument):  vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
         
         this.codeLenses = [];
         const regex = new RegExp(this.regex);
-        const text = document.getText();
-        if (text.indexOf("@Test") != -1 && text.indexOf("import dev.galasa.Test;") != -1 ) {
-            let match;
-            if (match = regex.exec(text)) {
-                let line = document.lineAt(document.positionAt(match.index).line);
-                let indexOf = line.text.indexOf(match[0]);
-                let position = new vscode.Position(line.lineNumber, indexOf);
-                let range = document.getWordRangeAtPosition(position, new RegExp(this.regex));
-
-                if (range) {
-                    this.codeLenses.push(new vscode.CodeLens(range))
+        const text: string[] = document.getText().split(/\n/);
+        for(let i = 0; i < text.length; i++) {
+            if (text[i].indexOf("@Test") != -1 && document.getText().indexOf("import dev.galasa.Test;") != -1 ) {
+                let match;
+                if (match = regex.exec(text[i].trim())) {
+                    let textline = document.lineAt(i);
+                    if (textline.range) {
+                        this.codeLenses.push(new vscode.CodeLens(textline.range));
+                        break;
+                    }
                 }
             }
         }
+            
         return this.codeLenses;
     }
 
