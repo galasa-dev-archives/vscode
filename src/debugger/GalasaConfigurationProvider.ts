@@ -25,6 +25,5 @@ export class GalasaConfigurationProvider implements vscode.DebugConfigurationPro
     
     async runJavaDebugger(config : vscode.DebugConfiguration) {
         vscode.debug.startDebugging(undefined, await getDebugConfig(config.testclass, this.galasaPath, this.context, this.environmentProvider, config.args, config.environment));
-        
     }
 }

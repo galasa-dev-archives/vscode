@@ -2,7 +2,8 @@
 
 Bugfixes
 - Terminal views
-- Workspace OBR's are now properly built in order 
+- Workspace OBR's are now properly built in order
+- Debug Galasa appearing in random non-test files
 
 Functionality
 - Launch.json export functionality to customise your debug environment with args and environment properties
