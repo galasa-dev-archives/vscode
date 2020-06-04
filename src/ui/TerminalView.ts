@@ -47,21 +47,24 @@ export class TerminalView {
     showTerminal() {
         if (this.showScreen) {
             const panel = vscode.window.createWebviewPanel("terminalView", "Terminal " + this.run_id + " " + this.id, vscode.ViewColumn.Active);
-            panel.webview.html = this.getWebviewContent(this.images);
+            if (this.images) {
+                panel.webview.html= this.getWebviewContent(this.images);
+            } else {
+                panel.webview.html= `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>No screens were found</title><body><h1>No screens were found</h1></body></html>`;
+            }
         } else {
             vscode.window.showErrorMessage("The terminal you tried to open is formatted incorrectely.");
         }
     }   
 
-    getWebviewContent(images: TerminalImage[] | undefined) : string {
+    getWebviewContent(images: TerminalImage[]) : string {
 
         let completeHTML =  `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Terminals</title><style>
         .main-grid-container {
           display: grid;
           grid-template-columns: auto;
           grid-template-rows: auto;
-          font-family: Menlo, Monaco, "Courier New", monospace;
-          
+          font-family: Menlo, Monaco, "Courier New", monospace;  
         }
         
         body {
@@ -77,18 +80,17 @@ export class TerminalView {
             padding: 5px;
             border: 5px;
             border-style: double;
-            width: 633px;
+            width: 630px;
             height: 375px;
         }
-        </style></head><body><h1>Terminal Screens of run: ${this.run_id}</h1><h3>Number of screens:  ${this.images?.length}</h3><div class="main-grid-container">`;
+        </style></head><body><h1>Terminal Screens of run: ${this.run_id}</h1><h3>Number of screens:  ${images.length}</h3><div class="main-grid-container">`;
 
         let dynamicHTML = "";
+        let indexArray: number[] = new Array(images.length);
         
-        let indexArray: number[] = new Array(images?.length);
-        let standardCol:number = 80;
-        let standardRow:number = 24;
-
-        images?.forEach((image,index) => { 
+        images.forEach((image,index) => { 
+            let standardCol:number = image.imageSize.columns;
+            let standardRow:number = image.imageSize.rows;
             dynamicHTML = dynamicHTML + `<div class="terminal">`;
             let terminalHTML = "";
             indexArray.push(index)
@@ -102,14 +104,11 @@ export class TerminalView {
                                 if (content.text) {
                                     terminalLine = terminalLine + " " + content.text;
                                     x = x + content.text.length;
-                                    y = y + Math.floor(x / 80);
-                                    x = x % 80;
+                                    y = y + Math.floor(x / standardCol);
+                                    x = x % standardCol;
                                     lineUsed = true;
                                 } else if (content.chars && content.chars.length > 0) {
                                     let terminalCharLine = " ";
-                                    if (field.unformatted && field.unformatted == true) {
-                                        terminalCharLine = "";
-                                    }
                                     content.chars.forEach(char => {
                                         if (char != null) {
                                             terminalCharLine = terminalCharLine + char;
@@ -118,8 +117,8 @@ export class TerminalView {
                                         }
                                     });
                                     x = x + terminalCharLine.length;
-                                    y = y + Math.floor(x / 80);
-                                    x = x % 80;
+                                    y = y + Math.floor(x / standardCol);
+                                    x = x % standardCol;
                                     terminalLine = terminalLine + terminalCharLine;
                                     lineUsed = true;
                                 }
@@ -133,14 +132,13 @@ export class TerminalView {
                 terminalHTML = terminalHTML + terminalLine;
             }
             let broken = [];
-            for(let i = 0, len = terminalHTML.length; i < len; i += 80) {
-                broken.push(terminalHTML.substr(i, 80));
+            for(let i = 0; i < terminalHTML.length; i += standardCol) {
+                broken.push(terminalHTML.substr(i, standardCol));
             }
             terminalHTML = broken.join("\n");
             dynamicHTML = dynamicHTML + terminalHTML + `</div>`;
-        })
+        });
         dynamicHTML = dynamicHTML + `</div></body></html>`;
-
         completeHTML = completeHTML + dynamicHTML;
 
         return completeHTML;
