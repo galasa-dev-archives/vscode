@@ -40,8 +40,8 @@ export async function getDebugConfig(testClass : TestCase | string, galasaPath :
         request: "launch",
         classPaths: [path.join(context.extensionPath, "lib", "galasa-boot.jar")],
         mainClass: "dev.galasa.boot.Launcher",
-        args: maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion(context) + "/obr " 
-            + workspaceObr + bootstrapURI + overridesURI + "--test " + testClass + extraArgs
+        args: workspaceObr + extraArgs + maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion(context) + "/obr " 
+            + bootstrapURI + overridesURI + "--test " + testClass
     }
 }
 
