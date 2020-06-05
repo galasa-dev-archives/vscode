@@ -217,6 +217,19 @@
 					"command": "galasa-test.export",
 					"group": "navigation"
 				}
+			],
+			"touchBar": [
+				{
+			
+					"when": "resourceLangId == java",
+					"command": "galasa-test.debug",
+					"group": "navigation"
+				},
+				{
+					"when": "resourceLangId == java",
+					"command": "galasa-test.export",
+					"group": "navigation"
+				}
 			]
 		},
 		"debuggers": [
