@@ -155,7 +155,18 @@ function findPomField(directory : string, field : string) : string {
 }
 
 function getBuildWorkspaceObrTask(context : ExtensionContext) : Task {
-    return new Task({type : "shell"}, TaskScope.Workspace.toString(), "Workspace Obr", new ShellExecution("mvn install -f " + path.join(context.extensionPath, "galasa-workspace", "obr")));
+    let config = workspace.getConfiguration();
+    let settings : string | undefined = undefined;
+    if(config.has("java.configuration.maven.userSettings")) {
+        settings = config.get("java.configuration.maven.userSettings");
+    }
+    
+    if(!settings || settings == "") {
+        settings = "";
+    } else {
+        settings = " --settings " + settings;
+    }
+    return new Task({type : "shell"}, TaskScope.Workspace.toString(), "Workspace Obr", new ShellExecution("mvn install -f " + path.join(context.extensionPath, "galasa-workspace", "obr") + settings));
 }
 
 function findEnvironment(env : string, galasaPath : string) : string | undefined {
