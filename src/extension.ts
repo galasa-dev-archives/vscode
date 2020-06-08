@@ -8,17 +8,19 @@ import * as path from 'path';
 import { createExampleFiles, launchSimbank } from './Examples';
 import { ArtifactProvider, ArtifactItem } from './TreeViewArtifacts';
 import rimraf = require('rimraf');
-import { EnvironmentProvider, Property } from './TreeViewEnvironmentProperties';
-import { selectEnvrionment, addProperty, editProperty, deleteProperty, deleteEnvironment } from './EnvironmentController';
+import { EnvironmentProvider, GalasaEnvironment } from './TreeViewEnvironmentProperties';
 import { showOverview } from './ui/RunOverview';
 import {CodeProvider} from "./CodeProvider";
 import { GalasaConfigurationProvider } from "./debugger/GalasaConfigurationProvider";
 import commentjson = require('comment-json');
+import { addEnvrionment, deleteEnvironment } from './EnvironmentController';
 const galasaPath = path.join(process.env.HOME ? process.env.HOME : "", ".galasa");
 
 export function activate(context: vscode.ExtensionContext) {
 
     setupWorkspace();
+
+    let activeLabel = "";
 
     //Examples
     vscode.commands.registerCommand('galasa-test.createExamples', () => {
@@ -98,20 +100,27 @@ export function activate(context: vscode.ExtensionContext) {
     //Environment Properties
     const environmentProvider = new EnvironmentProvider(galasaPath);
     vscode.window.registerTreeDataProvider("galasa-environment", environmentProvider);
-    vscode.commands.registerCommand("galasa-environment.search", () => {
-        selectEnvrionment(galasaPath, environmentProvider);
+    vscode.commands.registerCommand("galasa-environment.refresh", () => {
+        environmentProvider.refresh();
     });
-    vscode.commands.registerCommand("galasa-environment.add", () => {
-        addProperty(environmentProvider);
+    vscode.commands.registerCommand("galasa-envionment.addEnv", () => {
+        addEnvrionment(galasaPath, environmentProvider);
     });
-    vscode.commands.registerCommand("galasa-environment.deleteEnv", () => {
-        deleteEnvironment(galasaPath, environmentProvider);
+    vscode.commands.registerCommand("galasa-envionment.delEnv", (env : GalasaEnvironment) => {
+        deleteEnvironment(env, environmentProvider);
     });
-    vscode.commands.registerCommand("galasa-environment.edit", (property : Property) => {
-        editProperty(property, environmentProvider);
+    vscode.commands.registerCommand("galasa-envionment.active", (env : GalasaEnvironment) => {
+        environmentProvider.setEnvironment(env.path);
     });
-    vscode.commands.registerCommand("galasa-environment.delete", (property : Property) => {
-        deleteProperty(property, environmentProvider);
+    vscode.commands.registerCommand("galasa-environment.open", (env : GalasaEnvironment) => {
+        if(activeLabel != env.label) {
+            activeLabel = env.label;
+        } else {
+            activeLabel = "";
+            vscode.workspace.openTextDocument(env.path).then(doc => {
+                vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,true);
+            });
+        }
     });
 
     //Local Runs
@@ -129,13 +138,12 @@ export function activate(context: vscode.ExtensionContext) {
         rimraf(run.path, () => {});
         localRasProvider.refresh();
     });
-    let active = "";
     vscode.commands.registerCommand("galasa-artifacts.open", (artifact : ArtifactItem) => {
-        if(active != artifact.label) {
-            active = artifact.label;
+        if(activeLabel != artifact.label) {
+            activeLabel = artifact.label;
         } else {
             if (!fs.statSync(artifact.path).isDirectory()) {
-                active = "";
+                activeLabel = "";
                 if (artifact.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
                     new TerminalView(fs.readFileSync(artifact.path), undefined);
                 } else {
@@ -146,7 +154,6 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }
     });
-    let activeLabel = "";
     vscode.commands.registerCommand("galasa-ras.overview", (run : LocalRun) => {
         if(activeLabel != run.label) {
             activeLabel = run.label;

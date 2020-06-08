@@ -63,6 +63,12 @@ function buildOverrides(galasaPath : string, context : ExtensionContext, environ
     }
     const filepath = path.join(context.extensionPath, "galasa-workspace", "overrides", "generated_overrides.properties");
 
+    if(workspace.getConfiguration("galasa").get("overrides")) {
+        fs.writeFileSync(filepath, fs.readFileSync(path.join(galasaPath, "overrides.properties")));
+    } else {
+        fs.writeFileSync(filepath, "");
+    }
+
     let envPath;
     if(!env) {
         envPath = environmentProvider.getEnvironment();
@@ -70,22 +76,25 @@ function buildOverrides(galasaPath : string, context : ExtensionContext, environ
         envPath = findEnvironment(env, galasaPath);
     }
      
-    if(!envPath) {
-        fs.writeFileSync(filepath, "");
-    } else {
+    if(envPath) {
         const environmentPropContent = fs.readFileSync(envPath).toString();
-        fs.writeFileSync(filepath, environmentPropContent);
+        environmentPropContent.split(/\r?\n/).forEach(line => {
+            const keyPair = line.split("=");
+            if(keyPair.length == 2) {
+                overrideProperty(filepath, keyPair[0], keyPair[1]);
+            }
+        });
     }
     
-    fs.appendFileSync(filepath, "framework.resultarchive.store=file:" + path.join(galasaPath, "ras") + "\n");
-    fs.appendFileSync(filepath, "framework.credentials.store=file:" + path.join(galasaPath, "credentials.properties") + "\n");
-    fs.appendFileSync(filepath, "framework.bootstrap.url=" + bootstrap + "\n");
+    overrideProperty(filepath, "framework.resultarchive.store", "file:" + path.join(galasaPath, "ras"));
+    overrideProperty(filepath, "framework.credentials.store", "file:" + path.join(galasaPath, "credentials.properties"));
+    overrideProperty(filepath, "framework.bootstrap.url", bootstrap);
 
-    let requestor = workspace.getConfiguration("galasa").get("requestor");
+    let requestor : string | undefined = workspace.getConfiguration("galasa").get("requestor");
     if(!requestor) {
         requestor = "unknown";
     }
-    fs.appendFileSync(filepath, "framework.run.requestor=" + requestor + "\n");
+    overrideProperty(filepath, "framework.run.requestor", requestor);
 
     return "--overrides file:" + filepath + " ";
 }
@@ -181,4 +190,18 @@ function findEnvironment(env : string, galasaPath : string) : string | undefined
         }
     });
     return found;
+}
+
+function overrideProperty(filePath : string, key : string, value : string) {
+    const fileContent = fs.readFileSync(filePath).toString();
+    if(fileContent.includes(key)) {
+        fileContent.split(/\r?\n/).forEach(line => {
+            if(line.trim().startsWith(key)) {
+                fs.writeFileSync(filePath, fileContent.replace(line, key + "=" + value) + "\n");
+            }
+        });
+    } else {
+        fs.appendFileSync(filePath, key + "=" + value + "\n");
+    }
+    
 }

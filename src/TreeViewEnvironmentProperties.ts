@@ -2,11 +2,12 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export class EnvironmentProvider implements vscode.TreeDataProvider<Property> {
-    private _onDidChangeTreeData: vscode.EventEmitter<Property | undefined> = new vscode.EventEmitter<Property | undefined>();
-    readonly onDidChangeTreeData: vscode.Event<Property | undefined> = this._onDidChangeTreeData.event;
+export class EnvironmentProvider implements vscode.TreeDataProvider<GalasaEnvironment> {
+    private _onDidChangeTreeData: vscode.EventEmitter<GalasaEnvironment | undefined> = new vscode.EventEmitter<GalasaEnvironment | undefined>();
+    readonly onDidChangeTreeData: vscode.Event<GalasaEnvironment | undefined> = this._onDidChangeTreeData.event;
 
-    constructor(galasaPath: string) { 
+    constructor(galasaPath: string) {
+        this.galasaPath = galasaPath;
         this.configPath = path.join(galasaPath, "vscode", "envconfig");
         if(!fs.existsSync(this.configPath)) {
             fs.writeFileSync(this.configPath, "");
@@ -23,42 +24,33 @@ export class EnvironmentProvider implements vscode.TreeDataProvider<Property> {
 
     private envPath : string | undefined;
     private configPath : string;
+    private galasaPath : string;
 
-    getTreeItem(element: Property): vscode.TreeItem {
+    getTreeItem(element: GalasaEnvironment): vscode.TreeItem {
         return element;
     }
 
-    getChildren(element?: Property): Property[] | undefined {
-        if(!element && this.envPath) {
-            return this.getEnvName(this.envPath);
-        } else if (element && element.key == "" && this.envPath) {
-            return this.getProperties(this.envPath);
-        } else {
-            return undefined;
-        }
-    }
-
-    private getEnvName(envPath : string) {
-        let items : Property[] = [];
-        if(fs.existsSync(envPath) && fs.statSync(envPath).isFile()) {
-            const name = fs.readFileSync(envPath).toString().split(/\r?\n/)[0].substring(1).trim();
-            items.push(new Property(name, "", "", "", vscode.TreeItemCollapsibleState.Expanded));
-        }
-        return items;
-    }
-
-    private getProperties(envPath : string) : Property[] {
-        let items : Property[] = [];
-        if(fs.existsSync(envPath) && fs.statSync(envPath).isFile()) {
-            fs.readFileSync(envPath).toString().split(/\r?\n/).forEach(line => {
-                if(!line.startsWith("#") && line != "") {
-                    const pairing = line.split("=");
-                    items.push(new Property(pairing[0] + " - " + pairing[1],pairing[0],pairing[1], "property", vscode.TreeItemCollapsibleState.None))
+    getChildren(element?: GalasaEnvironment): GalasaEnvironment[] | undefined {
+        let items : GalasaEnvironment[] = [];
+        fs.readdirSync(path.join(this.galasaPath, "vscode")).forEach(file => {
+            if(file.endsWith(".galenv")) {
+                const filePath = path.join(this.galasaPath, "vscode", file);
+                const name = fs.readFileSync(filePath).toString().split(/\r?\n/)[0].substring(1).trim();
+                if(this.envPath == filePath) {
+                    items.push(new GalasaEnvironment(name + " - Active", filePath, vscode.TreeItemCollapsibleState.None));
+                } else {
+                    items.push(new GalasaEnvironment(name, filePath, vscode.TreeItemCollapsibleState.None));
                 }
-            });
-        }
-        items.sort(function (a, b) {
-            return a.key.toLowerCase().localeCompare(b.key.toLowerCase());
+            }
+        });
+        items.sort((a,b) => {
+            if(a.label.endsWith(" - Active")) {
+                return Number.MIN_SAFE_INTEGER;
+            } else if(b.label.endsWith(" - Active")) {
+                return Number.MAX_SAFE_INTEGER;
+            } else {
+                return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
+            }
         });
         return items;
     }
@@ -78,13 +70,21 @@ export class EnvironmentProvider implements vscode.TreeDataProvider<Property> {
     }
 }
 
-export class Property extends vscode.TreeItem{
+export class GalasaEnvironment extends vscode.TreeItem{
    
     constructor(public label: string,
-                public key: string,
-                public value: string,
-                public contextValue: string,
+                public path: string,
                 public readonly collapsibleState: vscode.TreeItemCollapsibleState) {
         super(label, collapsibleState )
+
+        this.command = getCommand(this);
+
+        function getCommand(klass : any): vscode.Command | undefined {
+            return {
+                title: "Open Environment",
+                command: "galasa-environment.open",
+                arguments: [klass]
+            }
+        }
     }
 }

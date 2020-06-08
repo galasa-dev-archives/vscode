@@ -29,11 +29,10 @@
 		"onCommand:galasa-ras.runlog",
 		"onCommand:galasa-ras.delete",
 		"onCommand:galasa-artifacts.open",
-		"onCommand:galasa-environment.search",
-		"onCommand:galasa-environment.add",
-		"onCommand:galasa-environment.edit",
-		"onCommand:galasa-environment.delete",
-		"onCommand:galasa-environment.deleteEnv",
+		"onCommand:galasa-envionment.addEnv",
+		"onCommand:galasa-envionment.refresh",
+		"onCommand:galasa-envionment.delEnv",
+		"onCommand:galasa-envionment.active",
 		"onDebug"
 	],
 	"main": "./out/extension",
@@ -78,32 +77,27 @@
 				"icon": "$(go-to-file)"
 			},
 			{
-				"command": "galasa-environment.search",
-				"title": "Select Environment",
-				"icon": "$(search)"
-			},
-			{
-				"command": "galasa-environment.add",
-				"title": "Add Property",
-				"icon": "$(add)"
-			},
-			{
-				"command": "galasa-environment.edit",
-				"title": "Edit Value"
-			},
-			{
-				"command": "galasa-environment.delete",
-				"title": "Delete"
-			},
-			{
-				"command": "galasa-environment.deleteEnv",
-				"title": "Delete Environment",
-				"icon": "$(chrome-close)"
-			},
-			{
 				"command": "galasa-test.export",
 				"title": "Galasa Export launch.json",
 				"icon": "$(json)"
+			},
+			{
+				"command": "galasa-envionment.refresh",
+				"title": "Refresh",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "galasa-envionment.addEnv",
+				"title": "Add Environment",
+				"icon": "$(add)"
+			},
+			{
+				"command": "galasa-envionment.delEnv",
+				"title": "Delete"
+			},
+			{
+				"command": "galasa-envionment.active",
+				"title": "Set Active"
 			}
 		],
 		"viewsContainers": {
@@ -152,26 +146,15 @@
 				"galasa.requestor": {
 					"type": "string",
 					"default": "unknown"
+				},
+				"galasa.overrides": {
+					"type": "boolean",
+					"default": true
 				}
 			}
 		},
 		"menus": {
 			"view/title": [
-				{
-					"command": "galasa-environment.search",
-					"when": "view == galasa-environment",
-					"group": "navigation"
-				},
-				{
-					"command": "galasa-environment.add",
-					"when": "view == galasa-environment",
-					"group": "navigation"
-				},
-				{
-					"command": "galasa-environment.deleteEnv",
-					"when": "view == galasa-environment",
-					"group": "navigation"
-				},
 				{
 					"command": "galasa-test.simbank",
 					"when": "view == galasa-ras",
@@ -186,24 +169,38 @@
 					"command": "galasa-ras.refresh",
 					"when": "view == galasa-ras",
 					"group": "navigation@3"
+				},
+				{
+					"command": "galasa-envionment.refresh",
+					"when": "view == galasa-environment",
+					"group": "navigation@2"
+				},
+				{
+					"command": "galasa-envionment.addEnv",
+					"when": "view == galasa-environment",
+					"group": "navigation@1"
 				}
 			],
 			"view/item/context": [
 				{
 					"command": "galasa-ras.runlog",
-					"when": "view == galasa-ras && viewItem == localrun"
+					"when": "view == galasa-ras && viewItem == localrun",
+					"group": "navigation@1"
 				},
 				{
 					"command": "galasa-ras.delete",
-					"when": "view == galasa-ras && viewItem == localrun"
+					"when": "view == galasa-ras && viewItem == localrun",
+					"group": "navigation@2"
 				},
 				{
-					"command": "galasa-environment.edit",
-					"when": "view == galasa-environment && viewItem == property"
+					"command": "galasa-envionment.delEnv",
+					"when": "view == galasa-environment",
+					"group": "navigation@2"
 				},
 				{
-					"command": "galasa-environment.delete",
-					"when": "view == galasa-environment && viewItem == property"
+					"command": "galasa-envionment.active",
+					"when": "view == galasa-environment",
+					"group": "navigation@1"
 				}
 			],
 			"editor/title": [
