@@ -88,34 +88,41 @@ export function showOverview(run : LocalRun) {
 
     for(let i : number = 0; i < run.structure.methods.length; i++) {
         let befores = "";
-        run.structure.methods[i].befores.forEach((before : any) => {
-            befores = befores + ", " + before.methodName;
-        });
-        if(befores == "") {
-            befores = "None";
-        } else {
-            befores = befores.substring(2);
-        }
-
         let afters = "";
-        run.structure.methods[i].afters.forEach((after : any) => {
-            afters = afters + ", " + after.methodName;
-        });
-        if(afters == "") {
-            afters = "None";
-        } else {
-            afters = afters.substring(2);
+        if (run.structure.methods[i].type == "Test") {
+            run.structure.methods[i].befores.forEach((before : any) => {
+                befores = befores + ", " + before.methodName;
+            });
+            if(befores == "") {
+                befores = "None";
+            } else {
+                befores = befores.substring(2);
+            }
+
+            run.structure.methods[i].afters.forEach((after : any) => {
+                afters = afters + ", " + after.methodName;
+            });
+            if(afters == "") {
+                afters = "None";
+            } else {
+                afters = afters.substring(2);
+            }
         }
+        
 
         let exception = run.structure.methods[i].exception;
 
         methodData = methodData + 
             `<table><tr><td>Method Name</td><td>${run.structure.methods[i].methodName}</td></tr>
             <tr><td>Class Name</td><td>${run.structure.methods[i].className}</td></tr>
-            <tr><td>Type</td><td>${run.structure.methods[i].type}</td></tr>
-            <tr><td>Befores</td><td>${befores}</td></tr>
-            <tr><td>Afters</td><td>${afters}</td></tr>
-            <tr><td>Status</td><td>${run.structure.methods[i].status}</td></tr>
+            <tr><td>Type</td><td>${run.structure.methods[i].type}</td></tr>`;
+
+        if (run.structure.methods[i].type == "Test") {
+            methodData = methodData + `<tr><td>Befores</td><td>${befores}</td></tr>
+                <tr><td>Afters</td><td>${afters}</td></tr>`
+        } 
+
+        methodData = methodData +  `<tr><td>Status</td><td>${run.structure.methods[i].status}</td></tr>
             <tr><td>Result</td><td>${run.structure.methods[i].result}</td></tr>
             <tr><td>Run Log Start</td><td>${run.structure.methods[i].runLogStart}</td></tr>
             <tr><td>Run Log End</td><td>${run.structure.methods[i].runLogEnd}</td></tr>
@@ -129,7 +136,7 @@ export function showOverview(run : LocalRun) {
             
     }
     methodData = methodData + `</div>`;
-
+    console.log(html + metaData + methodData + endHtml);
     panel.webview.html = html + metaData + methodData + endHtml;
 }
 
