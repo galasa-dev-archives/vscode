@@ -1,0 +1,40 @@
+{
+  "name": "galenv",
+  "scopeName": "source.galenv",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#operator"
+    },
+    {
+      "include": "#ident"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [   
+        {
+          "name": "comment.line",
+          "begin": "#",
+          "end": "\\n"
+        }
+      ]
+    },
+    "ident": {
+      "patterns": [{
+        "name": "variable.name",
+        "match": "[A-z.0-9]+(?==)"
+      }]
+    },
+    "operator": {
+      "patterns": [
+        {
+          "name": "keyword.operator",
+          "match": "="
+        }
+      ]
+    }
+  }
+}

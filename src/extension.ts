@@ -18,7 +18,7 @@ const galasaPath = path.join(process.env.HOME ? process.env.HOME : "", ".galasa"
 
 export function activate(context: vscode.ExtensionContext) {
 
-    setupWorkspace();
+    setupWorkspace(context);
 
     let activeLabel = "";
 
@@ -169,7 +169,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('galasa', provider));
 }
 
-function setupWorkspace() : string[] {
+async function setupWorkspace(context: vscode.ExtensionContext) : Promise<string[]> {
     let created : string[] = []
     if(!fs.existsSync(path.join(galasaPath, "credentials.properties"))) {
         fs.writeFile(path.join(galasaPath, "credentials.properties"), "", function (err) {
@@ -204,6 +204,22 @@ function setupWorkspace() : string[] {
     if(!fs.existsSync(path.join(galasaPath, "vscode"))) {
         fs.mkdirSync(path.join(galasaPath, "vscode"));
         created.push("vscode");
+    }
+    let cpsGalasaPath = path.join(galasaPath, "cps_snippets.json");
+    let cpsExtensionPath = path.join(context.extensionPath, "galasa-workspace", "cps");
+    if(fs.existsSync(cpsGalasaPath)) {
+        if(!fs.existsSync(cpsExtensionPath)) {
+            fs.mkdirSync(cpsExtensionPath);
+        }
+        if(fs.readFileSync(cpsGalasaPath).toString() != fs.readFileSync(path.join(cpsExtensionPath, "snippets.json")).toString()) {
+            fs.writeFile(path.join(cpsExtensionPath, "snippets.json"), fs.readFileSync(cpsGalasaPath), function (err) {
+                if (err) throw err;
+            });
+            let reload = await vscode.window.showInformationMessage("Changes were detected to your Galasa snippets. Do you want to reload the window now?", "Reload");
+            if (reload == "Reload") {
+                vscode.commands.executeCommand("workbench.action.reloadWindow");
+            }
+        }
     }
     return created;
 }
