@@ -31,7 +31,7 @@ export async function getDebugConfig(testClass : TestCase | string, galasaPath :
 
     let extraArgs = "";
     if(args) {
-        extraArgs = " " + args;
+        extraArgs = args + " ";
     }
     
     return {
