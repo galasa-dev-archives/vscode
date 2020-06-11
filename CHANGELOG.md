@@ -10,6 +10,7 @@ Bugfixes
 
 Functionality
 - Launch.json export functionality to customise your debug environment with args and environment properties
+- Reworked Galasa overrides where `.galasa/overrides.properties` is used by default and then overwritten by `.galenv properties`, which are actively pulled from the active environment
 
 ## 02/06/2020 - Version 0.8.2
 

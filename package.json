@@ -271,6 +271,27 @@
 					}
 				]
 			}
+		],
+		"snippets": [
+			{
+				"language": "galenv",
+				"path": "./galasa-workspace/cps/snippets.json"
+			}
+		],
+		"languages": [
+			{
+				"id": "galenv",
+				"extensions": [
+					".galenv"
+				]
+			}
+		],
+		"grammars": [
+			{
+				"language": "galenv",
+				"scopeName": "source.galenv",
+				"path": "./syntaxes/galenv.json"
+			}
 		]
 	},
 	"scripts": {
