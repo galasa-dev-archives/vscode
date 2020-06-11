@@ -14,6 +14,7 @@ import {CodeProvider} from "./CodeProvider";
 import { GalasaConfigurationProvider } from "./debugger/GalasaConfigurationProvider";
 import commentjson = require('comment-json');
 import { addEnvrionment, deleteEnvironment } from './EnvironmentController';
+
 const galasaPath = path.join(process.env.HOME ? process.env.HOME : "", ".galasa");
 
 export function activate(context: vscode.ExtensionContext) {
