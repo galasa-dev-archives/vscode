@@ -1,15 +1,15 @@
 import * as vscode from 'vscode';
 import { RASProvider, LocalRun} from './local/views/TreeViewLocalResultArchiveStore';
 import { getDebugConfig, findTestArtifact, TestCase } from './local/debugger/DebugConfigHandler';
-import { TerminalView } from "./ui/TerminalView";
+import { TerminalView } from "./webviews/terminal/TerminalView";
 import * as fs from 'fs';
 import * as path from 'path';
 import { createExampleFiles, launchSimbank } from './local/Examples';
 import { ArtifactProvider, ArtifactItem } from './local/views/TreeViewArtifacts';
 import rimraf = require('rimraf');
 import { EnvironmentProvider, GalasaEnvironment } from './local/views/TreeViewEnvironmentProperties';
-import { showOverview } from './ui/RunOverview';
-import {CodeProvider} from "./ui/CodeProvider";
+import { showOverview } from './webviews/RunOverview';
+import {CodeProvider} from "./webviews/CodeProvider";
 import { GalasaConfigurationProvider } from "./local/debugger/GalasaConfigurationProvider";
 import commentjson = require('comment-json');
 import { addEnvrionment, deleteEnvironment } from './local/EnvironmentController';
