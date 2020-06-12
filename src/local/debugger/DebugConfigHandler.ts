@@ -1,7 +1,6 @@
 import { DebugConfiguration, workspace, ExtensionContext, window, tasks, Task, TaskScope, ShellExecution } from 'vscode';
-import { TestCase } from './TestExtractor';
 import * as fs from 'fs';
-import { EnvironmentProvider } from './TreeViewEnvironmentProperties';
+import { EnvironmentProvider } from '../views/TreeViewEnvironmentProperties';
 var path = require('path');
 
 export async function getDebugConfig(testClass : TestCase | string, galasaPath : string, context : ExtensionContext, environmentProvider : EnvironmentProvider, args? : string, env? : string) : Promise<DebugConfiguration> {
@@ -205,3 +204,12 @@ function overrideProperty(filePath : string, key : string, value : string) {
     }
     
 }
+
+export class TestCase{
+
+    constructor(
+        public readonly label: string,
+        public readonly pathToFile: string
+    ) {}
+  
+  }

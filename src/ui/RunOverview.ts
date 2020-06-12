@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { LocalRun } from "../TreeViewLocalResultArchiveStore";
+import { LocalRun } from "../local/views/TreeViewLocalResultArchiveStore";
 
 export function showOverview(run : LocalRun) {
     let buttonColour = "";

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { EnvironmentProvider } from '../TreeViewEnvironmentProperties';
-import { getDebugConfig } from '../DebugConfigHandler';
+import { EnvironmentProvider } from '../views/TreeViewEnvironmentProperties';
+import { getDebugConfig } from './DebugConfigHandler';
 
 export class GalasaConfigurationProvider implements vscode.DebugConfigurationProvider {
 

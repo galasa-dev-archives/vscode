@@ -220,7 +220,7 @@
 			{
 				"type": "galasa",
 				"label": "Galasa Debug",
-				"program": "./out/debugAdapter.js",
+				"program": "./out/local/debugger/debugAdapter.js",
 				"runtime": "java",
 				"configurationAttributes": {
 					"launch": {
@@ -290,7 +290,7 @@
 			{
 				"language": "galenv",
 				"scopeName": "source.galenv",
-				"path": "./syntaxes/galenv.json"
+				"path": "./config/syntaxes/galenv.json"
 			}
 		]
 	},

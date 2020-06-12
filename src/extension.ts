@@ -1,25 +1,25 @@
 import * as vscode from 'vscode';
-import { TestCase } from './TestExtractor';
-import { RASProvider, LocalRun} from './TreeViewLocalResultArchiveStore';
-import { getDebugConfig, findTestArtifact, getGalasaVersion } from './DebugConfigHandler';
+import { RASProvider, LocalRun} from './local/views/TreeViewLocalResultArchiveStore';
+import { getDebugConfig, findTestArtifact, TestCase } from './local/debugger/DebugConfigHandler';
 import { TerminalView } from "./ui/TerminalView";
 import * as fs from 'fs';
 import * as path from 'path';
-import { createExampleFiles, launchSimbank } from './Examples';
-import { ArtifactProvider, ArtifactItem } from './TreeViewArtifacts';
+import { createExampleFiles, launchSimbank } from './local/Examples';
+import { ArtifactProvider, ArtifactItem } from './local/views/TreeViewArtifacts';
 import rimraf = require('rimraf');
-import { EnvironmentProvider, GalasaEnvironment } from './TreeViewEnvironmentProperties';
+import { EnvironmentProvider, GalasaEnvironment } from './local/views/TreeViewEnvironmentProperties';
 import { showOverview } from './ui/RunOverview';
-import {CodeProvider} from "./CodeProvider";
-import { GalasaConfigurationProvider } from "./debugger/GalasaConfigurationProvider";
+import {CodeProvider} from "./ui/CodeProvider";
+import { GalasaConfigurationProvider } from "./local/debugger/GalasaConfigurationProvider";
 import commentjson = require('comment-json');
-import { addEnvrionment, deleteEnvironment } from './EnvironmentController';
+import { addEnvrionment, deleteEnvironment } from './local/EnvironmentController';
+import { setupWorkspace } from './config/setup';
 
 const galasaPath = path.join(process.env.HOME ? process.env.HOME : "", ".galasa");
 
 export function activate(context: vscode.ExtensionContext) {
 
-    setupWorkspace(context);
+    setupWorkspace(context, galasaPath);
 
     let activeLabel = "";
 
@@ -168,59 +168,4 @@ export function activate(context: vscode.ExtensionContext) {
     //Debugger JSON
     const provider = new GalasaConfigurationProvider(galasaPath, context, environmentProvider); 
 	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('galasa', provider));
-}
-
-async function setupWorkspace(context: vscode.ExtensionContext) : Promise<string[]> {
-    let created : string[] = []
-    if(!fs.existsSync(path.join(galasaPath, "credentials.properties"))) {
-        fs.writeFile(path.join(galasaPath, "credentials.properties"), "", function (err) {
-            if (err) throw err;
-        });
-        created.push("credentials.properties");
-    }
-    if(!fs.existsSync(path.join(galasaPath, "cps.properties"))) {
-        fs.writeFile(path.join(galasaPath, "cps.properties"), "", function (err) {
-            if (err) throw err;
-        });
-        created.push("cps.properties");
-    }
-    if(!fs.existsSync(path.join(galasaPath, "bootstrap.properties"))) {
-        fs.writeFile(path.join(galasaPath, "bootstrap.properties"), "", function (err) {
-            if (err) throw err;
-        });
-        created.push("bootstrap.properties");
-    }
-    if(!fs.existsSync(path.join(galasaPath, "dss.properties"))) {
-        fs.writeFile(path.join(galasaPath, "dss.properties"), "", function (err) {
-            if (err) throw err;
-        });
-        created.push("dss.properties");
-    }
-    if(!fs.existsSync(path.join(galasaPath, "overrides.properties"))) {
-        fs.writeFile(path.join(galasaPath, "overrides.properties"), "", function (err) {
-            if (err) throw err;
-        });
-        created.push("overrides.properties");
-    }
-    if(!fs.existsSync(path.join(galasaPath, "vscode"))) {
-        fs.mkdirSync(path.join(galasaPath, "vscode"));
-        created.push("vscode");
-    }
-    let cpsGalasaPath = path.join(galasaPath, "cps_snippets.json");
-    let cpsExtensionPath = path.join(context.extensionPath, "galasa-workspace", "cps");
-    if(fs.existsSync(cpsGalasaPath)) {
-        if(!fs.existsSync(cpsExtensionPath)) {
-            fs.mkdirSync(cpsExtensionPath);
-        }
-        if(fs.readFileSync(cpsGalasaPath).toString() != fs.readFileSync(path.join(cpsExtensionPath, "snippets.json")).toString()) {
-            fs.writeFile(path.join(cpsExtensionPath, "snippets.json"), fs.readFileSync(cpsGalasaPath), function (err) {
-                if (err) throw err;
-            });
-            let reload = await vscode.window.showInformationMessage("Changes were detected to your Galasa snippets. Do you want to reload the window now?", "Reload");
-            if (reload == "Reload") {
-                vscode.commands.executeCommand("workbench.action.reloadWindow");
-            }
-        }
-    }
-    return created;
 }
