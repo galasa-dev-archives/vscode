@@ -22,10 +22,11 @@ export async function setupWorkspace(context: vscode.ExtensionContext, galasaPat
         fs.mkdirSync(path.join(galasaPath, "vscode"));
     }
     let cpsGalasaPath = path.join(galasaPath, "cps_snippets.json");
-    let cpsExtensionPath = path.join(context.extensionPath, "galasa-workspace", "cps");
+    let cpsExtensionPath = path.join(context.extensionPath, "lib", "cps");
     if(fs.existsSync(cpsGalasaPath)) {
         if(!fs.existsSync(cpsExtensionPath)) {
             fs.mkdirSync(cpsExtensionPath);
+            fs.appendFileSync(path.join(cpsExtensionPath, "snippets.json"), "");
         }
         if(fs.readFileSync(cpsGalasaPath).toString() != fs.readFileSync(path.join(cpsExtensionPath, "snippets.json")).toString()) {
             fs.writeFileSync(path.join(cpsExtensionPath, "snippets.json"), fs.readFileSync(cpsGalasaPath));

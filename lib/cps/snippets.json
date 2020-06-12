@@ -1,0 +1,26 @@
+
+{
+	"zos.imageid": {
+		"prefix": "zos",
+		"body": [
+			"zos.dse.tag.DEFAULT.imageid=VALUE"
+		],
+		"description": "Zos dse imageID"
+    },
+    "zos.clusterid": {
+        "prefix": "zos",
+        "body": [
+            "zos.dse.tag.DEFAULT.clusterid=VALUE"
+        ],
+        "description":"Zos dse clusterid"
+    },
+    "docker.engines": {
+        "prefix": "docker",
+        "body": [
+            "docker.engines=ENGINES_NAMES"
+        ],
+        "description":"Docker engines Testing Test"
+    }
+}
+
+

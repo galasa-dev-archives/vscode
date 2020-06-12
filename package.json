@@ -275,7 +275,7 @@
 		"snippets": [
 			{
 				"language": "galenv",
-				"path": "./galasa-workspace/cps/snippets.json"
+				"path": "./lib/cps/snippets.json"
 			}
 		],
 		"languages": [
@@ -290,7 +290,7 @@
 			{
 				"language": "galenv",
 				"scopeName": "source.galenv",
-				"path": "./config/syntaxes/galenv.json"
+				"path": "./src/config/syntaxes/galenv.json"
 			}
 		]
 	},
