@@ -1,0 +1,15 @@
+pipeline {
+    agent {
+        label 'codesigning'
+    }
+    environment {
+        def workspace  = pwd()
+    }
+    stages {
+        stage('SonarVsPlugin') {
+            steps {
+                sh "sonar-scanner -Dsonar.projectKey=Vscode.Plugin -Dsonar.sources=. -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_KEY}"
+            }
+        }
+    }
+}
