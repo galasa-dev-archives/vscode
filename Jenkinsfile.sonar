@@ -9,7 +9,8 @@ pipeline {
         stage('SonarVsPlugin') {
             steps {
                 withFolderProperties {
-                    sh "sonar-scanner -Dsonar.projectKey=Vscode.Plugin -Dsonar.sources=. -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_KEY}"
+                    sh "npm install"
+                    sh "npx sonar-scanner -Dsonar.projectKey=Vscode.Plugin -Dsonar.sources=. -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_KEY}"
                 }
             }
         }

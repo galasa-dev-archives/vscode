@@ -297,7 +297,8 @@
 	"scripts": {
 		"vscode:prepublish": "tsc -p ./",
 		"compile": "gulp build",
-		"watch": "tsc -watch -p ./"
+		"watch": "tsc -watch -p ./",
+		"sonar-scanner": "node_modules/sonar-scanner/bin/sonar-scanner"
 	},
 	"extensionDependencies": [
 		"vscjava.vscode-java-pack"
@@ -317,6 +318,7 @@
 		"@types/node": "^13.13.5",
 		"@types/vscode": "^1.45.1",
 		"glob": "^7.1.6",
+		"sonarqube-scanner": "^2.6.0",
 		"typescript": "^3.8.3"
 	},
 	"repository": {
