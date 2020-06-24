@@ -18,9 +18,9 @@ export async function addEnvrionment(galasaPath : string, environmentProvider : 
 }
 
 export async function deleteEnvironment(env : GalasaEnvironment, environmentProvider : EnvironmentProvider) {
-    if(environmentProvider.getEnvironment() == env.path) {
+    if(environmentProvider.getEnvironment() == env.envPath) {
         environmentProvider.setEnvironment(undefined);
     }
-    fs.unlinkSync(env.path);
+    fs.unlinkSync(env.envPath);
     environmentProvider.refresh();
 }

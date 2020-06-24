@@ -24,10 +24,10 @@ export class ArtifactProvider implements vscode.TreeDataProvider<ArtifactItem | 
                 artifacts.push(new ArtifactDirectory(this.run.label, "", vscode.TreeItemCollapsibleState.Expanded, "directory"));
                 return artifacts;
             }
-        } else if (element.path == "" && this.run) {
-            return this.getArtifacts(path.join(this.run.path, "artifacts"));
-        } else if(fs.statSync(element.path).isDirectory()) {
-            return this.getArtifacts(element.path);
+        } else if (element.artifactPath == "" && this.run) {
+            return this.getArtifacts(path.join(this.run.runPath, "artifacts"));
+        } else if(fs.statSync(element.artifactPath).isDirectory()) {
+            return this.getArtifacts(element.artifactPath);
         } else {
             return undefined;
         }
@@ -50,7 +50,7 @@ export class ArtifactProvider implements vscode.TreeDataProvider<ArtifactItem | 
 
     public refresh(): void {
         this._onDidChangeTreeData.fire(undefined);
-        const children = this.getChildren(undefined)
+        const children = this.getChildren();
         if(children) {
             children.forEach(artifact => {
                 this._onDidChangeTreeData.fire(artifact);
@@ -68,7 +68,7 @@ export class ArtifactProvider implements vscode.TreeDataProvider<ArtifactItem | 
 export class ArtifactItem extends vscode.TreeItem{
    
     constructor(public label: string,
-                public path: string,
+                public artifactPath: string,
                 public readonly collapsibleState: vscode.TreeItemCollapsibleState,
                 public contextValue : string) {
         super(label, collapsibleState)
@@ -88,7 +88,7 @@ export class ArtifactItem extends vscode.TreeItem{
 export class ArtifactDirectory extends vscode.TreeItem{
    
     constructor(public label: string,
-                public path: string,
+                public artifactPath: string,
                 public readonly collapsibleState: vscode.TreeItemCollapsibleState,
                 public contextValue : string) {
         super(label, collapsibleState)

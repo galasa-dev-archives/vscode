@@ -49,6 +49,7 @@ async function generateExampleCode(packageName : string, context : vscode.Extens
 
             let watcher = vscode.workspace.createFileSystemWatcher("**/dev.galasa.simbank.*");
             watcher.onDidCreate(async project => {
+                let watcherWorkpath = getWorkspacePath();
                 try {
                     await Promise.resolve(() => setTimeout(() => {}, 100));
                     let exampleName = "";
@@ -58,25 +59,25 @@ async function generateExampleCode(packageName : string, context : vscode.Extens
                         exampleName = project.toString().substring(project.toString().lastIndexOf("\\") + 1);
                     }
                     const projectName = exampleName.toString().replace("dev.galasa.simbank", packageName);
-                    if(workpath && !fs.existsSync(path.join(workpath, projectName)) && (exampleName == "dev.galasa.simbank.manager" || exampleName == "dev.galasa.simbank.tests")) {
-                        copyDirectory(path.join(workpath, "examples", exampleName), path.join(workpath, projectName));
+                    if(watcherWorkpath && !fs.existsSync(path.join(watcherWorkpath, projectName)) && (exampleName == "dev.galasa.simbank.manager" || exampleName == "dev.galasa.simbank.tests")) {
+                        copyDirectory(path.join(watcherWorkpath, "examples", exampleName), path.join(watcherWorkpath, projectName));
 
-                        let pomData = fs.readFileSync(path.join(workpath, projectName, "pom-example.xml")).toString();
+                        let pomData = fs.readFileSync(path.join(watcherWorkpath, projectName, "pom-example.xml")).toString();
                         pomData = pomData.replace(/%%prefix%%/g, packageName);
-                        fs.writeFileSync(path.join(workpath, projectName, "pom-example.xml"), pomData);
-                        fs.renameSync(path.join(workpath, projectName, "pom-example.xml"), path.join(workpath, projectName, "pom.xml"));
+                        fs.writeFileSync(path.join(watcherWorkpath, projectName, "pom-example.xml"), pomData);
+                        fs.renameSync(path.join(watcherWorkpath, projectName, "pom-example.xml"), path.join(watcherWorkpath, projectName, "pom.xml"));
 
-                        if(fs.existsSync(path.join(workpath, packageName + ".manager")) && fs.existsSync(path.join(workpath, packageName + ".tests"))) {
-                            rimraf(path.join(workpath, "examples"), () => {});
+                        if(fs.existsSync(path.join(watcherWorkpath, packageName + ".manager")) && fs.existsSync(path.join(watcherWorkpath, packageName + ".tests"))) {
+                            rimraf(path.join(watcherWorkpath, "examples"), () => {});
                             watcher.dispose();
                         }
                     }
                 } catch(err) {
                     vscode.window.showErrorMessage("Error loading example tests, please update the Galasa plugin and try again");
-                    if(workpath) {
-                        rimraf(path.join(workpath, packageName + ".manager"), () => {});
-                        rimraf(path.join(workpath, packageName + ".tests"), () => {});
-                        rimraf(path.join(workpath, "examples"), () => {});
+                    if(watcherWorkpath) {
+                        rimraf(path.join(watcherWorkpath, packageName + ".manager"), () => {});
+                        rimraf(path.join(watcherWorkpath, packageName + ".tests"), () => {});
+                        rimraf(path.join(watcherWorkpath, "examples"), () => {});
                     }
                 } finally {
                     if(javaExt) {
@@ -93,11 +94,13 @@ async function generateExampleCode(packageName : string, context : vscode.Extens
 
 export function getWorkspacePath() : string | undefined {
     let workspacePath : string | undefined = undefined;
-    vscode.workspace.workspaceFolders?.forEach(folder => {
-        if(!workspacePath) {
-            workspacePath = folder.uri.toString().replace("%40","@").replace("file://", "");
+    if(vscode.workspace.workspaceFolders) {
+        for (const folder of vscode.workspace.workspaceFolders) {
+            if(!workspacePath) {
+                workspacePath = folder.uri.toString().replace("%40","@").replace("file://", "");
+            }
         }
-    });
+    }
     return workspacePath;
 }
 

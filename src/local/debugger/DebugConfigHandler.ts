@@ -1,4 +1,4 @@
-import { DebugConfiguration, workspace, ExtensionContext, window, tasks, Task, TaskScope, ShellExecution } from 'vscode';
+import { DebugConfiguration, workspace, ExtensionContext, tasks, Task, TaskScope, ShellExecution } from 'vscode';
 import * as fs from 'fs';
 import { EnvironmentProvider } from '../views/TreeViewEnvironmentProperties';
 var path = require('path');

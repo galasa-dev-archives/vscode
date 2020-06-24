@@ -73,7 +73,7 @@ export class EnvironmentProvider implements vscode.TreeDataProvider<GalasaEnviro
 export class GalasaEnvironment extends vscode.TreeItem{
    
     constructor(public label: string,
-                public path: string,
+                public envPath: string,
                 public readonly collapsibleState: vscode.TreeItemCollapsibleState) {
         super(label, collapsibleState )
 

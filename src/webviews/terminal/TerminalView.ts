@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import * as fs from "fs";
 import * as zlib from "zlib";
 import { TerminalImage } from "./TerminalImage";
 import { TerminalSize } from "./TerminalSize";
@@ -24,7 +23,8 @@ export class TerminalView {
         if (this.gzipBuffer) {
             const unzippedFile = zlib.unzipSync(this.gzipBuffer);
             parsedFileJSON = JSON.parse(this.utf8ToString(unzippedFile.toJSON().data));
-        } if (this.json) {
+        }
+        if (this.json) {
             parsedFileJSON = this.json;
         } 
         if (parsedFileJSON.id && parsedFileJSON.runId && parsedFileJSON.sequence && parsedFileJSON.images && parsedFileJSON.defaultSize) { 
@@ -86,14 +86,12 @@ export class TerminalView {
         </style></head><body><h1>Terminal Screens of run: ${this.run_id}</h1><h3>Number of screens:  ${images.length}</h3><div class="main-grid-container">`;
 
         let dynamicHTML = "";
-        let indexArray: number[] = new Array(images.length);
         
         images.forEach((image,index) => { 
             let standardCol:number = image.imageSize.columns;
             let standardRow:number = image.imageSize.rows;
             dynamicHTML = dynamicHTML + `<div class="terminal">`;
             let terminalHTML = "";
-            indexArray.push(index)
             for (let y = 0; y < standardRow; y++) {
                 let terminalLine = "";
                 for (let x = 0; x < standardCol; x++) {

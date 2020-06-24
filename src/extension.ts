@@ -71,11 +71,11 @@ export function activate(context: vscode.ExtensionContext) {
                         if (!fs.existsSync(path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, ".vscode"))) {
                             fs.mkdirSync(path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, ".vscode"));
                         }
-                        let launch: any = `{
+                        let launchJson: any = `{
                             "version": "0.2.0",
                             "configurations": []
                         }`;
-                        fs.writeFileSync(launchPath, JSON.stringify(JSON.parse(launch), undefined, 4));
+                        fs.writeFileSync(launchPath, JSON.stringify(JSON.parse(launchJson), undefined, 4));
                     }
                     
                     let launch = commentjson.parse(fs.readFileSync(launchPath).toString());
@@ -111,14 +111,14 @@ export function activate(context: vscode.ExtensionContext) {
         deleteEnvironment(env, environmentProvider);
     });
     vscode.commands.registerCommand("galasa-envionment.active", (env : GalasaEnvironment) => {
-        environmentProvider.setEnvironment(env.path);
+        environmentProvider.setEnvironment(env.envPath);
     });
     vscode.commands.registerCommand("galasa-environment.open", (env : GalasaEnvironment) => {
         if(activeLabel != env.label) {
             activeLabel = env.label;
         } else {
             activeLabel = "";
-            vscode.workspace.openTextDocument(env.path).then(doc => {
+            vscode.workspace.openTextDocument(env.envPath).then(doc => {
                 vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,true);
             });
         }
@@ -129,26 +129,26 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerTreeDataProvider("galasa-ras", localRasProvider);
     vscode.commands.registerCommand("galasa-ras.refresh", () => localRasProvider.refresh());
     vscode.commands.registerCommand('galasa-ras.runlog', (run : LocalRun) => {
-        vscode.workspace.openTextDocument(path.join(run.path, "run.log")).then(doc => {
+        vscode.workspace.openTextDocument(path.join(run.runPath, "run.log")).then(doc => {
             vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,true);
         });
     });
     const localArtifactProvider = new ArtifactProvider();
     vscode.window.registerTreeDataProvider("galasa-artifacts", localArtifactProvider);
     vscode.commands.registerCommand("galasa-ras.delete", (run : LocalRun) => {
-        rimraf(run.path, () => {});
+        rimraf(run.runPath, () => {});
         localRasProvider.refresh();
     });
     vscode.commands.registerCommand("galasa-artifacts.open", (artifact : ArtifactItem) => {
         if(activeLabel != artifact.label) {
             activeLabel = artifact.label;
         } else {
-            if (!fs.statSync(artifact.path).isDirectory()) {
+            if (!fs.statSync(artifact.artifactPath).isDirectory()) {
                 activeLabel = "";
                 if (artifact.label.endsWith(".gz")) { // GALASA TERMINAL SCREEN
-                    new TerminalView(fs.readFileSync(artifact.path), undefined);
+                    new TerminalView(fs.readFileSync(artifact.artifactPath), undefined);
                 } else {
-                    vscode.workspace.openTextDocument(artifact.path).then(doc => {
+                    vscode.workspace.openTextDocument(artifact.artifactPath).then(doc => {
                             vscode.window.showTextDocument(doc,vscode.ViewColumn.Active,true);
                     });
                 }
