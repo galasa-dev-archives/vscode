@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { RASProvider, LocalRun} from './local/views/TreeViewLocalResultArchiveStore';
-import { getDebugConfig, findTestArtifact, TestCase } from './local/debugger/DebugConfigHandler';
+import { getDebugConfig, findTestArtifact, TestCase, GherkinTestCase } from './local/debugger/DebugConfigHandler';
 import { TerminalView } from "./webviews/terminal/TerminalView";
 import * as fs from 'fs';
 import * as path from 'path';
@@ -44,6 +44,15 @@ export function activate(context: vscode.ExtensionContext) {
                     test = new TestCase(docPath.substring(docPath.lastIndexOf("\\") + 1, docPath.lastIndexOf(".java")), docPath);
                 }
                 vscode.debug.startDebugging(undefined, await getDebugConfig(test, galasaPath, context, environmentProvider));
+            } else if (activeDoc.document.getText().includes("Feature:") && activeDoc.document.uri.fsPath.endsWith(".feature")) {
+                let docPath = activeDoc.document.uri.fsPath;
+                let test : GherkinTestCase;
+                if(docPath.lastIndexOf("/") != -1) {
+                    test = new GherkinTestCase(docPath.substring(docPath.lastIndexOf("/") + 1, docPath.lastIndexOf(".feature")), activeDoc.document.uri);
+                } else {
+                    test = new GherkinTestCase(docPath.substring(docPath.lastIndexOf("\\") + 1, docPath.lastIndexOf(".feature")), activeDoc.document.uri);
+                }
+                vscode.debug.startDebugging(undefined, await getDebugConfig(test, galasaPath, context, environmentProvider));
             } else {
                 vscode.window.showErrorMessage("You do not have a viable Galasa test opened.")
             }
@@ -57,15 +66,25 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("galasa-test.export", async () => {
         const activeDoc = vscode.window.activeTextEditor;
         if (activeDoc) {
-            if (activeDoc.document.getText().includes("@Test") && activeDoc.document.getText().includes("import dev.galasa.Test;") && activeDoc.document.uri.fsPath.endsWith(".java")) {
+            if ((activeDoc.document.getText().includes("@Test") && activeDoc.document.getText().includes("import dev.galasa.Test;") && activeDoc.document.uri.fsPath.endsWith(".java")) ||
+                    (activeDoc.document.uri.fsPath.endsWith(".feature") && activeDoc.document.getText().includes("Feature:"))) {
                 if (vscode.workspace.workspaceFolders) {
                     const launchPath = path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, ".vscode", "launch.json");
                     let testcase;
+                    let gherkincase;
                     let filename = activeDoc.document.fileName;
-                    if (activeDoc.document.uri.fsPath.lastIndexOf("/") != -1) {
-                        testcase = new TestCase(filename.substring(filename.lastIndexOf("/") + 1, filename.lastIndexOf(".java")), activeDoc.document.uri.fsPath);
+                    if (activeDoc.document.uri.fsPath.endsWith(".java")) {
+                        if (activeDoc.document.uri.fsPath.lastIndexOf("/") != -1) {
+                            testcase = new TestCase(filename.substring(filename.lastIndexOf("/") + 1, filename.lastIndexOf(".java")), activeDoc.document.uri.fsPath);
+                        } else {
+                            testcase = new TestCase(filename.substring(filename.lastIndexOf("\\") + 1, filename.lastIndexOf(".java")), activeDoc.document.uri.fsPath);
+                        }
                     } else {
-                        testcase = new TestCase(filename.substring(filename.lastIndexOf("\\") + 1, filename.lastIndexOf(".java")), activeDoc.document.uri.fsPath);
+                        if (activeDoc.document.uri.fsPath.lastIndexOf("/") != -1) {
+                            gherkincase = new GherkinTestCase(filename.substring(filename.lastIndexOf("/") + 1, filename.lastIndexOf(".feature")), activeDoc.document.uri);
+                        } else {
+                            gherkincase = new GherkinTestCase(filename.substring(filename.lastIndexOf("\\") + 1, filename.lastIndexOf(".feature")), activeDoc.document.uri);
+                        }
                     }
                     if(!fs.existsSync(launchPath)) {
                         if (!fs.existsSync(path.join(vscode.workspace.workspaceFolders[0]?.uri.fsPath, ".vscode"))) {
@@ -80,8 +99,15 @@ export function activate(context: vscode.ExtensionContext) {
                     
                     let launch = commentjson.parse(fs.readFileSync(launchPath).toString());
                     let config = JSON.parse(fs.readFileSync(path.join(context.extensionPath, "package.json")).toString()).contributes.debuggers[0].initialConfigurations[0];
-                    config.testclass = findTestArtifact(testcase);
-                    config.name = testcase.label;
+                    if (testcase) {
+                        config.testclass = findTestArtifact(testcase);
+                        config.name = testcase.label;
+                    } else if(gherkincase) {
+                        config.testclass = "";
+                        config.gherkinFeature = gherkincase.uri.toString().replace("%40", "@");
+                        config.name = gherkincase.label;
+                    }
+                    
                     launch.configurations.push(config);
                     fs.writeFileSync(launchPath, commentjson.stringify(launch, undefined, 4));
 

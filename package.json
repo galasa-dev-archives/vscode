@@ -3,8 +3,8 @@
 	"displayName": "galasa",
 	"description": "The Galasa Visual Studio Code plugin enables the ability to develop and run Galasa tests locally.",
 	"publisher": "galasa",
-	"version": "0.9.0",
-	"symbolicversion": "0.9.0",
+	"version": "0.10.0",
+	"symbolicversion": "0.10.0",
 	"preview": true,
 	"icon": "resources/GalasaLogo.png",
 	"engines": {
@@ -205,12 +205,12 @@
 			],
 			"editor/title": [
 				{
-					"when": "resourceLangId == java",
+					"when": "resourceLangId == java || resourceLangId == feature",
 					"command": "galasa-test.debug",
 					"group": "navigation"
 				},
 				{
-					"when": "resourceLangId == java",
+					"when": "resourceLangId == java || resourceLangId == feature",
 					"command": "galasa-test.export",
 					"group": "navigation"
 				}
@@ -225,13 +225,17 @@
 				"configurationAttributes": {
 					"launch": {
 						"required": [
-							"testclass"
 						],
 						"properties": {
 							"testclass": {
 								"type": "string",
 								"description": "Test Bundle, package and class of test to be run",
 								"default": "bundlename/testclass"
+							},
+							"gherkinFeature": {
+								"type": "string",
+								"description": "Gherkin Feature file URI",
+								"default": ""
 							},
 							"environment": {
 								"type": "string",
@@ -252,6 +256,7 @@
 						"request": "launch",
 						"name": "Default Galasa",
 						"testclass": "bundlename/testclass",
+						"gherkinFeature": "",
 						"environment": "",
 						"args": ""
 					}
@@ -265,6 +270,7 @@
 							"request": "launch",
 							"name": "Default Galasa",
 							"testclass": "bundlename/testclass",
+							"gherkinFeature": "",
 							"environment": "",
 							"args": ""
 						}
@@ -283,6 +289,12 @@
 				"id": "galenv",
 				"extensions": [
 					".galenv"
+				]
+			},
+			{
+				"id": "feature",
+				"extensions": [
+					".feature"
 				]
 			}
 		],

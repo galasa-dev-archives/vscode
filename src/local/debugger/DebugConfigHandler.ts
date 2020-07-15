@@ -1,9 +1,9 @@
-import { DebugConfiguration, workspace, ExtensionContext, tasks, Task, TaskScope, ShellExecution } from 'vscode';
+import { DebugConfiguration, workspace, ExtensionContext, tasks, Task, TaskScope, ShellExecution, Uri } from 'vscode';
 import * as fs from 'fs';
 import { EnvironmentProvider } from '../views/TreeViewEnvironmentProperties';
 var path = require('path');
 
-export async function getDebugConfig(testClass : TestCase | string, galasaPath : string, context : ExtensionContext, environmentProvider : EnvironmentProvider, args? : string, env? : string) : Promise<DebugConfiguration> {
+export async function getDebugConfig(testClass : TestCase | string | GherkinTestCase, galasaPath : string, context : ExtensionContext, environmentProvider : EnvironmentProvider, args? : string, env? : string) : Promise<DebugConfiguration> {
     let maven = "";
     let localMaven : string | undefined = workspace.getConfiguration("galasa").get("maven-local");
     if(localMaven && localMaven.trim().length != 0) {
@@ -24,8 +24,12 @@ export async function getDebugConfig(testClass : TestCase | string, galasaPath :
 
     const workspaceObr = await buildLocalObr(context);
     
-    if(testClass instanceof TestCase) {
+    let testType = "--test ";
+    if (testClass instanceof TestCase) {
         testClass = findTestArtifact(testClass);
+    } else if (testClass instanceof GherkinTestCase) {
+        testClass = testClass.uri.toString().replace("%40", "@");
+        testType = "--gherkin ";
     }
 
     let extraArgs = "";
@@ -40,7 +44,7 @@ export async function getDebugConfig(testClass : TestCase | string, galasaPath :
         classPaths: [path.join(context.extensionPath, "lib", "galasa-boot.jar")],
         mainClass: "dev.galasa.boot.Launcher",
         args: workspaceObr + extraArgs + maven + "--obr mvn:dev.galasa/dev.galasa.uber.obr/" + getGalasaVersion(context) + "/obr " 
-            + bootstrapURI + overridesURI + "--test " + testClass
+            + bootstrapURI + overridesURI + testType + testClass
     }
 }
 
@@ -212,4 +216,13 @@ export class TestCase{
         public readonly pathToFile: string
     ) {}
   
-  }
+}
+
+export class GherkinTestCase{
+
+    constructor(
+        public readonly label: string,
+        public readonly uri: Uri
+    ) {}
+  
+}
