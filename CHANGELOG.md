@@ -1,5 +1,11 @@
 # Changelog for Galasa Extension
 
+## Version 0.10.0
+
+Functionality
+- Gherkin Functionality, support for running tests
+- Webview for viewing Gherking test metadata
+
 ## Version 0.9.0
 
 Bugfixes
