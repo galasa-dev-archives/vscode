@@ -84,13 +84,22 @@ export function showOverview(run : LocalRun) {
     <tr><td>Start Time</td><td>${run.structure.startTime}</td></tr>
     <tr><td>End Time</td><td>${run.structure.endTime}</td></tr></table><br><br></div>`;
 
-    let methodData = `<div class="side"><h3>Methods: ${run.structure.methods.length}</h3>`;
+    let methods: any;
+    let type: string = "";
+    if (run.structure.methods) {
+        methods = run.structure.methods;
+        type = "java";
+    } else if (run.structure.gherkinMethods) { 
+        methods = run.structure.gherkinMethods;
+        type = "gherkin";
+    }
+    let methodData = `<div class="side"><h3>Methods: ${methods.length}</h3>`;
 
-    for(let i : number = 0; i < run.structure.methods.length; i++) {
+    for(let i : number = 0; i < methods.length; i++) {
         let befores = "";
         let afters = "";
-        if (run.structure.methods[i].type == "Test") {
-            run.structure.methods[i].befores.forEach((before : any) => {
+        if (methods[i].type == "Test") {
+            methods[i].befores.forEach((before : any) => {
                 befores = befores + ", " + before.methodName;
             });
             if(befores == "") {
@@ -99,7 +108,7 @@ export function showOverview(run : LocalRun) {
                 befores = befores.substring(2);
             }
 
-            run.structure.methods[i].afters.forEach((after : any) => {
+            methods[i].afters.forEach((after : any) => {
                 afters = afters + ", " + after.methodName;
             });
             if(afters == "") {
@@ -110,28 +119,41 @@ export function showOverview(run : LocalRun) {
         }
         
 
-        let exception = run.structure.methods[i].exception;
+        let exception = methods[i].exception;
 
-        methodData = methodData + 
-            `<table><tr><td>Method Name</td><td>${run.structure.methods[i].methodName}</td></tr>
-            <tr><td>Class Name</td><td>${run.structure.methods[i].className}</td></tr>
-            <tr><td>Type</td><td>${run.structure.methods[i].type}</td></tr>`;
+        if (type == "java") {
+            methodData = methodData +
+                `<table><tr><td>Method Name</td><td>${methods[i].methodName}</td></tr>
+            <tr><td>Class Name</td><td>${methods[i].className}</td></tr>
+            <tr><td>Type</td><td>${methods[i].type}</td></tr>`;
 
-        if (run.structure.methods[i].type == "Test") {
-            methodData = methodData + `<tr><td>Befores</td><td>${befores}</td></tr>
+            if (methods[i].type == "Test") {
+                methodData = methodData + `<tr><td>Befores</td><td>${befores}</td></tr>
                 <tr><td>Afters</td><td>${afters}</td></tr>`
-        } 
+            }
 
-        methodData = methodData +  `<tr><td>Status</td><td>${run.structure.methods[i].status}</td></tr>
-            <tr><td>Result</td><td>${run.structure.methods[i].result}</td></tr>
-            <tr><td>Run Log Start</td><td>${run.structure.methods[i].runLogStart}</td></tr>
-            <tr><td>Run Log End</td><td>${run.structure.methods[i].runLogEnd}</td></tr>
-            <tr><td>Start Time</td><td>${run.structure.methods[i].startTime}</td></tr>
-            <tr><td>End Time</td><td>${run.structure.methods[i].endTime}</td></tr>`
+            methodData = methodData +  `<tr><td>Status</td><td>${methods[i].status}</td></tr>
+            <tr><td>Result</td><td>${methods[i].result}</td></tr>
+            <tr><td>Run Log Start</td><td>${methods[i].runLogStart}</td></tr>
+            <tr><td>Run Log End</td><td>${methods[i].runLogEnd}</td></tr>
+            <tr><td>Start Time</td><td>${methods[i].startTime}</td></tr>
+            <tr><td>End Time</td><td>${methods[i].endTime}</td></tr>`
+        } else if (type == "gherkin") { 
+            methodData = methodData +
+                `<table><tr><td>Method Name</td><td>${methods[i].name}</td></tr>
+                <tr><td>Test Name</td><td>${methods[i].testName}</td></tr>`;
+            
+            methodData = methodData +  `<tr><td>Status</td><td>${methods[i].status}</td></tr>
+                <tr><td>Result</td><td>${methods[i].result.name}</td></tr>
+                <tr><td>Start Time</td><td>${methods[i].startTime}</td></tr>
+                <tr><td>End Time</td><td>${methods[i].endTime}</td></tr>`
+        }
+
         if(exception) {
             methodData = methodData + `<tr><td colspan="2"><button type="button" class="collapsible">Exception</button></td></tr>
                 <tr><td colspan="2"><div class="content">${exception}</div></td></tr>`;
         }
+        
         methodData = methodData + `</table><br>`;
             
     }
