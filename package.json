@@ -3,7 +3,7 @@
 	"displayName": "galasa",
 	"description": "The Galasa Visual Studio Code plugin enables the ability to develop and run Galasa tests locally.",
 	"publisher": "galasa",
-	"version": "0.10.0",
+	"version": "0.10.90",
 	"symbolicversion": "0.10.0",
 	"preview": true,
 	"icon": "resources/GalasaLogo.png",
