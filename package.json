@@ -224,8 +224,7 @@
 				"runtime": "java",
 				"configurationAttributes": {
 					"launch": {
-						"required": [
-						],
+						"required": [],
 						"properties": {
 							"testclass": {
 								"type": "string",
