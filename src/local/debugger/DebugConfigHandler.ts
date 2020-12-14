@@ -156,8 +156,11 @@ function findPomField(directory : string, field : string) : string {
         });
         if(pom != "") {
             let data = fs.readFileSync(path.join(directory, pom)).toString();
-            if((field == "artifactId" || field == "version")&& data.includes("<parent>")) {
+            if(field == "artifactId" && data.includes("<parent>")) {
                 data = data.substring(data.indexOf("</parent>"));
+            }
+            if(field == "version" && data.includes("<parent>")) {
+                data = data.substring(0, data.indexOf("</parent>"));
             }
             data = data.substring(data.indexOf("<" + field + ">") + field.length + 2, data.indexOf("</"+ field +">"));
             return data;
