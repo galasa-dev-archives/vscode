@@ -1,3 +1,5 @@
+**This repository is no longer actively maintained therefore is being archived.**
+
 # Galasa for Visual Studio Code
 
 _This extension is directly linked to the [Java Extension Pack](https://code.visualstudio.com/docs/languages/java) to be able to compile your Java-workspace and to build Galasa-tests using Maven for Java. This is installed simultaneously with the Galasa extension._
